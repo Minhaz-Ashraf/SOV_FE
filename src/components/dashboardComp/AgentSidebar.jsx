@@ -13,7 +13,7 @@ import { RiLogoutBoxRLine } from "react-icons/ri";
 import LogoutPop from "../login/LogoutPop";
 import ImageComponent from "../reusable/Input";
 import { logo } from "../../assets";
-import DeleteAccount from "../deleteAccount";
+import DeleteAccount from "../DeleteAccount";
 import { deleteAgentById } from "../../features/agentApi";
 import { toast } from "react-toastify";
 import socketServiceInstance from "../../services/socket";
