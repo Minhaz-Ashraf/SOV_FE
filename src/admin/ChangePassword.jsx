@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import {  changeAdminPassword } from "../features/adminApi";
 import AdminSidebar from "../components/dashboardComp/AdminSidebar";
 import socketServiceInstance from "../services/socket";
+import { useSelector } from "react-redux";
 
 const ChangeAdminPassword = () => {
   const [isPassword, setIsPassword] = useState({
