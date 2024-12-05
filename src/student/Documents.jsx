@@ -1,0 +1,85 @@
+import React, { useEffect, useState } from "react";
+import Header from "../components/dashboardComp/Header";
+import Sidebar from "../components/dashboardComp/Sidebar";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
+import { studentInfo } from "../features/studentSlice";
+import { studentById } from "../features/generalSlice";
+import StudentRecieveDocument from "../components/dashboardComp/StudentRecieveDocument";
+import StudentuplaodDocument from "./../components/dashboardComp/StudentuplaodDocument";
+import TabBar from "../components/dashboardComp/TabBar";
+
+const Documents = () => {
+  const role = localStorage.getItem("role");
+  const studentId = localStorage.getItem("student");
+  const { studentInfoData } = useSelector((state) => state.student);
+
+  const studentData =
+    role === "0"
+      ? useSelector((state) => state.admin.getStudentDataById)
+      : role === "3"
+      ? studentInfoData?.data
+      : useSelector((state) => state.general.studentData);
+
+  const location = useLocation();
+  const dispatch = useDispatch();
+  const profileView = location.state?.isprofileView;
+  const [profileUpdated, setProfileUpdated] = useState(false);
+  useEffect(() => {
+    dispatch(studentInfo(studentId));
+    dispatch(studentById(studentId));
+  }, [dispatch, profileUpdated, studentId]);
+
+  const handleProfileUpdate = () => {
+    setProfileUpdated((prev) => !prev);
+  };
+
+  const tabs = [
+    {
+      name: "myDocument",
+      label: "My Document",
+      component: StudentuplaodDocument,
+      props: {
+        data: studentData?.studentInformation,
+        profileView: profileView,
+        updateData: handleProfileUpdate,
+        studentId: studentId,
+      },
+    },
+    {
+      name: "recieveDocument",
+      label: "Recieve Document",
+      component: StudentRecieveDocument,
+      props: {
+        data: studentData?.studentInformation,
+        profileView: profileView,
+        updateData: handleProfileUpdate,
+        studentId: studentId,
+      },
+    },
+  ];
+
+  return (
+    <>
+      <Header customLink="/agent/shortlist" />
+      <span className="fixed overflow-y-scroll scrollbar-hide  bg-white">
+        <Sidebar />
+      </span>
+      <div className="ml-[17%] pt-16 pb-8 bg-white border-b-2 border-[#E8E8E8] font-poppins  ">
+        <span className="flex items-center">
+          <p className="text-[28px] font-bold text-sidebar mt-6 md:ml-9  sm:ml-20">
+            Documents
+          </p>
+        </span>
+        <p className="text-[16px] font-normal text-sidebar  md:ml-9  sm:ml-20">
+          Here you can view and manage all your uploaded documents.
+        </p>
+      </div>
+      <div className="sm:ml-[9%] md:ml-0">
+        <TabBar tabs={tabs} />
+      </div>
+    </>
+  );
+};
+
+export default Documents;
