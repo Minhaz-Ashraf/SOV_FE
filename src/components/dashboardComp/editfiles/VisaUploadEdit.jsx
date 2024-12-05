@@ -101,19 +101,23 @@ const VisaUploadEdit = ({ appId, updatedData, profileViewPath, userId }) => {
     }
   };
 
+
+
   const deleteFile = async (fileType) => {
     const fileUrl = visaLetter.studentDocument[fileType];
     if (!fileUrl) return;
-    await deleteDocument(fileUrl);
+    // await deleteDocument(fileUrl);
 
-    const isFirebaseUrl = fileUrl.startsWith("http");
+    const fileUrls = Array.isArray(fileUrl) ? fileUrl : [fileUrl];
 
-    if (isFirebaseUrl) {
-      setDeletedFiles((prevFiles) => [
-        ...prevFiles.filter((f) => f.fileType !== fileType),
-        { fileUrl, fileType },
-      ]);
-    }
+    fileUrls.forEach((url) => {
+      if (typeof url === "string" && url.startsWith("http")) {
+        setDeletedFiles((prevFiles) => [
+          ...prevFiles.filter((f) => f.fileType !== fileType),
+          { fileUrl: url, fileType },
+        ]);
+      }
+    });
 
     setVisaLetter((prevState) => ({
       ...prevState,
@@ -129,6 +133,8 @@ const VisaUploadEdit = ({ appId, updatedData, profileViewPath, userId }) => {
 
     // toast.info("File marked for deletion.");
   };
+
+ 
 
   const validateFields = () => {
     const errors = {};
@@ -157,6 +163,8 @@ const VisaUploadEdit = ({ appId, updatedData, profileViewPath, userId }) => {
         const storageRef = ref(storage, fileUrl);
         try {
           await deleteObject(storageRef);
+    await deleteDocument(fileUrl);
+
           // toast.success(`File ${fileUrl} deleted successfully.`);
         } catch (error) {
           // toast.error(`Error deleting file: ${fileUrl}`);
@@ -175,7 +183,7 @@ const VisaUploadEdit = ({ appId, updatedData, profileViewPath, userId }) => {
 
           // Replace the blob URL with the Firebase URL for the specific field
           updatedStudentDocument[fileType] = downloadURL;
-          const uploadData = { viewUrl: downloadURL, documentName: file.name };
+          const uploadData = { viewUrl: downloadURL, documentName: file.name, userId: userId };
           await uploadDocument(uploadData);
           setVisaLetter((prevState) => ({
             ...prevState,

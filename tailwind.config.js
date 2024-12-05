@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-export default {
+module.exports = {
   content: ["./src/**/*.{js,jsx}"],
   mode: "jit",
   theme: {
@@ -7,15 +7,15 @@ export default {
       colors: {
         transparent: 'transparent',
         current: 'currentColor',
-        white: '#ffffff',
-        primary: '#98090B',
-        secondary: '#515151',
-        inputText: '#B9BBBD',
-        input: '#F2F5F7',
-        heading: '#303031',
-        sidebar: "#464255",
-        body: "#6E7170",
-        greyish: "#E8E8E8"
+        'white': '#ffffff',
+        'primary':'  #98090B',
+        'secondary': '#515151',
+         'inputText':'#B9BBBD',
+         'input':  '#F2F5F7',
+         'heading': '#303031',
+         'sidebar': "#464255",
+          'body' : "#6E7170",
+          'greyish': "#E8E8E8"
       },
       fontFamily: {
         poppins: ['Poppins', 'sans-serif'],

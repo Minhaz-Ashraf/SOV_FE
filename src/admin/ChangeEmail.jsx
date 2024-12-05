@@ -6,7 +6,6 @@ import { toast } from 'react-toastify';
 import { changeAdminEmail } from '../features/adminApi';
 import { greenCheck } from '../assets';
 import socketServiceInstance from '../services/socket';
-import { useSelector } from 'react-redux';
 
 const ChangeEmail = () => {
   const [formData, setFormData] = useState({

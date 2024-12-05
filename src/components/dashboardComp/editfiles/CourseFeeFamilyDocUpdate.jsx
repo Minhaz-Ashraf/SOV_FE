@@ -37,6 +37,7 @@ const initialSiblingDocument = {
 const CourseFeeFamilyDocUpdate = ({ appId, updatedData, profileViewPath, userId }) => {
   const { applicationDataById } = useSelector((state) => state.agent);
   const dispatch = useDispatch();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [newFiles, setNewFiles] = useState([]);
   const [deletedFiles, setDeletedFiles] = useState([]);
   const [isOne, setIsOne] = useState(false);
@@ -151,21 +152,20 @@ const CourseFeeFamilyDocUpdate = ({ appId, updatedData, profileViewPath, userId 
     }
   };
 
-  const deleteFile = async (fileType) => {
-    const fileUrl =
-      courseFee.parentDocument[fileType] || courseFee.siblingDocument[fileType];
+  const deleteFile = async (fileUrl, fileType) => {
+    
     if (!fileUrl) return;
-    await deleteDocument(fileUrl);
 
-    const isFirebaseUrl = fileUrl.startsWith("http");
+    const fileUrls = Array.isArray(fileUrl) ? fileUrl : [fileUrl];
 
-    if (isFirebaseUrl) {
-      // Add to deletedFiles for deferred deletion
-      setDeletedFiles((prevFiles) => [
-        ...prevFiles.filter((f) => f.fileType !== fileType),
-        { fileUrl, fileType },
-      ]);
-    }
+    fileUrls.forEach((url) => {
+        if (typeof url === "string" && url.startsWith("http")) {
+            setDeletedFiles((prevFiles) => [
+                ...prevFiles.filter((f) => f.fileType !== fileType),
+                { fileUrl: url, fileType },
+            ]);
+        }
+    });
 
     // Remove the file locally
     setCourseFee((prevState) => {
@@ -196,11 +196,14 @@ const CourseFeeFamilyDocUpdate = ({ appId, updatedData, profileViewPath, userId 
     }
 
     try {
+      setIsSubmitting(true);
       // Delete files marked for deletion
       for (const { fileUrl } of deletedFiles) {
         const storageRef = ref(storage, fileUrl);
         try {
           await deleteObject(storageRef);
+    await deleteDocument(fileUrl)
+
           // toast.success(`File ${fileUrl} deleted successfully.`);
         } catch (error) {
           // toast.error(`Error deleting file: ${fileUrl}`);
@@ -230,6 +233,7 @@ const CourseFeeFamilyDocUpdate = ({ appId, updatedData, profileViewPath, userId 
             const uploadData = {
               viewUrl: downloadURL,
               documentName: file.name,
+              userId: userId,
             };
             await uploadDocument(uploadData);
             // Update state with Firebase URL
@@ -244,19 +248,35 @@ const CourseFeeFamilyDocUpdate = ({ appId, updatedData, profileViewPath, userId 
             });
           } catch (error) {
             toast.error(`Error uploading ${file.name}.`);
+            setIsSubmitting(false);
+           } finally {
+            setIsSubmitting(false);
           }
         })
       );
 
       // Submit the updated object
       const payload = {
-        fatherAadharCard: courseFee.fatherAadharCard,
-        motherAadharCard: courseFee.motherAadharCard,
-        fatherAadharCard: courseFee.fatherAadharCard,
-        motherAadharCard: courseFee.motherAadharCard,
-        siblingAdharCard: courseFee.siblingAdharCard,
-        siblingAdharCard: courseFee.siblingAdharCard,
+        fatherAadharCard: courseFee.parentDocument.fatherAadharCard || "",
+        motherAadharCard: courseFee.parentDocument.motherAadharCard || "",
+        fatherPanCard: courseFee.parentDocument.fatherPanCard || "",
+        motherPanCard: courseFee.parentDocument.motherPanCard || "",
       };
+      
+      // Check if both father and mother Aadhar and PAN cards are available
+      const areParentsAvailable =
+        payload.fatherAadharCard && payload.motherAadharCard &&
+        payload.fatherPanCard && payload.motherPanCard;
+      
+      // Conditionally add sibling data to the payload
+      if (!areParentsAvailable) {
+        payload.siblingAdharCard = courseFee.siblingDocument.siblingAdharCard || "";
+        payload.siblingPanCard = courseFee.siblingDocument.siblingPanCard || "";
+      }
+      
+      // If you want to log the payload for debugging
+      // console.log("Payload:", payload);
+      
       const res = await updateCourseFeeFamilyDoc(appId, payload);
 
       toast.success(res.message || "Data added successfully.");
@@ -582,7 +602,7 @@ const CourseFeeFamilyDocUpdate = ({ appId, updatedData, profileViewPath, userId 
               className="bg-primary text-white px-6 py-2 rounded"
               onClick={handleSubmit}
             >
-              Save
+              {isSubmitting ? "Submitting..." : "Save"}
             </button>
           </div>
         )}

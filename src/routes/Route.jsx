@@ -39,7 +39,7 @@ import AgentRoleProtected from "./AgentRoleProtected";
 import HelpNSupport from "../pages/HelpNSupport";
 import CourseFeeApplication from "../pages/CourseFeeApplication";
 // import ChangedashboardEmail from '../pages/ChangedashboardEmail';
-import ChangeDashboardPassword from "../pages/ChangeDashboardPassword";
+import ChangeDashboardPassword from "../pages/changeDashboardPassword";
 import ChangeDashboardEmail from "../components/dashboardComp/ChangedashboardEmail";
 import DashboardEmailOtp from "../components/dashboardComp/DashboardEmailOtp";
 import VisaApply from "../pages/VisaApply";

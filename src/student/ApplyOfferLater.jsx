@@ -330,7 +330,7 @@ const ApplyOfferLater = () => {
         const downloadURL = await getDownloadURL(snapshot.ref);
         uploadedUrls.push(downloadURL);
         toast.success(`${file.name} uploaded successfully!`);
-        const uploadData = { viewUrl: downloadURL, documentName: file.name };
+        const uploadData = { viewUrl: downloadURL, documentName: file.name, userId: studentId };
         await uploadDocument(uploadData);
       } catch (error) {
         toast.error(`Error uploading ${file.name}. Please try again.`);

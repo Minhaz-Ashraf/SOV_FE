@@ -140,7 +140,7 @@ const VisaApply = () => {
         const snapshot = await uploadBytes(storageRef, file);
         const downloadURL = await getDownloadURL(snapshot.ref);
         uploadedUrls.push(downloadURL);
-        const uploadData = { viewUrl: downloadURL, documentName: file.name };
+        const uploadData = { viewUrl: downloadURL, documentName: file.name, userId: studentId };
         await uploadDocument(uploadData);
         toast.success(`${file.name} uploaded successfully!`);
       } catch (error) {

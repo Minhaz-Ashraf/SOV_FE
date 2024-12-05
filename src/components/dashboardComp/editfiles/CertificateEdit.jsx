@@ -97,7 +97,6 @@ const CertificateEdit = ({ appId, updatedData, profileViewPath, userId }) => {
   
   const deleteFile = async(fileUrl) => {
     if (!fileUrl) return;
-    await deleteDocument(fileUrl)
 
     const isFirebaseUrl = fileUrl.startsWith("http");
   
@@ -140,6 +139,8 @@ const CertificateEdit = ({ appId, updatedData, profileViewPath, userId }) => {
         const storageRef = ref(storage, fileUrl);
         try {
           await deleteObject(storageRef);
+    await deleteDocument(fileUrl)
+
           // toast.success(`File ${fileUrl} deleted successfully.`);
         } catch (error) {
           // toast.error(`Error deleting file: ${fileUrl}`);
@@ -155,7 +156,7 @@ const CertificateEdit = ({ appId, updatedData, profileViewPath, userId }) => {
             const snapshot = await uploadBytes(storageRef, file);
             const downloadURL = await getDownloadURL(snapshot.ref);
             uploadedUrls.push(downloadURL);
-            const uploadData = { viewUrl: downloadURL, documentName: file.name };
+            const uploadData = { viewUrl: downloadURL, documentName: file.name, userId:userId };
             await uploadDocument(uploadData);
             // Replace blob URLs with Firebase URLs in state
             setOfferLater((prevData) => ({

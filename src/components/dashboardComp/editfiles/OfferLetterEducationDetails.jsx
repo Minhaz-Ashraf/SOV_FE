@@ -127,7 +127,6 @@ const [newFiles, setNewFiles] = useState([]);
   
   const deleteFile = async(fileUrl, uploadType) => {
     if (!fileUrl) return;
-    await deleteDocument(fileUrl)
 
     // Add file to deletedFiles array for deferred deletion
     setDeletedFiles((prevState) => [
@@ -181,6 +180,8 @@ const handleSubmit = async () => {
       const storageRef = ref(storage, fileUrl);
       try {
         await deleteObject(storageRef);
+    await deleteDocument(fileUrl)
+
         // toast.success(`File ${fileUrl} deleted successfully.`);
       } catch (error) {
         // toast.error(`Error deleting file: ${fileUrl}`);
@@ -200,7 +201,7 @@ const handleSubmit = async () => {
 
           // Update temporary object with Firebase URL
           updatedEducationDetails[uploadType] = downloadURL;
-          const uploadData = { viewUrl: downloadURL, documentName: file.name };
+          const uploadData = { viewUrl: downloadURL, documentName: file.name, userId: userId };
           await uploadDocument(uploadData);
           toast.success(`${file.name} uploaded successfully.`);
         } catch (error) {

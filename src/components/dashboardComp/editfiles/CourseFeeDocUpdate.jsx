@@ -113,19 +113,18 @@ const CourseFeeDocUpdate = ({ appId, updatedData, profileViewPath, userId }) => 
     }
   };
 
-  const deleteFile = async(fileType) => {
-    const fileUrl = courseFee.offerLetterAnsPassport[fileType];
+  const deleteFile = async(fileUrl, fileType) => {
     if (!fileUrl) return;
-    await deleteDocument(fileUrl)
+    const fileUrls = Array.isArray(fileUrl) ? fileUrl : [fileUrl];
 
-    const isFirebaseUrl = fileUrl.startsWith("http");
-
-    if (isFirebaseUrl) {
-      setDeletedFiles((prevFiles) => [
-        ...prevFiles.filter((f) => f.fileType !== fileType),
-        { fileUrl, fileType },
-      ]);
-    }
+    fileUrls.forEach((url) => {
+        if (typeof url === "string" && url.startsWith("http")) {
+            setDeletedFiles((prevFiles) => [
+                ...prevFiles.filter((f) => f.fileType !== fileType),
+                { fileUrl: url, fileType },
+            ]);
+        }
+    });
 
     setCourseFee((prevState) => ({
       ...prevState,
@@ -139,7 +138,7 @@ const CourseFeeDocUpdate = ({ appId, updatedData, profileViewPath, userId }) => 
       prevFiles.filter((file) => file.fileType !== fileType)
     );
 
-    toast.info("File marked for deletion.");
+    // toast.info("File marked for deletion.");
   };
 
   const handleSubmit = async () => {
@@ -156,6 +155,8 @@ const CourseFeeDocUpdate = ({ appId, updatedData, profileViewPath, userId }) => 
         const storageRef = ref(storage, fileUrl);
         try {
           await deleteObject(storageRef);
+    await deleteDocument(fileUrl)
+
           // toast.success(`File ${fileUrl} deleted successfully.`);
         } catch (error) {
           // toast.error(`Error deleting file: ${fileUrl}`);
@@ -180,7 +181,7 @@ const CourseFeeDocUpdate = ({ appId, updatedData, profileViewPath, userId }) => 
             const downloadURL = await getDownloadURL(snapshot.ref);
 
             updatedOfferLetterAnsPassport[fileType] = downloadURL;
-            const uploadData = { viewUrl: downloadURL, documentName: file.name };
+            const uploadData = { viewUrl: downloadURL, documentName: file.name, userId: userId };
             await uploadDocument(uploadData);
             setCourseFee((prevState) => ({
               ...prevState,
@@ -198,7 +199,9 @@ const CourseFeeDocUpdate = ({ appId, updatedData, profileViewPath, userId }) => 
         })
       );
 
-      const payload = { offerLetterAnsPassport: updatedOfferLetterAnsPassport };
+      const payload = { passport: courseFee.offerLetterAnsPassport.passport,
+        offerLetter: courseFee.offerLetterAnsPassport.offerLetter
+       };
       const res = await updateCourseFeeDoc(appId, payload);
 
       toast.success(res.message || "Data added successfully.");

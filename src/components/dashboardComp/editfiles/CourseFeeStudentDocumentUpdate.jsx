@@ -98,7 +98,7 @@ const CourseFeeStudentDocumentUpdate = ({
         },
       }));
   
-      toast.success(`${fileOrUrl.name} has been selected.`);
+      // toast.success(`${fileOrUrl.name} has been selected.`);
     } else if (typeof fileOrUrl === "string") {
       // Handle URL strings: directly set in the courseFee state
       setCourseFee((prevState) => ({
@@ -113,34 +113,38 @@ const CourseFeeStudentDocumentUpdate = ({
     }
   };
   
-  const deleteFile = async(fileType) => {
-    const fileUrl = courseFee.studentDocument[fileType];
+  const deleteFile = async (fileUrl, fileType) => {
+    // console.log("Attempting to delete fileType:", fileType);
+    // console.log("File URL:", fileUrl);
+
     if (!fileUrl) return;
-    await deleteDocument(fileUrl)
 
-    const isFirebaseUrl = fileUrl.startsWith("http");
+    const fileUrls = Array.isArray(fileUrl) ? fileUrl : [fileUrl];
 
-    if (isFirebaseUrl) {
-      setDeletedFiles((prevFiles) => [
-        ...prevFiles.filter((f) => f.fileType !== fileType),
-        { fileUrl, fileType },
-      ]);
-    }
+    fileUrls.forEach((url) => {
+        if (typeof url === "string" && url.startsWith("http")) {
+            setDeletedFiles((prevFiles) => [
+                ...prevFiles.filter((f) => f.fileType !== fileType),
+                { fileUrl: url, fileType },
+            ]);
+        }
+    });
 
     setCourseFee((prevState) => ({
-      ...prevState,
-      studentDocument: {
-        ...prevState.studentDocument,
-        [fileType]: "",
-      },
+        ...prevState,
+        studentDocument: {
+            ...prevState.studentDocument,
+            [fileType]: "",
+        },
     }));
 
     setNewFiles((prevFiles) =>
-      prevFiles.filter((file) => file.fileType !== fileType)
+        prevFiles.filter((file) => file.fileType !== fileType)
     );
 
-    toast.info("File marked for deletion.");
-  };
+    console.log("File successfully marked for deletion.");
+};
+
 
   const handleSubmit = async () => {
     const validationErrors = validateFields();
@@ -158,9 +162,11 @@ const CourseFeeStudentDocumentUpdate = ({
         const storageRef = ref(storage, fileUrl);
         try {
           await deleteObject(storageRef);
-          toast.success(`File ${fileUrl} deleted successfully.`);
+    await deleteDocument(fileUrl)
+
+          // toast.success(`File ${fileUrl} deleted successfully.`);
         } catch (error) {
-          toast.error(`Error deleting file: ${fileUrl}`);
+          // toast.error(`Error deleting file: ${fileUrl}`);
         }
       }
 
@@ -181,7 +187,7 @@ const CourseFeeStudentDocumentUpdate = ({
 
           // Replace blob URL with Firebase URL in `updatedStudentDocument`
           updatedStudentDocument[fileType] = downloadURL;
-          const uploadData = { viewUrl: downloadURL, documentName: file.name };
+          const uploadData = { viewUrl: downloadURL, documentName: file.name, userId:userId };
           await uploadDocument(uploadData);
           // Update the state with Firebase URL
           setCourseFee((prevState) => ({
@@ -199,7 +205,9 @@ const CourseFeeStudentDocumentUpdate = ({
       }
 
       // Submit the updated `studentDocument` to the backend
-      const payload = { studentDocument: updatedStudentDocument };
+      const payload = { aadharCard: courseFee.studentDocument.aadharCard,
+        panCard: courseFee.studentDocument.panCard
+       };
       const res = await updateCourseFeeStudentDoc(appId, payload);
 
       toast.success(res.message || "Data added successfully.");
@@ -212,6 +220,7 @@ const CourseFeeStudentDocumentUpdate = ({
     } catch (error) {
       console.error("Error during submission:", error);
       toast.error("Something went wrong.");
+      setIsSubmitting(false);
     } finally {
       setIsSubmitting(false);
     }
@@ -329,32 +338,32 @@ const CourseFeeStudentDocumentUpdate = ({
                   <p>Upload Aadhar Card</p>
                 </div>
                 {courseFee.studentDocument?.aadharCard &&
-                  typeof courseFee.studentDocument.aadharCard === "string" &&
-                  courseFee.studentDocument.aadharCard.startsWith("http") && (
-                    <div className="mt-4">
-                      <p className="text-secondary font-semibold">
-                        Uploaded Document:
-                      </p>
-                      <ul>
-                        <li className="flex items-center mt-2">
-                          <a
-                            href={courseFee.studentDocument.aadharCard}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-primary rounded-sm px-6 py-2 border border-greyish"
-                          >
-                            Uploaded Document
-                          </a>
-                          <button
-                            onClick={() => deleteFile(courseFee.studentDocument.aadharCard,"aadharCard")}
-                            className="ml-4 text-red-500"
-                          >
-                            <RiDeleteBin6Line />
-                          </button>
-                        </li>
-                      </ul>
-                    </div>
-                  )}
+  (typeof courseFee.studentDocument.aadharCard === "string") && (
+    <div className="mt-4">
+      <p className="text-secondary font-semibold">
+        Uploaded Document:
+      </p>
+      <ul>
+        <li className="flex items-center mt-2">
+          <a
+            href={courseFee.studentDocument.aadharCard}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary rounded-sm px-6 py-2 border border-greyish"
+          >
+            Uploaded Document
+          </a>
+          <button
+            onClick={() => deleteFile(courseFee.studentDocument.aadharCard, "aadharCard")}
+            className="ml-4 text-red-500"
+          >
+            <RiDeleteBin6Line />
+          </button>
+        </li>
+      </ul>
+    </div>
+  )}
+
                 <p className="text-[15px] mt-3 text-body">Pan Card</p>
                 <div className="flex flex-col justify-center items-center border-2 border-dashed border-body rounded-md py-9 mt-9 mb-4">
                   <button
@@ -366,32 +375,32 @@ const CourseFeeStudentDocumentUpdate = ({
                   <p>Upload Pan Card</p>
                 </div>
                 {courseFee.studentDocument?.panCard &&
-                  typeof courseFee.studentDocument.panCard === "string" &&
-                  courseFee.studentDocument.panCard.startsWith("http") && (
-                    <div className="mt-4">
-                      <p className="text-secondary font-semibold">
-                        Uploaded Document:
-                      </p>
-                      <ul>
-                        <li className="flex items-center mt-2">
-                          <a
-                            href={courseFee.studentDocument.panCard}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-primary rounded-sm px-6 py-2 border border-greyish"
-                          >
-                            Uploaded Document
-                          </a>
-                          <button
-                            onClick={() => deleteFile(courseFee.studentDocument.panCard,"panCard")}
-                            className="ml-4 text-red-500"
-                          >
-                            <RiDeleteBin6Line />
-                          </button>
-                        </li>
-                      </ul>
-                    </div>
-                  )}
+  (typeof courseFee.studentDocument.panCard === "string") && (
+    <div className="mt-4">
+      <p className="text-secondary font-semibold">
+        Uploaded Document:
+      </p>
+      <ul>
+        <li className="flex items-center mt-2">
+          <a
+            href={courseFee.studentDocument.panCard}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary rounded-sm px-6 py-2 border border-greyish"
+          >
+            Uploaded Document
+          </a>
+          <button
+            onClick={() => deleteFile(courseFee.studentDocument.panCard, "panCard")}
+            className="ml-4 text-red-500"
+          >
+            <RiDeleteBin6Line />
+          </button>
+        </li>
+      </ul>
+    </div>
+  )}
+
               </div>
             </>
           )}

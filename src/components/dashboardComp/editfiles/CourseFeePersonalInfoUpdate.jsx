@@ -149,8 +149,14 @@ const CourseFeePersonalInfoUpdate = ({appId, updatedData, profileViewPath}) => {
       console.log("Form has errors", validationErrors);
     }
     try{
+      const payload = {
+         fullName: courseFee.personalDetails.fullName,
+         phoneNumber: courseFee.personalDetails.phoneNumber,
+         email: courseFee.personalDetails.email,
+         address: courseFee.personalDetails.address
+      }
 
-      const res = await OfferLetterPersonalInfoEdit(appId, courseFee, "courseFeeApplication")
+      const res = await OfferLetterPersonalInfoEdit(appId, payload, "courseFeeApplication")
       toast.success(res.message || "Data Added successfully");
       updatedData()
       handleCancelOne();
