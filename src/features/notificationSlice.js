@@ -6,6 +6,9 @@ const notificationsSlice = createSlice({
     notifications: [],
     notificationCount: 0,
     currentPage: 0,
+    nextPage: 0,
+    totalPage:0,
+    totalNotification:0,
     status: 'idle',
     error: null,
   },
@@ -22,13 +25,17 @@ const notificationsSlice = createSlice({
       );
     },
     addAllNotifications: (state, action) => {
-      const {notifications, currentPage} = action.payload;
+      const {notifications, currentPage, nextPage, totalPages, totalNotifications} = action.payload;
       const uniqueNotifications = notifications.filter(
         (newNotification) => !state.notifications.some(
           (existingNotification) => existingNotification._id === newNotification._id
         )
       );
-      state.currentPage = currentPage?.page || 1;
+      state.currentPage = currentPage|| 1;
+      state.nextPage = nextPage || 1;
+      state.totalPage = totalPages || 1;
+      state.totalNotification = totalNotifications || 1;
+
     
       state.notifications = [...state.notifications, ...uniqueNotifications];
     },
