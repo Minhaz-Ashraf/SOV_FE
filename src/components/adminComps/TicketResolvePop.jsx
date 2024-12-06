@@ -121,6 +121,7 @@ const TicketResolvePop = ({ isOpen, closePopUp, isticketId, handleStatus }) => {
                 className="border border-md h-16 mt-2 px-3 py-3 outline-none text-sidebar text-[14px]"
                 placeholder="Write Here"
                 onChange={handleSolution}
+                disabled={ticketById?.status === "resolved"}
               ></textarea>
               <span className="text-[14px] text-sidebar mt-4 font-medium">
                 Solution to show the user?
@@ -131,6 +132,7 @@ const TicketResolvePop = ({ isOpen, closePopUp, isticketId, handleStatus }) => {
                 className="border border-md h-16 mt-2 px-3 py-3 outline-none text-sidebar text-[14px]"
                 placeholder="Write Here"
                 onChange={handleInput}
+                disabled={ticketById?.status === "resolved"}
               ></textarea>
               <div className="flex flex-row items-center justify-end mt-6 gap-4 text-[14px]">
                 <span
@@ -139,13 +141,14 @@ const TicketResolvePop = ({ isOpen, closePopUp, isticketId, handleStatus }) => {
                 >
                   Cancel
                 </span>
+                {ticketById?.status === "underreview" && 
                 <span
                 onClick={() => handleStatus("resolved", isSolution, isResolvedText, isticketId)}
 
                   className="bg-primary text-white rounded-md px-6 py-2 cursor-pointer"
                 >
                   Resolved
-                </span>
+                </span>}
               </div>
             </span>
           </div>
