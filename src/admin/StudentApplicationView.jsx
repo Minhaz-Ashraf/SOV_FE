@@ -83,7 +83,7 @@ const StudentApplicationView = () => {
   // Prepare table data
   const TABLE_ROWS = studentApplicationData?.applications?.map(
     (data, index) => ({
-      SNO: (currentPage - 1) * perPage + index + 1,
+      sno: (currentPage - 1) * perPage + index + 1,
       id: data?.applicationId || "NA",
       institute: data?.preferences?.institution || "NA",
       country: data?.preferences?.country || "NA",
