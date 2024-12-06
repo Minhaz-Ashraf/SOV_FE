@@ -55,12 +55,12 @@ const Pagination = ({
             className={`page-item ${
               page === currentPage
                 ? "bg-primary px-3 py-1 text-white rounded-md mx-2"
-                : "mx-2"
+                : "mx-2 bg-greyish px-3 py-1 rounded-md "
             }`}
           >
             <button
               onClick={() => handlePageChange(page)}
-              className="page-link"
+              className="page-link "
             >
               {page}
             </button>
