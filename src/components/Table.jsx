@@ -253,7 +253,7 @@ useEffect(()=>{
                   color="blue-gray"
                   className="font-normal"
                 >
-                  {index + 1}
+                  {row.sno}
                 </Typography>
               </td>
               <td className="p-4">

@@ -10,7 +10,7 @@ import { FaRegEye } from "react-icons/fa";
 import { studentById } from "./../features/generalSlice";
 import { CustomInput, SelectComponent } from "../components/reusable/Input";
 import { IoSearchOutline } from "react-icons/io5";
-import { applicationTypeOption, statusOption } from "../constant/data";
+import { applicationTypeOption, statusApplicationView, statusOption } from "../constant/data";
 import Pagination from "../components/dashboardComp/Pagination";
 import Loader from "../components/Loader";
 import Dnf from "../components/Dnf";
@@ -90,7 +90,7 @@ console.log(location)
   // Prepare table data
   const TABLE_ROWS = studentApplicationData?.applications?.map(
     (data, index) => ({
-      SNO: (currentPage - 1) * perPage + index + 1,
+      sno: (currentPage - 1) * perPage + index + 1,
       id: data?.applicationId || "NA",
       institute: data?.preferences?.institution || "NA",
       country: data?.preferences?.country || "NA",
@@ -203,7 +203,7 @@ console.log(location)
                   onChange={handleApplicatioTypeChange}
                 >
                   <option value="">Status</option>
-                  {statusOption.map((option) => (
+                  {statusApplicationView.map((option) => (
                     <option key={option.option} value={option.option}>
                       {option.label}
                     </option>

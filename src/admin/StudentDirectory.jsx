@@ -1,181 +1,203 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, Link } from "react-router-dom";
-import Pagination from "../components/dashboardComp/Pagination";
-import { CustomTableEight, CustomTableTwo } from "../components/Table";
-import { getAllStudentList } from "../features/adminSlice";
-import AdminSidebar from "../components/dashboardComp/AdminSidebar";
+import {
+  clearNotificationCount,
+  removeNotification,
+  addAllNotifications,
+} from "../features/notificationSlice";
 import Header from "../components/dashboardComp/Header";
-import { FaRegEye } from "react-icons/fa";
-import { CustomInput } from "../components/reusable/Input";
-import { IoSearchOutline } from "react-icons/io5";
-import { downloadFile } from "../features/adminApi";
+import { FaStar } from "react-icons/fa";
+import AgentSidebar from "../components/dashboardComp/AgentSidebar";
+import Sidebar from "../components/dashboardComp/Sidebar";
+import AdminSidebar from "../components/dashboardComp/AdminSidebar";
+import { RxCross2 } from "react-icons/rx";
+import socketServiceInstance from "../services/socket";
+import { Link } from "react-router-dom";
 
-const StudentDirectory = () => {
+const NotificationPage = () => {
   const dispatch = useDispatch();
-  const location = useLocation();
-  const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(true);
-  const [perPage, setPerPage] = useState(10);
-  const path =
-    location.pathname === "/admin/agent-student"
-      ? "/studentInformation/agent-student-admin"
-      : "/admin/student-directory";
+  const role = localStorage.getItem("role");
 
-  // Select data from Redux
+  const [deletingNotification, setDeletingNotification] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [noMoreNotifications, setNoMoreNotifications] = useState(false);
 
-  const { getAllStudentData } = useSelector((state) => state.admin);
-  const totalUsersCount =
-    getAllStudentData?.data?.pagination?.totalDocuments || 0;
-  const currentPage = getAllStudentData?.data?.pagination?.currentPage || 1;
-  const totalPagesCount = getAllStudentData?.data?.pagination?.totalPages || 1;
+  const {
+    notifications,
+    currentPage,
+    nextPage,
+    totalNotification,
+    totalPage,
+  } = useSelector((state) => state.notifications);
 
-  const perPageOptions = Array.from(
-    { length: Math.min(totalUsersCount, 100) / 10 },
-    (_, i) => (i + 1) * 10
-  );
-
-  const handlePerPageChange = (e) => {
-    setPerPage(parseInt(e.target.value));
-    setPage(1);
-  };
-
-  const handleSearchChange = (e) => {
-    setSearch(e.target.value);
-    setPage(1);
-  };
-
-  const handlePageChange = (pageNumber) => setPage(pageNumber);
-
-  useEffect(() => {
-    dispatch(getAllStudentList({ path, page, perPage, search }));
-  }, [dispatch, page, perPage, search]);
-
-  const TABLE_HEAD = [
-    "S.No.",
-    "Student Name",
-    "Id",
-    "Email Id",
-    "Phone Number",
-    "View",
-    "Action",
-  ];
-
-  const isAgentStudentPage = location.pathname === "/admin/agent-student";
-
-  const TABLE_ROWS =
-    getAllStudentData?.data?.data?.map((data, index) => {
-      const personalInfo = data?.personalInformation;
-
-      return {
-        sno: (currentPage - 1) * perPage + index + 1,
-        name: personalInfo
-          ? `${personalInfo.firstName || "NA"} ${personalInfo.lastName || ""}`
-          : "NA",
-        stId:  data?.stId || "_",
-        email: personalInfo?.email || "NA",
-        phone: personalInfo?.phone?.phone || "NA",
-        data: data || "NA",
-      };
-    }) || [];
-
-  const downloadAll = async () => {
-    try {
-      await downloadFile({
-        url: "/admin/total-student-download",
-        filename: "Student.csv",
+  const handleNotificationClick = (notification) => {
+    if (!notification.isRead) {
+      let byAdmin = false;
+      if (role === "0" || role === "1") {
+        byAdmin = true;
+      }
+      socketServiceInstance.socket?.emit("NOTIFICATION_IS_READ", {
+        _id: notification._id,
+        byAdmin,
       });
-      toast.info("Downloading will start in few seconds");
-    } catch (error) {
-      console.log(error);
-      toast.error(error.message || "Error downloading");
     }
   };
+
+  const handleDeleteNotification = (notificationId) => {
+    if (socketServiceInstance.socket) {
+      socketServiceInstance.socket?.emit("DELETE_NOTIFICATION", notificationId);
+      socketServiceInstance.socket?.on("DELETE_NOTIFICATION", (response) => {
+        setDeletingNotification(notificationId);
+        setTimeout(() => {
+          dispatch(removeNotification(notificationId)); // Remove from Redux state
+        }, 300);
+      });
+    }
+  };
+
+  const fetchNotifications = useCallback(() => {
+    if (isLoading || !nextPage || noMoreNotifications) return;
+
+    setIsLoading(true);
+    const eventName =
+      role === "0" || role === "1"
+        ? "GET_NOTIFICATIONS_FOR_ADMIN"
+        : "GET_NOTIFICATIONS_FOR_USER";
+
+    socketServiceInstance.socket?.emit(eventName, { page: nextPage, limit: 10 });
+    socketServiceInstance.socket?.on(eventName, (data) => {
+      if (data.notifications.length === 0) {
+        setNoMoreNotifications(true);
+      } else {
+        dispatch(addAllNotifications(data));
+        if (!data.nextPage) {
+          setNoMoreNotifications(true);
+        }
+      }
+      setIsLoading(false);
+    });
+  }, [dispatch, isLoading, nextPage, noMoreNotifications, role]);
+
+  const handleScroll = useCallback(() => {
+    const bottom =
+      window.innerHeight + window.scrollY >=
+      document.documentElement.offsetHeight - 200;
+
+    if (bottom && !isLoading && !noMoreNotifications) {
+      fetchNotifications();
+    }
+  }, [fetchNotifications, isLoading, noMoreNotifications]);
+
+  useEffect(() => {
+    if (role === "0" || role === "1") {
+      socketServiceInstance.socket?.emit("NOTIFICATION_SEEN_BY_ADMIN", {});
+    } else {
+      socketServiceInstance.socket?.emit("NOTIFICATION_SEEN_BY_USER", {});
+    }
+    dispatch(clearNotificationCount());
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [dispatch, handleScroll, role]);
+
+  const renderNotifications = (notifications) => {
+    return notifications.map((notification) => (
+      <div
+        onClick={() => handleNotificationClick(notification)}
+        key={notification._id}
+        className={`ml-[19.5%] mr-9 mt-4 px-3 py-5 relative rounded-md transition-transform duration-300 ease-in-out hover:-translate-y-1 ${
+          notification.isRead ? "bg-white" : "bg-[#F9DEDC]"
+        }     ${
+          deletingNotification === notification._id ? "slide-out-right" : ""
+        }`}
+      >
+        <span
+          onClick={() => handleDeleteNotification(notification._id)}
+          className="absolute right-5 text-[22px] text-body cursor-pointer top-3"
+        >
+          <RxCross2 />
+        </span>
+        <p className="text-sidebar font-semibold">
+          {notification.title
+            .replace(/_/g, " ")
+            .replace(/\b(AGENT|STUDENT|ADMIN)\b/g, "")
+            .trim() || "Notification Title"}
+        </p>
+        <p className="text-body mt-2">
+          {notification.message || "No message provided"}
+        </p>
+        <div className="flex justify-between mt-3 text-sm text-gray-500">
+          <span>{new Date(notification.createdAt).toLocaleString()}</span>
+        </div>
+        {notification.pathData ? (
+          <Link
+            onClick={() => handleNotificationClick(notification)}
+            to={notification.routePath}
+            state={notification.pathData}
+            className="text-primary hover:underline text-sm mt-2"
+          >
+            Click to view
+          </Link>
+        ) : (
+          <a
+            onClick={() => handleNotificationClick(notification)}
+            href={notification.routePath}
+            target="_blank"
+            className="text-primary hover:underline text-sm mt-2"
+          >
+            Click to view
+          </a>
+        )}
+      </div>
+    ));
+  };
+
   return (
     <>
-      <Header customLink="/agent/shortlist" />
-      <div>
-        <span className="fixed overflow-y-scroll scrollbar-hide  bg-white ">
-          <AdminSidebar />
+      <Header
+        icon={location.pathname === "/student/shortlist" ? <FaStar /> : null}
+      />
+      <div className="font-poppins">
+        <span className="fixed overflow-y-scroll scrollbar-hide bg-white">
+          {role === "3" ? (
+            <Sidebar />
+          ) : role === "2" ? (
+            <AgentSidebar />
+          ) : role === "0" ? (
+            <AdminSidebar />
+          ) : null}
         </span>
-        <div className="md:ml-[17%] ml-[22%] pt-14 font-poppins">
-          <p className="md:text-[28px] text-[24px] font-bold text-sidebar mt-6 ml-9">
-            Student Directory
+        <div className="ml-[17%] pt-16 pb-5 bg-white border-b-2 border-[#E8E8E8]">
+          <span className="flex items-center">
+            <p className="text-[28px] font-semibold text-sidebar mt-5 md:ml-9 sm:ml-20">
+              Notifications Center
+            </p>
+          </span>
+          <p className="text-[16px] ml-[3%] text-body pr-52">
+            Stay updated on your applications, college statuses, visa progress,
+            and more. Check here regularly for notifications and pending tasks.
           </p>
         </div>
-      </div>
-      <div className=" mt-6 mr-6 ">
-        <span className="flex flex-row items-center mb-3 ml-[20%]">
-          <span className="flex flex-row justify-between w-full items-center">
-            <span className="flex flex-row items-center">
-              <span className="text-body">Show</span>
-              <select
-                className="ml-3 border px-2 py-1 w-10 h-11 rounded outline-none"
-                value={perPage}
-                onChange={handlePerPageChange}
-              >
-                {perPageOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-              <span className="px-3 text-body">entries</span>
-              <span className="flex flex-row items-center  ml-9">
-                <CustomInput
-                  className="h-11 w-80 rounded-md text-body placeholder:px-3 pl-7 border border-[#E8E8E8] outline-none"
-                  type="text"
-                  placeHodler="Search by application ID"
-                  name="search"
-                  value={search}
-                  onChange={handleSearchChange}
-                />
-                <span className="absolute pl-2 text-[20px] text-body">
-                  <IoSearchOutline />
-                </span>
-              </span>
-            </span>
-            <span>
-              <Link
-                to="/login"
-                className="bg-primary text-white px-4 rounded-md py-2 cursor-pointer"
-              >
-                + Add Student
-              </Link>
-            </span>
-          </span>
-          <span
-            onClick={downloadAll}
-            className="bg-primary ml-5 text-white px-4 rounded-md py-2 cursor-pointer"
-          >
-            Download
-          </span>
-        </span>
-      </div>
-
-      <div className="mt-6 mr-6 ml-[19%]">
-        <CustomTableEight
-          tableHead={TABLE_HEAD}
-          tableRows={TABLE_ROWS}
-          action="View"
-          linkOne={"/student-profile"}
-          icon={<FaRegEye />}
-          actionTwo={"Remove"}
-        />
-      </div>
-
-      <div className="mt-16 mb-10 ml-20">
-        <Pagination
-          currentPage={currentPage}
-          hasNextPage={currentPage * perPage < totalUsersCount}
-          hasPreviousPage={currentPage > 1}
-          onPageChange={handlePageChange}
-          totalPagesCount={totalPagesCount}
-        />
+        <div className="mb-20">
+          {notifications.length > 0 ? (
+            renderNotifications(notifications)
+          ) : (
+            <p className="text-center text-gray-500 mt-10">
+              No notifications to show.
+            </p>
+          )}
+          {isLoading && <p className="text-center text-gray-500">Loading...</p>}
+          {noMoreNotifications && notifications.length > 0 && (
+            <p className="text-center text-gray-500 mt-4">
+              No more notifications to show.
+            </p>
+          )}
+        </div>
       </div>
     </>
   );
 };
 
-export default StudentDirectory;
+export default NotificationPage;
