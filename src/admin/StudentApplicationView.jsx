@@ -39,8 +39,8 @@ const StudentApplicationView = () => {
   const [perPage, setPerPage] = useState(10);
 
   const [page, setPage] = useState(1);
-  const totalUsersCount = studentApplicationData?.total || 0;
-  const currentPage = studentApplicationData?.page || 1;
+  const totalUsersCount = studentApplicationData?.totalApplications || 0;
+  const currentPage = studentApplicationData?.currentPage || 1;
   const totalPagesCount = studentApplicationData?.totalPages || 1;
 
   const handlePageChange = (pageNumber) => {
