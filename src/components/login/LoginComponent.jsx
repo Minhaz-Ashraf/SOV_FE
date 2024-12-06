@@ -153,7 +153,7 @@ const LoginComponent = () => {
           } else if (
             studentInfo?.data?.studentInformation?.pageCount === 3 &&
             studentInfo?.data?.studentInformation?.pageStatus?.status ===
-              "completed"
+              "approved"
           ) {
             redirectPath = `/student/dashboard`;
           }
