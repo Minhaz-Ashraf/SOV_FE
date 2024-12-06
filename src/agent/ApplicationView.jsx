@@ -26,9 +26,9 @@ const ApplicationView = ({stId, adminPath, adminAccess}) => {
   const { studentData } = useSelector((state) => state.general);
   const studentId = 
   location.pathname === "/student-profile" 
-    ? stId?.stId || (adminPath && adminAccess) 
+    ? stId || (adminPath && adminAccess) 
     : location.state || location.state;
-console.log(location)
+console.log(stId)
   const [isLoading, setIsLoading] = useState(true);
   const [perPage, setPerPage] = useState(10);
   const totalUsersCount = studentApplicationData?.total || 0;
