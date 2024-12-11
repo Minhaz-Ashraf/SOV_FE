@@ -7,23 +7,33 @@ import VisaWithdrawlForm from "./VisaWithdrawlForm";
 import VisaCompleteUpload from "./VisaCompleteUpload";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
-import { changeVisaStatus, updateWithdrawalReq } from "../../features/adminApi";
+import {
+  changeVisaStatus,
+  chngeApplicationStatus,
+  updateWithdrawalReq,
+} from "../../features/adminApi";
 import { toast } from "react-toastify";
 import VisaRejectPop from "../adminComps/VisaRejectPop";
 import { FaRegEye } from "react-icons/fa";
 import WithdrwalChoosePop from "./WithdrwalChoosePop";
 import WithDrawalData from "./WithDrawalData";
 import socketServiceInstance from "../../services/socket";
+import { Link, useLocation } from "react-router-dom";
 
 const VisaStatusComponent = ({ studentId }) => {
+  const location = useLocation();
   const role = localStorage.getItem("role");
   const { studentData } = useSelector((state) => state.general);
+  const { agentData } = useSelector((state) => state.agent);
 
   // const id = localStorage.getItem('student');
+
   const { studentInfoData } = useSelector((state) => state.student);
+
   const studId =
     role === "3"
-      ? studentInfoData?.data?.studentInformation?._id
+      ? studentInfoData?.data?.studentInformation?._id ||
+        location?.state?.notifyId
       : role === "2" || role === "0"
       ? studentId
       : null;
@@ -80,45 +90,54 @@ const VisaStatusComponent = ({ studentId }) => {
         let notificationTitle = "";
         let notificationMessage = "";
         let receiverType = "";
-      
+        let pathData = "";
+        let path = "";
         if (flag === "rejectedbyembassy") {
           if (getStudentDataById.studentInformation.studentId) {
             notificationTitle = "VISA_REJECTED_BY_EMBASSY_STUDENT";
             notificationMessage = `Visa Application ${visaStatus?.applicationId} has been rejected by the Embassy for ${visaStatus?.visa?.country}. Rejection Reason: ${message}`;
             receiverType = "STUDENT";
+            path = "/student/visa-update";
           } else {
             notificationTitle = "VISA_REJECTED_BY_EMBASSY_AGENT";
             notificationMessage = `Visa Application ${visaStatus?.applicationId} has been rejected by the embassy for ${getStudentDataById?.studentInformation?.personalInformation?.firstName} ${getStudentDataById?.studentInformation?.personalInformation?.lastName} (${getStudentDataById?.studentInformation?.stId}) for ${visaStatus?.visa?.country}. Rejection Reason: ${message} `;
             receiverType = "AGENT";
+            path = "/student-profile";
+            pathData = getStudentDataById?.studentInformation?._id;
           }
         } else if (flag === "approvedbyembassy") {
           if (getStudentDataById.studentInformation.studentId) {
             notificationTitle = "VISA_APPROVED_BY_EMBASSY_STUDENT";
             notificationMessage = `Visa Application ${visaStatus?.applicationId} has been approved by the Embassy for ${visaStatus?.visa?.country}.`;
             receiverType = "STUDENT";
+            path = "/student/visa-update";
           } else {
             notificationTitle = "VISA_APPROVED_BY_EMBASSY_AGENT";
             notificationMessage = `Visa Application ${visaStatus?.applicationId} has been approved by the embassy for ${getStudentDataById?.studentInformation?.personalInformation?.firstName} ${getStudentDataById?.studentInformation?.personalInformation?.lastName} (${getStudentDataById?.studentInformation?.stId}) for ${visaStatus?.visa?.country}.`;
             receiverType = "AGENT";
+            path = "/student-profile";
+            pathData = getStudentDataById?.studentInformation?._id;
           }
         }
 
-        
-      
         if (notificationTitle && notificationMessage) {
           const notificationData = {
             title: notificationTitle,
             message: notificationMessage,
-            path: "/",
+            path: path,
+            pathData: { studentId: pathData },
             recieverId: visaStatus?.userId || "",
           };
-      
+
           const notificationEvent =
             receiverType === "STUDENT"
               ? "NOTIFICATION_ADMIN_TO_STUDENT"
               : "NOTIFICATION_ADMIN_TO_AGENT";
-      
-          socketServiceInstance.socket.emit(notificationEvent, notificationData);
+
+          socketServiceInstance.socket.emit(
+            notificationEvent,
+            notificationData
+          );
         }
       } else {
         console.error("Socket connection failed, cannot emit notification.");
@@ -134,6 +153,12 @@ const VisaStatusComponent = ({ studentId }) => {
         studentInformationId: visaStatus?.studentInformationId,
       };
       const res = await updateWithdrawalReq(payload);
+      await chngeApplicationStatus(
+        visaStatus?._id,
+        "withdrawalcomplete",
+        "visa"
+      );
+
       dispatch(visaStatusData(studId));
       toast.success(res.message || "Withdrwal Request Updated");
       if (getStudentDataById.studentInformation.agentId) {
@@ -142,11 +167,18 @@ const VisaStatusComponent = ({ studentId }) => {
           const notificationData = {
             title: " AGENT_WITHDRAWAL_COMPLETE",
             message: `Withdrawal transaction has been completed for the  ${
-              getStudentDataById?.studentInformation?.personalInformation.firstName +
+              getStudentDataById?.studentInformation?.personalInformation
+                .firstName +
               " " +
-              getStudentDataById?.studentInformation?.personalInformation.lastName
-            } ${getStudentDataById?.studentInformation?.stId} for this application ${visaStatus?.applicationId}`,
-            path: "",
+              getStudentDataById?.studentInformation?.personalInformation
+                .lastName
+            } ${
+              getStudentDataById?.studentInformation?.stId
+            } for this application ${visaStatus?.applicationId}`,
+            path: "/student-profile",
+            pathData: {
+              studentId: getStudentDataById?.studentInformation?._id,
+            },
             recieverId: getStudentDataById.studentInformation.agentId,
           };
 
@@ -164,7 +196,10 @@ const VisaStatusComponent = ({ studentId }) => {
           const notificationData = {
             title: " STUDENT_WITHDRAWAL_COMPLETE",
             message: `Withdrawal transaction has been completed for ${visaStatus?.applicationId}.`,
-            path: "",
+            path: "/student/visa-update",
+            pathData: {
+              studentId: getStudentDataById?.studentInformation?._id,
+            },
             recieverId: getStudentDataById.studentInformation.studentId,
           };
           socketServiceInstance.socket.emit(
@@ -201,7 +236,7 @@ const VisaStatusComponent = ({ studentId }) => {
         </div>
       ) : visaStatus?.visa?.status === "underreview" ? (
         <div
-          className={`bg-white flex flex-col rounded-md justify-center items-center mx-52 py-9 font-poppins px-14 mb-20 ${
+          className={`bg-white flex flex-col rounded-md justify-center items-center md:mx-52 py-9 font-poppins px-14 mb-20 ${
             role === "3" ? "mt-40 ml-[28%]" : ""
           } `}
         >
@@ -225,7 +260,7 @@ const VisaStatusComponent = ({ studentId }) => {
         </div>
       ) : visaStatus?.visa?.status === "approved" ? (
         <div
-          className={`bg-white flex flex-col rounded-md justify-center items-center mx-52 py-9 font-poppins px-14 mb-20 ${
+          className={`bg-white flex flex-col rounded-md justify-center items-center md:mx-52 py-9 font-poppins px-14 mb-20 ${
             role === "3" ? "mt-40 ml-[28%]" : ""
           } `}
         >
@@ -276,26 +311,40 @@ const VisaStatusComponent = ({ studentId }) => {
         </div>
       ) : visaStatus?.visa?.status === "rejected" ? (
         <div
-          className={`bg-white flex flex-col rounded-md justify-center items-center mx-52 py-9 font-poppins px-14 mb-20 ${
+          className={`bg-white flex flex-col rounded-md justify-center items-center md:mx-52 py-9 font-poppins px-14 mb-20 ${
             role === "3" ? "mt-40 ml-[28%]" : ""
           } `}
         >
-          <p className="text-sidebar text-[22px] font-semibold mt-3 text-center">
-            Your Visa lodgement Application has been Rejected
-          </p>
-          <p className="text-sidebar text-[16px] text-center font-light mt-3">
-            Please review the details provided or contact support for guidance
-            on the next steps.
-          </p>
-          <span className="bg-primary text-white rounded-md px-6 py-2 text-[14px] cursor-pointer mt-4">
-            Edit Application
-          </span>
+          {role === "2" || role === "3" ? (
+            <>
+              <p className="text-sidebar text-[22px] font-semibold mt-3 text-center">
+                Your Visa lodgement Application has been Rejected
+              </p>
+              <p className="text-sidebar text-[16px] text-center font-light mt-3">
+                Please review the details provided or contact support for
+                guidance on the next steps.
+              </p>
+              <Link
+                state={{ id: visaStatus?._id }}
+                to="/visa/edit"
+                className="bg-primary text-white rounded-md px-6 py-2 text-[14px] cursor-pointer mt-4"
+              >
+                Edit Application
+              </Link>
+            </>
+          ) : (
+            <>
+              <p className="text-sidebar text-[22px] font-semibold mt-3 text-center">
+                Visa lodgement Application has been Rejected by Admin
+              </p>
+            </>
+          )}
         </div>
       ) : visaStatus?.visa?.status === "withdrawalrequest" ? (
         <>
           {role === "0" && (
             <div
-              className={`bg-white flex flex-col rounded-md justify-center items-center mx-52 py-9 font-poppins px-14 mb-20 ${
+              className={`bg-white flex flex-col rounded-md justify-center items-center md:mx-52 py-9 font-poppins px-14 mb-20 ${
                 role === "3" ? "mt-40 ml-[28%]" : ""
               } `}
             >
@@ -326,7 +375,7 @@ const VisaStatusComponent = ({ studentId }) => {
 
           {role !== "0" && (
             <div
-              className={`bg-white flex flex-col rounded-md justify-center items-center mx-52 py-9 font-poppins px-14 mb-20 ${
+              className={`bg-white flex flex-col rounded-md justify-center items-center md:mx-52 py-9 font-poppins px-14 mb-20 ${
                 role === "3" ? "mt-40 ml-[28%]" : ""
               } `}
             >
@@ -351,7 +400,7 @@ const VisaStatusComponent = ({ studentId }) => {
                 All good things take time. <br />
                 Thanks for your patience!
               </p>
-              <span 
+              <span
                 onClick={handleWithdrawalData}
                 className="text-primary flex flex-row items-center font-semibold gap-2 text-[16px] rounded-md px-6 py-2  cursor-pointer mt-4"
               >
@@ -366,7 +415,7 @@ const VisaStatusComponent = ({ studentId }) => {
       ) : visaStatus?.visa?.status === "withdrawalcomplete" ? (
         <>
           <div
-            className={`bg-white flex flex-col rounded-md justify-center items-center mx-52 py-9 font-poppins px-14 mb-20 ${
+            className={`bg-white flex flex-col rounded-md justify-center items-center md:mx-52 py-9 font-poppins px-14 mb-20 ${
               role === "3" ? "mt-40 ml-[28%]" : ""
             } `}
           >
@@ -419,7 +468,7 @@ const VisaStatusComponent = ({ studentId }) => {
       ) : visaStatus?.visa?.status === "visagranted" ? (
         <>
           <div
-            className={`bg-white flex flex-col rounded-md justify-center items-center mx-52 py-9 font-poppins px-14 mb-20 ${
+            className={`bg-white flex flex-col rounded-md justify-center items-center md:mx-52 py-9 font-poppins px-14 mb-20 ${
               role === "3" ? "mt-40 ml-[28%]" : ""
             } `}
           >
@@ -499,11 +548,11 @@ const VisaStatusComponent = ({ studentId }) => {
         </>
       ) : visaStatus?.visa?.status === "rejectedbyembassy" ? (
         <div
-          className={`bg-white flex flex-col rounded-md justify-center items-center mx-52 py-9 font-poppins px-14 mb-20 ${
+          className={`bg-white flex flex-col rounded-md justify-center items-center md:mx-52 py-9 font-poppins px-14 mb-20 ${
             role === "3" ? "mt-40 ml-[28%]" : ""
           } `}
         >
-          {!role === "0" ? (
+          {role !== "0" ? (
             <>
               <p className="text-sidebar text-[22px] font-semibold mt-3 text-center">
                 Visa Application Rejected
@@ -533,38 +582,64 @@ const VisaStatusComponent = ({ studentId }) => {
         </div>
       ) : visaStatus?.visa?.status === "approvedbyembassy" ? (
         <div
-          className={`bg-white flex flex-col rounded-md justify-center items-center mx-52 py-9 font-poppins px-6 mb-20 ${
+          className={`bg-white flex flex-col rounded-md justify-center items-center md:mx-52 py-9 font-poppins px-6 mb-20 ${
             role === "3" ? "mt-40 ml-[28%]" : ""
           } `}
         >
-          <span className="bg-[#F4FBF8] px-6 py-6">
-            <span className="flex flex-row items-center gap-3">
-              <img
-                src={greenCheck}
-                alt="img"
-                className="w-16 h-16"
-                onError={(e) => {
-                  e.target.src = profileSkeleton;
-                }}
-                loading="lazy"
-              />
-              <p className="text-sidebar text-[22px] font-normal mt-3">
-                <span className="font-semibold">Congratulations!</span> Your
-                Visa Application has been accepted
-              </p>
-            </span>
-            <p className="text-sidebar text-[16px] font-light mt-3">
-              Please allow 8-10 business days to get visa stamp. Once you
-              receive your visa stamp, complete the following steps to finalize
-              your application.
-            </p>
-          </span>
+          {role === "3" || role === "2" ? (
+            <>
+              <span className="bg-[#F4FBF8] px-6 py-6">
+                <span className="flex flex-row items-center gap-3">
+                  <img
+                    src={greenCheck}
+                    alt="img"
+                    className="w-16 h-16"
+                    onError={(e) => {
+                      e.target.src = profileSkeleton;
+                    }}
+                    loading="lazy"
+                  />
+                  <p className="text-sidebar text-[22px] font-normal mt-3">
+                    <span className="font-semibold">Congratulations!</span> Your
+                    Visa Application has been accepted
+                  </p>
+                </span>
+                <p className="text-sidebar text-[16px] font-light mt-3">
+                  Please allow 8-10 business days to get visa stamp. Once you
+                  receive your visa stamp, complete the following steps to
+                  finalize your application.
+                </p>
+              </span>
 
-          <VisaCompleteUpload appId={visaStatus?._id} />
+              <VisaCompleteUpload appId={visaStatus?._id} />
+            </>
+          ) : (
+            <>
+              <span className="flex flex-row items-center gap-3">
+                <img
+                  src={greenCheck}
+                  alt="img"
+                  className="w-16 h-16"
+                  onError={(e) => {
+                    e.target.src = profileSkeleton;
+                  }}
+                  loading="lazy"
+                />
+                <p className="text-sidebar text-[22px] font-normal mt-3">
+                  <span className="font-semibold">Congratulations!</span> Visa
+                  Application has been accepted from embassy for this student.
+                </p>
+              </span>
+              <p className="text-sidebar text-[16px] font-light mt-3">
+                Please allow 8-10 business days to get visa stamp. Once student
+                receive visa stamp, Student will finalize the application.
+              </p>
+            </>
+          )}
         </div>
       ) : (
         <div
-          className={`bg-white flex flex-col rounded-md justify-center items-center mx-52 py-9 font-poppins px-14 mb-20 ${
+          className={`bg-white flex flex-col rounded-md justify-center items-center md:mx-52 py-9 font-poppins px-14 mb-20 ${
             role === "3" ? "mt-40 ml-[28%]" : ""
           } `}
         >

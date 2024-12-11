@@ -23,9 +23,12 @@ const AdminCard = ({
   sectionData,
   pageType,
   instituteData,
-  mgdbId
+  mgdbId,
+  agentId
+
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen]
+   = useState(false);
   const closePopUp = () => setIsOpen(false);
   const openPopUp = () => setIsOpen(true);
 
@@ -60,7 +63,7 @@ const AdminCard = ({
                   ? linkTwo
                   : linkOne
               }
-              state={{ isprofileView: location.pathname, id: id }}
+              state={{ isprofileView: location.pathname, id: agentId }}
               className="font-medium    md:text-[14px] sm:text-[12px]  cursor-pointer"
             >
               {pageType === "offerLetter" ? "View Profile" : "View Application"}

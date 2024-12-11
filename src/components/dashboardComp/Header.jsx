@@ -4,14 +4,16 @@ import { CiBellOn, CiStar } from "react-icons/ci";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
-const Header = ({ icon, customLink }) => {
+const Header = ({ icon, customLink, iconTwo }) => {
   const role = localStorage.getItem("role");
 
-  const { agentData } = useSelector((state) => state.agent);
   const { notificationCount } = useSelector((state) => state.notifications);
+  const { agentData } = useSelector((state) => state.agent);
   const { studentInfoData } = useSelector((state) => state.student);
   const { getAdminProfile } = useSelector((state) => state.admin);
 
+
+ 
   // console.log(studentInfoData);
   return (
     <>
@@ -34,7 +36,12 @@ const Header = ({ icon, customLink }) => {
               )}
             </Link>}
             <Link to="/notifications" className="bg-white rounded-full px-[11px] py-2 text-[27px] cursor-pointer relative">
-              <CiBellOn />
+             
+              {iconTwo ? (
+                <span className="text-primary text-[26px]">{iconTwo}</span>
+              ) : (
+                <CiBellOn /> 
+              )}
              {notificationCount > 0 &&  <span className="absolute rounded-full w-5 h-5 text-[13px] -top-1 -right-2 bg-[#FBD5D5] text-primary text-center">
                 {notificationCount}
               </span>}

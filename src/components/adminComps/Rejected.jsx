@@ -37,6 +37,7 @@ const Rejected = ({ data }) => {
                 rejectionMessage={application?.message}
                 linkTwo="/application-view"
                 id={application?.institutionId}
+                agentId={null}
                 userType={
                   application?.customUserId?.startsWith("AG-")
                     ? "Agent"
@@ -71,14 +72,19 @@ const Rejected = ({ data }) => {
               isApproval={true}
               newStatus="completed"
               id={item?._id}
+              agentId={item?.agentId}
               linkTwo="/agent-profile"
               linkOne="/student-profile"
               rejectStatus="rejected"
               name={`${item?.firstName} ${item?.lastName}` || "Unknown User"}
               description={
-                `${item?.firstName} ${
-                  item?.lastName
-                } has requested to register as an ${
+                `${item?.firstName} ${item?.lastName} ${
+                  item?.status === "requestedForReapproval"
+                    ? `${
+                        item?.type === "agent" ? "agent" : "student"
+                      } has requested for reapproval of the profile .`
+                    : "has requested to register as an"
+                } ${
                   item?.type === "agent" ? "agent" : "student"
                 } on SOV portal` || "Unknown User"
               }

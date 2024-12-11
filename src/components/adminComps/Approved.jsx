@@ -13,13 +13,16 @@ import { DataNotFound } from "../Dnf";
 const Approved = ({ data }) => {
   const location = useLocation();
   const dispatch = useDispatch();
-  const fetchStatus = location.pathname === "/admin/applications-review" ? "approved" : "completed"
+  const fetchStatus =
+    location.pathname === "/admin/applications-review"
+      ? "approved"
+      : "completed";
+  console.log(data);
+  useEffect(() => {
+    dispatch(setTabType(fetchStatus));
+  }, [dispatch]);
 
-useEffect(()=>{
-  dispatch(setTabType(fetchStatus))
-},[dispatch]);
-
-console.log(data)
+  console.log(data);
 
   const applications = data?.applications;
 
@@ -30,20 +33,19 @@ console.log(data)
           applications.map((application, index) => (
             <div key={index}>
               <AdminCard
-                    
-                   userType={
+                userType={
                   application?.customUserId?.startsWith("AG-")
                     ? "Agent"
                     : "Student"
                 }
                 apId={application?.applicationId}
                 isApproval={false}
-              
                 newStatus="approved"
                 name={application.fullName}
                 userId={application?.customUserId}
                 applicationType={application?.type}
                 currentStatus="approved"
+                agentId={null}
                 linkTwo="/application-view"
                 id={application?.institutionId}
                 description={
@@ -53,13 +55,12 @@ console.log(data)
                     ? `${application?.fullName} has filled ${application?.type}`
                     : "Unknown type"
                 }
-              pageType="application"
-
+                pageType="application"
               />
             </div>
           ))
         ) : (
-            <DataNotFound
+          <DataNotFound
             className="flex flex-col items-center mt-16"
             message="No Data Available"
             linkText="Back to Dashboard"
@@ -73,34 +74,36 @@ console.log(data)
               userType={item?.type === "agent" ? "Agent" : "Student"}
               userId={item?.agId ? item?.agId : item?.stId}
               isApproval={true}
-            
               newStatus="completed"
               id={item?._id}
+              agentId={item?.agentId}
               linkTwo="/agent-profile"
               linkOne="/student-profile"
               rejectStatus="rejected"
               name={`${item?.firstName} ${item?.lastName}` || "Unknown User"}
               description={
-                `${item?.firstName} ${
-                  item?.lastName
-                } has requested to register as an ${
+                `${item?.firstName} ${item?.lastName} ${
+                  item?.status === "requestedForReapproval"
+                    ? `${
+                        item?.type === "agent" ? "agent" : "student"
+                      } has requested for reapproval of the profile .`
+                    : "has requested to register as an"
+                } ${
                   item?.type === "agent" ? "agent" : "student"
                 } on SOV portal` || "Unknown User"
               }
               currentStatus="approved"
               pageType="offerLetter"
-
-
             />
           </div>
         ))
       ) : (
         <DataNotFound
-            className="flex flex-col items-center mt-16"
-            message="No Data Available"
-            linkText="Back to Dashboard"
-            linkDestination="/admin/dashboard"
-          />
+          className="flex flex-col items-center mt-16"
+          message="No Data Available"
+          linkText="Back to Dashboard"
+          linkDestination="/admin/dashboard"
+        />
       )}
     </div>
   );

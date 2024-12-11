@@ -30,11 +30,17 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { agentInformation } from "../features/agentSlice";
 import { v4 as uuidv4 } from 'uuid';
+import { editAgentAdmin } from "../features/adminApi";
+import { agentDataProfile } from "../features/adminSlice";
 
-const AgentForm4 = ({ hide, handleCancel, updateData }) => {
+const AgentForm4 = ({ hide, handleCancel, updateData, adminId, agentId }) => {
+  const role = localStorage.getItem('role')
+
   const { countryOption } = useSelector((state) => state.general);
   const { agentData } = useSelector((state) => state.agent);
-  const getData = agentData?.companyOverview;
+  const { agentProfile } = useSelector((state) => state.admin);
+  const getData = role === "0" ? agentProfile?.companyOverview :agentData?.companyOverview;
+
   const navigate = useNavigate();
 
   const [overviewData, setOverviewData] = useState({
@@ -258,7 +264,24 @@ const AgentForm4 = ({ hide, handleCancel, updateData }) => {
     if (validateFields()) {
       try {
         console.log("Submitting data:", overviewData);
-        const res = await formFourSubmit(overviewData, editForm);
+        const payload = {
+          ...overviewData,
+          ...(role === "0" && { companyId: adminId }),
+        };
+        
+        let res;
+
+        if (role === "0") {
+          await editAgentAdmin("/company/register-companyOverview-admin", payload, editForm);
+        } else {
+          res = await formFourSubmit(payload, editForm);
+        }
+        if(role === "0"){
+          dispatch(agentDataProfile(agentId));
+        }
+      
+
+     
 
         toast.success(res?.message || "Data added successfully");
         {
@@ -270,6 +293,8 @@ const AgentForm4 = ({ hide, handleCancel, updateData }) => {
         console.error(error);
         toast.error(error?.message || "Something went wrong");
       }
+    } else {
+      toast.error("Please fill in all required fields correctly.");
     }
   };
   return (

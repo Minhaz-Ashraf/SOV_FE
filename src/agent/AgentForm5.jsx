@@ -11,10 +11,15 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { agentInformation } from "../features/agentSlice";
 import { IoArrowBackSharp } from "react-icons/io5";
+import { editAgentAdmin } from "../features/adminApi";
+import { agentDataProfile } from "../features/adminSlice";
 
-const AgentForm5 = ({ hide, handleCancel, updateData }) => {
+const AgentForm5 = ({ hide, handleCancel, updateData, adminId, agentId }) => {
   const { agentData } = useSelector((state) => state.agent);
-  const getData = agentData?.companyOperations;
+  const role = localStorage.getItem('role')
+  const { agentProfile } = useSelector((state) => state.admin);
+  const getData = role === "0" ? agentProfile?.companyOperations :agentData?.companyOperations;
+
   const [operationsData, setOperationData] = useState({
     numberOfCounselors: "",
     averageExperienceYears: "",
@@ -107,8 +112,25 @@ const AgentForm5 = ({ hide, handleCancel, updateData }) => {
   // Submit form
   const handleSubmit = async () => {
     // if (validateFields()) {
+
       try {
-        const res = await formFiveSubmit(operationsData, editForm);
+        const payload = {
+          ...operationsData,
+          ...(role === "0" && { companyId: adminId }),
+        };
+        
+        let res;
+
+        if (role === "0") {
+          await editAgentAdmin("/company/register-companyOperations-admin", payload, editForm);
+        } else {
+          res = await formFiveSubmit(payload, editForm);
+        }
+      
+        if(role === "0"){
+          dispatch(agentDataProfile(agentId));
+        }
+       
 
         toast.success(res?.message || "Data added successfully");
         {

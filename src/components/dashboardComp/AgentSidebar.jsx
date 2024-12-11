@@ -2,40 +2,27 @@ import React, { useEffect, useState } from "react";
 import { BsPieChartFill } from "react-icons/bs";
 import { BiSolidInstitution } from "react-icons/bi";
 
-import { FaPassport, FaUsers } from "react-icons/fa";
+import {  FaUsers } from "react-icons/fa";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { IoDocumentTextSharp } from "react-icons/io5";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { CgProfile } from "react-icons/cg";
-import { MdOutlineHistory } from "react-icons/md";
 import { AiFillQuestionCircle } from "react-icons/ai";
 import { RiLogoutBoxRLine } from "react-icons/ri";
 import LogoutPop from "../login/LogoutPop";
 import ImageComponent from "../reusable/Input";
 import { logo } from "../../assets";
-import DeleteAccount from "../DeleteAccount";
-import { deleteAgentById } from "../../features/agentApi";
-import { toast } from "react-toastify";
-import socketServiceInstance from "../../services/socket";
+
 
 const AgentSidebar = () => {
   const location = useLocation();
-  const navigate = useNavigate();
   
   const path = location.pathname;
   const [isOpen, setIsOpen] = useState(
     JSON.parse(localStorage.getItem("isOpen")) ?? true
   );
   const [isLogoutOpen, setisLogoutOpen] = useState(false);
-  const [isOpenPop, setIsOpenPop] = useState(false);
-  const agentId =  localStorage.getItem('student')
-  const openDeletePopup = () => {
-    setIsOpenPop(true);
-  };
 
-  const closePop = () => {
-    setIsOpenPop(false);
-  };
 
   const openLogoutPopup = () => {
     setisLogoutOpen(true);
@@ -45,30 +32,6 @@ const AgentSidebar = () => {
     setisLogoutOpen(false);
   };
 
-const deleteAccountById = async()=>{
-  try{
-   const res = await deleteAgentById(agentId)
-   toast.success(res.message || "Account Deleted Successfully")
-   localStorage.removeItem("student")
-   localStorage.removeItem("role")
-   localStorage.removeItem("userAuthToken")
-   if (socketServiceInstance.isConnected()) {
-    //from agent to admin
-    const data = { userId : agentId, reason : "" }
-
-    socketServiceInstance.socket.emit(
-      "DELETE_AUTH_TOKEN",
-      data
-    );
-  } else {
-    console.error("Socket connection failed, cannot emit notification.");
-  }
-   navigate("/login")
-  }catch(error){
-    console.log(error)
-    toast.error(error.message || "Something went wrong")
-  }
-}
 
   const sidebarList = [
     {
@@ -99,6 +62,8 @@ const deleteAccountById = async()=>{
       otherPathThree: "/offerLetter-apply",
       otherPathFour: "/course-fee",
       otherPathFive: "/visa-apply",
+      otherPathFive: "/visa/edit",
+
 
 
     },
@@ -187,7 +152,7 @@ const deleteAccountById = async()=>{
                 Change Email
               </li>
             </Link>
-            <span onClick={openDeletePopup}>
+            <Link to="/settings/delete-account">
               <li
                 className={`text-sidebar py-2 mb-2 cursor-pointer md:px-14 sm:pl-14 md:ml-0  hover:bg-[#f5ebeb] hover:text-primary ${
                   path === "/settings/delete-account" &&
@@ -196,8 +161,8 @@ const deleteAccountById = async()=>{
               >
                 Delete Account
               </li>
-            </span>
-          </ul>
+              </Link>
+        </ul>
         </div>
         {/* <div
           className={`cursor-pointer py-4 hover:bg-[#f5ebeb] hover:text-primary hover:border-l-4 hover:font-medium ${
@@ -259,7 +224,6 @@ const deleteAccountById = async()=>{
       <div className="z-50  ">
         {" "}
         <LogoutPop isLogoutOpen={isLogoutOpen} closeLogout={closeLogout} />
-        <DeleteAccount closePop={closePop} isOpenPop={isOpenPop} handleFunc={deleteAccountById}/>
       </div>
     </>
   );

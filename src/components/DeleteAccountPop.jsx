@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
 import Swal from "sweetalert2";
 
-const DeleteAccount = ({ isOpenPop, closePop, handleFunc }) => {
+const DeleteAccountPop = ({ isOpenPop, closePop, handleFunc }) => {
   useEffect(() => {
     if (isOpenPop) {
       Swal.fire({
         title: "Do you want to delete your account?",
-        icon: "warning",
+        icon: "question",
         showCancelButton: true,
         cancelButtonColor: "#d33",
         confirmButtonColor: "#98090B",
@@ -34,4 +34,4 @@ const DeleteAccount = ({ isOpenPop, closePop, handleFunc }) => {
   return null;
 };
 
-export default DeleteAccount;
+export default DeleteAccountPop;

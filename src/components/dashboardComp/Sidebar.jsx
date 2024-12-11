@@ -11,7 +11,7 @@ import { RiLogoutBoxRLine } from "react-icons/ri";
 import LogoutPop from "../login/LogoutPop";
 import ImageComponent from "../reusable/Input";
 import { logo } from "../../assets";
-import DeleteAccount from "../DeleteAccount";
+import DeleteAccount from "../DeleteAccountPop";
 import { deleteStudentById } from "../../features/agentApi";
 import socketServiceInstance from "../../services/socket";
 
@@ -153,7 +153,7 @@ const Sidebar = () => {
 
             <Link to="/settings/change-password">
               <li
-                className={`text-sidebar py-2 mb-2 cursor-pointer md:px-14 sm:pl-14 md:ml-0  hover:bg-[#f5ebeb] hover:text-primary ${
+                className={`text-sidebar py-2 mb-2 cursor-pointer md:pl-14 sm:pl-14 md:ml-0  hover:bg-[#f5ebeb] hover:text-primary ${
                   path === "/settings/change-password" &&
                   "bg-[#FBD5D5] border-l-4 border-primary text-primary"
                 }`}
@@ -171,7 +171,7 @@ const Sidebar = () => {
                 Change Email
               </li>
             </Link>
-            <span onClick={openDeletePopup}>
+            <Link to="/settings/delete-account">
               <li
                 className={`text-sidebar py-2 mb-2 cursor-pointer md:px-14 sm:pl-14 md:ml-0  hover:bg-[#f5ebeb] hover:text-primary ${
                   path === "/settings/delete-account" &&
@@ -180,7 +180,7 @@ const Sidebar = () => {
               >
                 Delete Account
               </li>
-            </span>
+            </Link>
           </ul>
         </div>
         {/* <div
@@ -243,11 +243,7 @@ const Sidebar = () => {
         </p>
       </div>
       <LogoutPop isLogoutOpen={isLogoutOpen} closeLogout={closeLogout} />
-      <DeleteAccount
-        closePop={closePop}
-        isOpenPop={isOpenPop}
-        handleFunc={deleteAccountById}
-      />
+   
     </>
   );
 };

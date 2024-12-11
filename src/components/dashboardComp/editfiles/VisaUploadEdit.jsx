@@ -101,8 +101,6 @@ const VisaUploadEdit = ({ appId, updatedData, profileViewPath, userId }) => {
     }
   };
 
-
-
   const deleteFile = async (fileType) => {
     const fileUrl = visaLetter.studentDocument[fileType];
     if (!fileUrl) return;
@@ -134,8 +132,6 @@ const VisaUploadEdit = ({ appId, updatedData, profileViewPath, userId }) => {
     // toast.info("File marked for deletion.");
   };
 
- 
-
   const validateFields = () => {
     const errors = {};
     Object.keys(initialStudentDocument).forEach((docType) => {
@@ -159,17 +155,17 @@ const VisaUploadEdit = ({ appId, updatedData, profileViewPath, userId }) => {
       setIsSubmitting(true);
 
       // Handle file deletions
-      for (const { fileUrl } of deletedFiles) {
-        const storageRef = ref(storage, fileUrl);
-        try {
-          await deleteObject(storageRef);
-    await deleteDocument(fileUrl);
+      // for (const { fileUrl } of deletedFiles) {
+      // const storageRef = ref(storage, fileUrl);
+      //     try {
+      //       await deleteObject(storageRef);
+      // await deleteDocument(fileUrl);
 
-          // toast.success(`File ${fileUrl} deleted successfully.`);
-        } catch (error) {
-          // toast.error(`Error deleting file: ${fileUrl}`);
-        }
-      }
+      //       // toast.success(`File ${fileUrl} deleted successfully.`);
+      //     } catch (error) {
+      //       // toast.error(`Error deleting file: ${fileUrl}`);
+      //     }
+      // }
 
       // Handle new file uploads
       const updatedStudentDocument = { ...visaLetter.studentDocument };
@@ -183,7 +179,11 @@ const VisaUploadEdit = ({ appId, updatedData, profileViewPath, userId }) => {
 
           // Replace the blob URL with the Firebase URL for the specific field
           updatedStudentDocument[fileType] = downloadURL;
-          const uploadData = { viewUrl: downloadURL, documentName: file.name, userId: userId };
+          const uploadData = {
+            viewUrl: downloadURL,
+            documentName: file.name,
+            userId: userId,
+          };
           await uploadDocument(uploadData);
           setVisaLetter((prevState) => ({
             ...prevState,
@@ -246,7 +246,7 @@ const VisaUploadEdit = ({ appId, updatedData, profileViewPath, userId }) => {
             <span className="font-semibold text-[22px]">Upload Documents</span>
           </span>
           {/* Pencil icon visible only when the form is hidden */}
-          {profileViewPath 
+          {profileViewPath
             ? ""
             : !isOne && (
                 <span
@@ -406,7 +406,10 @@ const VisaUploadEdit = ({ appId, updatedData, profileViewPath, userId }) => {
                   key={docType}
                 >
                   <p className="text-[15px]  text-body">
-                    {docType.replace(/([A-Z])/g, " $1")}
+                    {docType
+                      .replace(/([A-Z])/g, " $1")
+                      .trim()
+                      .replace(/^./, (str) => str.toUpperCase())}
                   </p>
                   <div className="flex flex-col justify-center items-center border-2 border-dashed border-body rounded-md py-9 mt-2 mb-4">
                     <button
@@ -415,7 +418,13 @@ const VisaUploadEdit = ({ appId, updatedData, profileViewPath, userId }) => {
                     >
                       <FiUpload className="mr-2 text-primary text-[29px]" />
                     </button>
-                    <p>Upload {docType.replace(/([A-Z])/g, " $1")}</p>
+                    <p>
+                      Upload{" "}
+                      {docType
+                        .replace(/([A-Z])/g, " $1")
+                        .trim()
+                        .replace(/^./, (str) => str.toUpperCase())}
+                    </p>
                   </div>
                   {visaLetter?.studentDocument[docType] && (
                     <div className="mt-2 flex items-center">

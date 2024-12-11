@@ -135,17 +135,17 @@ const CertificateEdit = ({ appId, updatedData, profileViewPath, userId }) => {
       setIsSubmitting(true);
   
       // Step 1: Delete files marked for deletion
-      for (const fileUrl of deletedFiles) {
-        const storageRef = ref(storage, fileUrl);
-        try {
-          await deleteObject(storageRef);
-    await deleteDocument(fileUrl)
+    //   for (const fileUrl of deletedFiles) {
+    //     const storageRef = ref(storage, fileUrl);
+    //     try {
+    //       await deleteObject(storageRef);
+    // await deleteDocument(fileUrl)
 
-          // toast.success(`File ${fileUrl} deleted successfully.`);
-        } catch (error) {
-          // toast.error(`Error deleting file: ${fileUrl}`);
-        }
-      }
+    //       // toast.success(`File ${fileUrl} deleted successfully.`);
+    //     } catch (error) {
+    //       // toast.error(`Error deleting file: ${fileUrl}`);
+    //     }
+    //   }
   
       // Step 2: Upload new files if any
       let uploadedUrls = [];

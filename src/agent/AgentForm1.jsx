@@ -11,12 +11,17 @@ import {
 import PhoneInputComponent from "../components/reusable/PhoneInputComponent";
 import { useNavigate } from "react-router-dom";
 import { agentInformation } from "../features/agentSlice";
+import { editAgentAdmin } from "../features/adminApi";
+import { agentDataProfile } from "../features/adminSlice";
 
-const AgentForm1 = ({ hide, handleCancel, updateData }) => {
+const AgentForm1 = ({ hide, handleCancel, updateData, adminId, agentId}) => {
+  const role = localStorage.getItem('role')
   const navigate = useNavigate();
   const { countryOption } = useSelector((state) => state.general);
   const { agentData } = useSelector((state) => state.agent);
-  const getData = agentData?.companyDetails;
+  const { agentProfile } = useSelector((state) => state.admin);
+
+  const getData = role === "0" ? agentProfile?.companyDetails :agentData?.companyDetails;
   const [companyData, setCompanyData] = useState({
     businessName: "",
     address: "",
@@ -162,8 +167,15 @@ const AgentForm1 = ({ hide, handleCancel, updateData }) => {
         },
       };
       try {
-        const res = await formOneSubmit(payload, editForm);
-      
+        let res
+        if (role === "0") {
+          await editAgentAdmin("/company/register-company-admin", payload, editForm, adminId);
+        } else {
+          res = await formOneSubmit(payload, editForm);
+        }
+        if(role === "0"){
+          dispatch(agentDataProfile(agentId));
+        }
         toast.success(res?.data?.message || "Data added successfully");
         {
           hide === true ?   updateData() : navigate("/agent-form/2", { state: "passPage" });

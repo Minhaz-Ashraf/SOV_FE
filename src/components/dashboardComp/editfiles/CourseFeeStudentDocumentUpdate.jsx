@@ -31,7 +31,7 @@ const CourseFeeStudentDocumentUpdate = ({
   appId,
   updatedData,
   profileViewPath,
-  userId
+  userId,
 }) => {
   const { applicationDataById } = useSelector((state) => state.agent);
   const [isOne, setIsOne] = useState(false);
@@ -76,20 +76,20 @@ const CourseFeeStudentDocumentUpdate = ({
   };
 
   const handleFileUpload = (files) => {
-    console.log(files)
+    console.log(files);
     if (!files || files.length === 0) return;
-  
+
     const fileOrUrl = files[0]; // Either a File object or a URL string
-  
+
     if (fileOrUrl instanceof File) {
       // Handle File objects
       const blobUrl = URL.createObjectURL(fileOrUrl);
-  
+
       setNewFiles((prevFiles) => [
         ...prevFiles.filter((f) => f.fileType !== isFileType),
         { file: fileOrUrl, fileType: isFileType, blobUrl },
       ]);
-  
+
       setCourseFee((prevState) => ({
         ...prevState,
         studentDocument: {
@@ -97,7 +97,7 @@ const CourseFeeStudentDocumentUpdate = ({
           [isFileType]: blobUrl,
         },
       }));
-  
+
       // toast.success(`${fileOrUrl.name} has been selected.`);
     } else if (typeof fileOrUrl === "string") {
       // Handle URL strings: directly set in the courseFee state
@@ -108,11 +108,11 @@ const CourseFeeStudentDocumentUpdate = ({
           [isFileType]: fileOrUrl,
         },
       }));
-  
+
       // toast.success("Document URL has been set.");
     }
   };
-  
+
   const deleteFile = async (fileUrl, fileType) => {
     // console.log("Attempting to delete fileType:", fileType);
     // console.log("File URL:", fileUrl);
@@ -122,29 +122,28 @@ const CourseFeeStudentDocumentUpdate = ({
     const fileUrls = Array.isArray(fileUrl) ? fileUrl : [fileUrl];
 
     fileUrls.forEach((url) => {
-        if (typeof url === "string" && url.startsWith("http")) {
-            setDeletedFiles((prevFiles) => [
-                ...prevFiles.filter((f) => f.fileType !== fileType),
-                { fileUrl: url, fileType },
-            ]);
-        }
+      if (typeof url === "string" && url.startsWith("http")) {
+        setDeletedFiles((prevFiles) => [
+          ...prevFiles.filter((f) => f.fileType !== fileType),
+          { fileUrl: url, fileType },
+        ]);
+      }
     });
 
     setCourseFee((prevState) => ({
-        ...prevState,
-        studentDocument: {
-            ...prevState.studentDocument,
-            [fileType]: "",
-        },
+      ...prevState,
+      studentDocument: {
+        ...prevState.studentDocument,
+        [fileType]: "",
+      },
     }));
 
     setNewFiles((prevFiles) =>
-        prevFiles.filter((file) => file.fileType !== fileType)
+      prevFiles.filter((file) => file.fileType !== fileType)
     );
 
     console.log("File successfully marked for deletion.");
-};
-
+  };
 
   const handleSubmit = async () => {
     const validationErrors = validateFields();
@@ -158,17 +157,16 @@ const CourseFeeStudentDocumentUpdate = ({
       setIsSubmitting(true);
 
       // Delete files marked for deletion
-      for (const { fileUrl } of deletedFiles) {
-        const storageRef = ref(storage, fileUrl);
-        try {
-          await deleteObject(storageRef);
-    await deleteDocument(fileUrl)
-
-          // toast.success(`File ${fileUrl} deleted successfully.`);
-        } catch (error) {
-          // toast.error(`Error deleting file: ${fileUrl}`);
-        }
-      }
+      // for (const { fileUrl } of deletedFiles) {
+      //   const storageRef = ref(storage, fileUrl);
+      //   try {
+      //     //       await deleteObject(storageRef);
+      //     // await deleteDocument(fileUrl)
+      //     // toast.success(`File ${fileUrl} deleted successfully.`);
+      //   } catch (error) {
+      //     // toast.error(`Error deleting file: ${fileUrl}`);
+      //   }
+      // }
 
       // Prepare to update `studentDocument` with Firebase URLs
       const updatedStudentDocument = { ...courseFee.studentDocument };
@@ -187,7 +185,11 @@ const CourseFeeStudentDocumentUpdate = ({
 
           // Replace blob URL with Firebase URL in `updatedStudentDocument`
           updatedStudentDocument[fileType] = downloadURL;
-          const uploadData = { viewUrl: downloadURL, documentName: file.name, userId:userId };
+          const uploadData = {
+            viewUrl: downloadURL,
+            documentName: file.name,
+            userId: userId,
+          };
           await uploadDocument(uploadData);
           // Update the state with Firebase URL
           setCourseFee((prevState) => ({
@@ -205,9 +207,10 @@ const CourseFeeStudentDocumentUpdate = ({
       }
 
       // Submit the updated `studentDocument` to the backend
-      const payload = { aadharCard: courseFee.studentDocument.aadharCard,
-        panCard: courseFee.studentDocument.panCard
-       };
+      const payload = {
+        aadharCard: courseFee.studentDocument.aadharCard,
+        panCard: courseFee.studentDocument.panCard,
+      };
       const res = await updateCourseFeeStudentDoc(appId, payload);
 
       toast.success(res.message || "Data added successfully.");
@@ -254,7 +257,7 @@ const CourseFeeStudentDocumentUpdate = ({
             </span>
           </span>
           {/* Pencil icon visible only when the form is hidden */}
-          {profileViewPath 
+          {profileViewPath
             ? ""
             : !isOne && (
                 <span
@@ -338,31 +341,36 @@ const CourseFeeStudentDocumentUpdate = ({
                   <p>Upload Aadhar Card</p>
                 </div>
                 {courseFee.studentDocument?.aadharCard &&
-  (typeof courseFee.studentDocument.aadharCard === "string") && (
-    <div className="mt-4">
-      <p className="text-secondary font-semibold">
-        Uploaded Document:
-      </p>
-      <ul>
-        <li className="flex items-center mt-2">
-          <a
-            href={courseFee.studentDocument.aadharCard}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-primary rounded-sm px-6 py-2 border border-greyish"
-          >
-            Uploaded Document
-          </a>
-          <button
-            onClick={() => deleteFile(courseFee.studentDocument.aadharCard, "aadharCard")}
-            className="ml-4 text-red-500"
-          >
-            <RiDeleteBin6Line />
-          </button>
-        </li>
-      </ul>
-    </div>
-  )}
+                  typeof courseFee.studentDocument.aadharCard === "string" && (
+                    <div className="mt-4">
+                      <p className="text-secondary font-semibold">
+                        Uploaded Document:
+                      </p>
+                      <ul>
+                        <li className="flex items-center mt-2">
+                          <a
+                            href={courseFee.studentDocument.aadharCard}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-primary rounded-sm px-6 py-2 border border-greyish"
+                          >
+                            Uploaded Document
+                          </a>
+                          <button
+                            onClick={() =>
+                              deleteFile(
+                                courseFee.studentDocument.aadharCard,
+                                "aadharCard"
+                              )
+                            }
+                            className="ml-4 text-red-500"
+                          >
+                            <RiDeleteBin6Line />
+                          </button>
+                        </li>
+                      </ul>
+                    </div>
+                  )}
 
                 <p className="text-[15px] mt-3 text-body">Pan Card</p>
                 <div className="flex flex-col justify-center items-center border-2 border-dashed border-body rounded-md py-9 mt-9 mb-4">
@@ -375,32 +383,36 @@ const CourseFeeStudentDocumentUpdate = ({
                   <p>Upload Pan Card</p>
                 </div>
                 {courseFee.studentDocument?.panCard &&
-  (typeof courseFee.studentDocument.panCard === "string") && (
-    <div className="mt-4">
-      <p className="text-secondary font-semibold">
-        Uploaded Document:
-      </p>
-      <ul>
-        <li className="flex items-center mt-2">
-          <a
-            href={courseFee.studentDocument.panCard}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-primary rounded-sm px-6 py-2 border border-greyish"
-          >
-            Uploaded Document
-          </a>
-          <button
-            onClick={() => deleteFile(courseFee.studentDocument.panCard, "panCard")}
-            className="ml-4 text-red-500"
-          >
-            <RiDeleteBin6Line />
-          </button>
-        </li>
-      </ul>
-    </div>
-  )}
-
+                  typeof courseFee.studentDocument.panCard === "string" && (
+                    <div className="mt-4">
+                      <p className="text-secondary font-semibold">
+                        Uploaded Document:
+                      </p>
+                      <ul>
+                        <li className="flex items-center mt-2">
+                          <a
+                            href={courseFee.studentDocument.panCard}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-primary rounded-sm px-6 py-2 border border-greyish"
+                          >
+                            Uploaded Document
+                          </a>
+                          <button
+                            onClick={() =>
+                              deleteFile(
+                                courseFee.studentDocument.panCard,
+                                "panCard"
+                              )
+                            }
+                            className="ml-4 text-red-500"
+                          >
+                            <RiDeleteBin6Line />
+                          </button>
+                        </li>
+                      </ul>
+                    </div>
+                  )}
               </div>
             </>
           )}

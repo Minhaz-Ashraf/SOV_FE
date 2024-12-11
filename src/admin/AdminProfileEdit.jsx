@@ -15,9 +15,11 @@ import {
   deleteObject,
 } from "firebase/storage";
 import { storage } from "../utils/fireBase";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { adminProfileData } from "../features/adminSlice";
 
 const AdminProfileEdit = () => {
+  const dispatch = useDispatch()
   const [profileEdit, setProfileEdit] = useState({
     profilePicture: "",
     firstName: "",
@@ -177,6 +179,7 @@ setResetProfilePic(true)
       const res = await editProfile(payload);
 
       if (res?.statusCode === 200) {
+        dispatch(adminProfileData())
         toast.success("Profile updated successfully.");
         setNewFiles([]);
         setDeletedFiles([]);
@@ -203,7 +206,7 @@ useEffect(() => {
     }));
   }
 }, [getAdminProfile?.data]);
- 
+ console.log(profileEdit.dob)
   return (
     <>
       <Header />
@@ -214,19 +217,19 @@ useEffect(() => {
       </div>
 
       <div className="font-poppins">
-        <span className="flex md:flex-row sm:flex-col items-center bg-white mt-16 md:ml-[16.5%] sm:ml-[22%] pb-6">
+      <span className="flex items-center pt-16 md:ml-[16.5%] bg-white pb-6 sm:ml-[22%]">
           <span>
             <p className="text-[28px] font-bold text-sidebar mt-6 ml-9">
               Update Profile
             </p>
-            <p className="mt-1 md:font-normal sm:font-light text-body md:pr-0 sm:pr-[20%] ml-9">
+            <p className="mt-1 font-normal text-body ml-9 pr-[30%]">
               Please Review and Update Your Information
             </p>
           </span>
         </span>
 
-        <div className=" mb-2 md:ml-[31.5%] md:mr-[16%] sm:ml-[26%] mt-12 text-[20px] sm:mx-[22%] text-secondary">
-          <span className="font-semibold">Personal Information</span>
+        <div className=" mb-2 md:ml-[31.5%] md:mr-[16%] sm:ml-[26%] md:mt-12 mt-6 text-[20px] sm:mx-[6%] text-secondary">
+          <span className="font-semibold text-secondary ">Personal Information</span>
 
           <div className="bg-white px-9 py-9 text-[16px] mb-20">
             <FileUpload
@@ -287,7 +290,7 @@ useEffect(() => {
                   type="date"
                   label="Date of Birth"
                   handleInput={handleInput}
-                  value={profileEdit.dob}
+                  value={profileEdit.dob ? new Date(profileEdit.dob).toISOString().split('T')[0] : ""}
                   errors={errors.dob}
                 />
               </span>
@@ -295,7 +298,7 @@ useEffect(() => {
                 <span className="flex flex-col">
                   <span className="text-[14px] text-secondary ">
                     {" "}
-                    First Name *
+                    Last Name *
                   </span>{" "}
                   <CustomInput
                     name="lastName"

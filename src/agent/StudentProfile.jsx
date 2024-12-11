@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import AgentSidebar from "../components/dashboardComp/AgentSidebar";
 import Header from "../components/dashboardComp/Header";
-import { useLocation } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { studentById } from "../features/generalSlice";
 import { profileSkeleton } from "../assets";
@@ -19,12 +19,16 @@ import ApplicationView from "./ApplicationView";
 import StudentuplaodDocument from "./../components/dashboardComp/StudentuplaodDocument";
 import StudentRecieveDocument from "../components/dashboardComp/StudentRecieveDocument";
 import AdminSidebar from "../components/dashboardComp/AdminSidebar";
+import NotificationPage from "./../pages/NotificatonPage";
 
 const StudentProfile = () => {
   const role = localStorage.getItem("role");
   const id = localStorage.getItem("student");
   const { studentInfoData } = useSelector((state) => state.student);
-
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState(
+    searchParams.get("tab") || "pending"
+  );
   const studentData =
     role === "0"
       ? useSelector((state) => state.admin.getStudentDataById)
@@ -34,9 +38,11 @@ const StudentProfile = () => {
 
   const location = useLocation();
   const dispatch = useDispatch();
-
-  const studentId = role === "3" ? id : location?.state?.id;
-  console.log(location, studentId)
+  const studentId =
+    role === "3"
+      ? id || location.state.notifyId
+      : location?.state?.id || location?.state?.notifyId;
+  //  console.log( studentId, location?.state?.notifyId)
 
   const profileView = location.state?.isprofileView;
   const [isLoading, setIsLoading] = useState(true);
@@ -66,7 +72,7 @@ const StudentProfile = () => {
         profileView: profileView,
         updateData: handleProfileUpdate,
         studentId: studentId,
-        adminPath: location.state?.adminState
+        adminPath: location.state?.adminState,
       },
     },
 
@@ -79,7 +85,7 @@ const StudentProfile = () => {
         profileView: profileView,
         updateData: handleProfileUpdate,
         studentId: studentId,
-        adminPath: location.state?.adminState
+        adminPath: location.state?.adminState,
       },
     },
     {
@@ -91,7 +97,7 @@ const StudentProfile = () => {
         profileView: profileView,
         updateData: handleProfileUpdate,
         studentId: studentId,
-        adminPath: location.state?.adminState
+        adminPath: location.state?.adminState,
       },
     },
     {
@@ -104,7 +110,7 @@ const StudentProfile = () => {
         updateData: handleProfileUpdate,
         stId: studentId,
         adminPath: location.state?.adminState,
-        adminAccess: location?.state?.id
+        adminAccess: location?.state?.id,
       },
     },
     {
@@ -117,14 +123,17 @@ const StudentProfile = () => {
         updateData: handleProfileUpdate,
         studentId: studentId,
         adminPath: location.state?.adminState,
-        adminAccess: location?.state?.id
+        adminAccess: location?.state?.id,
       },
     },
   ];
-  console.log(location)
-  const tabs = role === "3" 
-  ? allTabs.filter(tab => tab.name === "profile") 
-  : allTabs;
+  console.log(location);
+  const tabs = useMemo(() => {
+    return role === "3"
+      ? allTabs.filter((tab) => tab.name === "profile")
+      : allTabs;
+  }, [role]);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
@@ -132,7 +141,20 @@ const StudentProfile = () => {
 
     return () => clearTimeout(timer);
   }, []);
+  useEffect(() => {
+    // Check the pathname and reset the active tab if needed
+    if (location.pathname !== "/student-profile") {
+      setActiveTab("profile");
+      setSearchParams({ tab: "profile" }); // Update the search params
+    } else {
+      setActiveTab(searchParams.get("tab") || "profile"); // Set from search params
+    }
+  }, [location.pathname, searchParams]);
 
+  const handleTabChange = (tabName) => {
+    setActiveTab(tabName);
+    setSearchParams({ tab: tabName });
+  };
   return (
     <>
       {profileView === "/admin/approvals" ||
@@ -147,8 +169,9 @@ const StudentProfile = () => {
                 <Sidebar />
               ) : role === "2" ? (
                 <AgentSidebar />
-              ) : role === "0" ? 
-              <AdminSidebar/> : null}
+              ) : role === "0" ? (
+                <AdminSidebar />
+              ) : null}
             </span>
           </div>{" "}
         </>
@@ -162,24 +185,36 @@ const StudentProfile = () => {
           <div>
             {profileView === "/admin/approvals" ||
             profileView === "/admin/applications-review" ||
-            
-          location?.state?.adminState ||
+            role === "0" ||
+            location?.state?.adminState ||
             role === "3" ? (
               ""
             ) : (
               <div className="pt-20 md:ml-[17.5%] md:pl-0 sm:pl-[25%] bg-white">
                 <StatusComp
                   statusOne={
-                    studentData?.studentInformation?.pageCount === 3
+                    studentData?.studentInformation?.pageStatus?.status ===
+                    "completed"
                       ? "done"
                       : "pending"
                   }
-                  statusTwo={studentData?.flags?.offerLetterApproved ? "done" : "current"}
-                  statusFive={studentData?.flags?.visaApproved ? "done" : "current"}
-                  statusFour={studentData?.flags?.courseFeeApproved ? "done" : "current"}
-
-
-                  
+                  statusTwo={
+                    studentData?.flags?.offerLetterApproved ? "done" : "current"
+                  }
+                  statusFive={
+                    studentData?.flags?.visaApproved === "approved" ||
+                    studentData?.flags?.visaApproved === "approvedbyembassy"
+                      ? "done"
+                      : "current"
+                  }
+                  statusFour={
+                    studentData?.flags?.courseFeeApproved ? "done" : "current"
+                  }
+                  statusSix={
+                    studentData?.flags?.visaApproved === "approvedbyembassy"
+                      ? "done"
+                      : "current"
+                  }
                 />
                 {/* {console.log(studentData?.flags) } */}
               </div>
@@ -189,11 +224,12 @@ const StudentProfile = () => {
               className={`flex items-center   bg-white ${
                 profileView === "/admin/approvals" ||
                 profileView === "/admin/applications-review"
-
                   ? " mx-44 px-6 mt-10 pt-6 pb-10"
                   : role === "3"
                   ? "pt-20  pl-[19.5%] pb-6"
-                  :  location?.state?.adminState  ? " pl-[19.5%] pt-20 pb-6" : " pl-[19.5%] pt-10 pb-6"
+                  : location?.state?.adminState
+                  ? " pl-[19.5%] pt-20 pb-6"
+                  : " pl-[19.5%] pt-[78px] pb-6"
               }`}
             >
               <span>
@@ -231,9 +267,14 @@ const StudentProfile = () => {
                 </div>
               </span>
             </span>
-            
-            <div className="sm:ml-[9%] md:ml-0">
-              <TabBar tabs={tabs} />
+
+            <div className="sm:ml-[9%] md:ml-0 ">
+              <TabBar
+                tabs={tabs}
+                activeTab={activeTab}
+                onTabChange={handleTabChange}
+                setActiveTab={setActiveTab}
+              />
             </div>
           </div>
         </>

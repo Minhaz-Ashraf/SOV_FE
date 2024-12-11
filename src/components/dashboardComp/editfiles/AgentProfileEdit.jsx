@@ -13,7 +13,7 @@ import AgentForm5 from "./../../../agent/AgentForm5";
 import { FaBuildingFlag } from "react-icons/fa6";
 import AgentForm6 from "./../../../agent/AgentForm6";
 
-const AgentProfileEdit = ({ agentData, locationPath, updateData }) => {
+const AgentProfileEdit = ({ agentData, locationPath, updateData, adminId, agentId }) => {
   const profileView = locationPath?.state?.isprofileView;
   const [toggleStates, setToggleStates] = useState({
     isOne: false,
@@ -158,6 +158,8 @@ const AgentProfileEdit = ({ agentData, locationPath, updateData }) => {
                 hide={true}
                 handleCancel={handleCancel}
                 updateData={updateData}
+                adminId={adminId}
+                agentId={agentId}
               />
             </div>
           )}
@@ -317,9 +319,13 @@ const AgentProfileEdit = ({ agentData, locationPath, updateData }) => {
           {toggleStates.isTwo && (
             <div className="mt-4">
               <AgentForm2
+                adminId={adminId}
+
                 hide={true}
                 handleCancel={handleCancel}
                 updateData={updateData}
+                agentId={agentId}
+
               />
             </div>
           )}
@@ -418,9 +424,13 @@ const AgentProfileEdit = ({ agentData, locationPath, updateData }) => {
           {toggleStates.isThree && (
             <div className="mt-4">
               <AgentForm3
+                adminId={adminId}
+
                 hide={true}
                 handleCancel={handleCancel}
                 updateData={updateData}
+                agentId={agentId}
+
               />
             </div>
           )}
@@ -637,9 +647,13 @@ const AgentProfileEdit = ({ agentData, locationPath, updateData }) => {
           {toggleStates.isFour && (
             <div className="mt-4">
               <AgentForm4
+                adminId={adminId}
+
                 hide={true}
                 handleCancel={handleCancel}
                 updateData={updateData}
+                agentId={agentId}
+
               />
             </div>
           )}
@@ -727,9 +741,13 @@ const AgentProfileEdit = ({ agentData, locationPath, updateData }) => {
           {toggleStates.isFive && (
             <div className="mt-4">
               <AgentForm5
+                adminId={adminId}
+
                 hide={true}
                 handleCancel={handleCancel}
                 updateData={updateData}
+                agentId={agentId}
+
               />
             </div>
           )}
@@ -809,6 +827,8 @@ const AgentProfileEdit = ({ agentData, locationPath, updateData }) => {
           {toggleStates.isSix && (
             <div className="mt-4">
               <AgentForm6
+                adminId={adminId}
+                agentId={agentId}
                 hide={true}
                 handleCancel={handleCancel}
                 updateData={updateData}

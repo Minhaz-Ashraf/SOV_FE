@@ -10,11 +10,17 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { agentInformation } from "../features/agentSlice";
 import { IoArrowBackSharp } from "react-icons/io5";
+import { editAgentAdmin } from "../features/adminApi";
+import { agentDataProfile } from "../features/adminSlice";
 
-const AgentForm3 = ({hide, handleCancel, updateData}) => {
+const AgentForm3 = ({hide, handleCancel, updateData, adminId, agentId}) => {
+  const role = localStorage.getItem('role')
   const { countryOption } = useSelector((state) => state.general);
   const { agentData } = useSelector((state) => state.agent);
-  const getData = agentData?.bankDetails;
+  const { agentProfile } = useSelector((state) => state.admin);
+
+  const getData = role === "0" ? agentProfile?.bankDetails :agentData?.bankDetails;
+
   const [bankData, setBankData] = useState({
     bankName: "",
     branchName: "",
@@ -82,9 +88,23 @@ const AgentForm3 = ({hide, handleCancel, updateData}) => {
       const filteredBankData = Object.fromEntries(
         Object.entries(bankData).filter(([_, value]) => value !== "")
       );
-  
+      const payload = {
+        ...filteredBankData,
+        ...(role === "0" && { companyId: adminId }),
+      };
+      
       try {
-        const res = await formThreeSubmit(filteredBankData, editForm);
+        let res;
+
+        if (role === "0") {
+          await editAgentAdmin("/company/register-bankDetails-admin", payload, editForm);
+        } else {
+          res = await formTwoSubmit(payload, editForm);
+        }
+        if(role === "0"){
+          dispatch(agentDataProfile(agentId));
+        }
+
   
         toast.success(res?.message || "Data added successfully");
   

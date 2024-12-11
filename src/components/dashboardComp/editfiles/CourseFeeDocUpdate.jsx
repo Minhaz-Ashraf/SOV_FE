@@ -27,7 +27,12 @@ const initialofferLetterAnsPassport = {
 };
 import { v4 as uuidv4 } from "uuid";
 
-const CourseFeeDocUpdate = ({ appId, updatedData, profileViewPath, userId }) => {
+const CourseFeeDocUpdate = ({
+  appId,
+  updatedData,
+  profileViewPath,
+  userId,
+}) => {
   const { applicationDataById } = useSelector((state) => state.agent);
   const [newFiles, setNewFiles] = useState([]);
   const [deletedFiles, setDeletedFiles] = useState([]);
@@ -113,17 +118,17 @@ const CourseFeeDocUpdate = ({ appId, updatedData, profileViewPath, userId }) => 
     }
   };
 
-  const deleteFile = async(fileUrl, fileType) => {
+  const deleteFile = async (fileUrl, fileType) => {
     if (!fileUrl) return;
     const fileUrls = Array.isArray(fileUrl) ? fileUrl : [fileUrl];
 
     fileUrls.forEach((url) => {
-        if (typeof url === "string" && url.startsWith("http")) {
-            setDeletedFiles((prevFiles) => [
-                ...prevFiles.filter((f) => f.fileType !== fileType),
-                { fileUrl: url, fileType },
-            ]);
-        }
+      if (typeof url === "string" && url.startsWith("http")) {
+        setDeletedFiles((prevFiles) => [
+          ...prevFiles.filter((f) => f.fileType !== fileType),
+          { fileUrl: url, fileType },
+        ]);
+      }
     });
 
     setCourseFee((prevState) => ({
@@ -151,17 +156,16 @@ const CourseFeeDocUpdate = ({ appId, updatedData, profileViewPath, userId }) => 
 
     try {
       // Handle deletions
-      for (const { fileUrl } of deletedFiles) {
-        const storageRef = ref(storage, fileUrl);
-        try {
-          await deleteObject(storageRef);
-    await deleteDocument(fileUrl)
-
-          // toast.success(`File ${fileUrl} deleted successfully.`);
-        } catch (error) {
-          // toast.error(`Error deleting file: ${fileUrl}`);
-        }
-      }
+      // for (const { fileUrl } of deletedFiles) {
+      //   const storageRef = ref(storage, fileUrl);
+      //   try {
+      //     //       await deleteObject(storageRef);
+      //     // await deleteDocument(fileUrl)
+      //     // toast.success(`File ${fileUrl} deleted successfully.`);
+      //   } catch (error) {
+      //     // toast.error(`Error deleting file: ${fileUrl}`);
+      //   }
+      // }
 
       // Upload new files and replace blob URLs with Firebase URLs
       const updatedOfferLetterAnsPassport = {
@@ -181,7 +185,11 @@ const CourseFeeDocUpdate = ({ appId, updatedData, profileViewPath, userId }) => 
             const downloadURL = await getDownloadURL(snapshot.ref);
 
             updatedOfferLetterAnsPassport[fileType] = downloadURL;
-            const uploadData = { viewUrl: downloadURL, documentName: file.name, userId: userId };
+            const uploadData = {
+              viewUrl: downloadURL,
+              documentName: file.name,
+              userId: userId,
+            };
             await uploadDocument(uploadData);
             setCourseFee((prevState) => ({
               ...prevState,
@@ -199,16 +207,17 @@ const CourseFeeDocUpdate = ({ appId, updatedData, profileViewPath, userId }) => 
         })
       );
 
-      const payload = { passport: courseFee.offerLetterAnsPassport.passport,
-        offerLetter: courseFee.offerLetterAnsPassport.offerLetter
-       };
+      const payload = {
+        passport: courseFee.offerLetterAnsPassport.passport,
+        offerLetter: courseFee.offerLetterAnsPassport.offerLetter,
+      };
       const res = await updateCourseFeeDoc(appId, payload);
 
       toast.success(res.message || "Data added successfully.");
       updatedData();
       setNewFiles([]);
       setDeletedFiles([]);
-      handleCancelOne()
+      handleCancelOne();
     } catch (error) {
       console.error("Error during submission:", error);
       toast.error("Something went wrong.");
@@ -242,7 +251,7 @@ const CourseFeeDocUpdate = ({ appId, updatedData, profileViewPath, userId }) => 
             </span>
           </span>
           {/* Pencil icon visible only when the form is hidden */}
-          {profileViewPath 
+          {profileViewPath
             ? ""
             : !isOne && (
                 <span
@@ -346,7 +355,12 @@ const CourseFeeDocUpdate = ({ appId, updatedData, profileViewPath, userId }) => 
                             Uploaded Document
                           </a>
                           <button
-                            onClick={() => deleteFile(courseFee.offerLetterAnsPassport.offerLetter,"offerLetter")}
+                            onClick={() =>
+                              deleteFile(
+                                courseFee.offerLetterAnsPassport.offerLetter,
+                                "offerLetter"
+                              )
+                            }
                             className="ml-4 text-red-500"
                           >
                             <RiDeleteBin6Line />
@@ -387,7 +401,12 @@ const CourseFeeDocUpdate = ({ appId, updatedData, profileViewPath, userId }) => 
                             Uploaded Document
                           </a>
                           <button
-                            onClick={() => deleteFile(courseFee.offerLetterAnsPassport.passport,"passport")}
+                            onClick={() =>
+                              deleteFile(
+                                courseFee.offerLetterAnsPassport.passport,
+                                "passport"
+                              )
+                            }
                             className="ml-4 text-red-500"
                           >
                             <RiDeleteBin6Line />

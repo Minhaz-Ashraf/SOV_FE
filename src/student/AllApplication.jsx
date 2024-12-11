@@ -32,11 +32,11 @@ const AllApplication = () => {
   const totalPagesCount = applicationData?.pagination?.totalPages || 1;
   const dispatch = useDispatch();
   const closeOpt = () => {
-    setIsOpenOpt(false); // Close the popup
+    setIsOpenOpt(false); 
   };
 
   const handleOpenOpt = () => {
-    setIsOpenOpt(true); // Open the popup
+    setIsOpenOpt(true); 
   };
   const handlePerPageChange = (e) => {
     setPerPage(parseInt(e.target.value));
@@ -73,8 +73,9 @@ const AllApplication = () => {
   }
 
   const TABLE_HEAD = ["S.No.", "Application ID","Country" ,"Type", "Status", "Action"];
+  
   const TABLE_ROWS = applicationData?.data?.map((data, index) => ({
-    SNO: (currentPage - 1) * perPage + index + 1,
+    sno: (currentPage - 1) * perPage + index + 1,
     id: data?.applicationId || "NA",
     type: data || "NA",
     status: data?.status || "NA",

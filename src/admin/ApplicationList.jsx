@@ -13,17 +13,21 @@ import {
   adminApplicationOverview,
   applicationForApproval,
 } from "../features/adminSlice";
-import {  CustomTableNine } from "../components/Table";
+import { CustomTableNine } from "../components/Table";
 import { downloadFile } from "../features/adminApi";
 import { toast } from "react-toastify";
 import { FaRegEye } from "react-icons/fa";
+import { dnf } from "../assets";
+import Dnf from "../components/Dnf";
+import Loader from "../components/Loader";
 
 const ApplicationList = () => {
   const dispatch = useDispatch();
-  const { applications } = useSelector((state) => state.admin);
-  const {} = useSelector((state) => state.admin);
+  const [loading, setLoading] = useState(true);
+  // const { applications } = useSelector((state) => state.admin);
+  // const {} = useSelector((state) => state.admin);
   const { getApplicationOverview } = useSelector((state) => state.admin);
-  const { updateState, tabType } = useSelector((state) => state.admin);
+  // const { updateState, tabType } = useSelector((state) => state.admin);
   const [search, setSearch] = useState("");
   const [perPage, setPerPage] = useState(10);
   const [isTypeFilter, setIsFilterType] = useState("");
@@ -56,7 +60,9 @@ const ApplicationList = () => {
     perPageOptions.push(i);
   }
   useEffect(() => {
+    setLoading(true);
     dispatch(adminApplicationOverview({ page, perPage, search, isTypeFilter }));
+    setLoading(false);
   }, [page, perPage, search, isTypeFilter]);
 
   const TABLE_HEAD = [
@@ -72,16 +78,16 @@ const ApplicationList = () => {
 
   const TABLE_ROWS = getApplicationOverview?.data?.data?.map((data, index) => ({
     sno: (currentPage - 1) * perPage + index + 1,
-    name: data?.firstName +" "+ data?.lastName  || "NA",
-    stId: data?.stId || "_",
-    submittedby: data?.submittedBy || "_",
-    total: data?.institutionCount || "_",
-    underreview: data?.underReviewCount || "_",
-    approved: data?.approvedCount || "_",
+    name: data?.firstName + " " + data?.lastName || "NA",
+    stId: data?.stId || "0",
+    submittedby: data?.submittedBy || "0",
+    total: data?.institutionCount || "0",
+    underreview: data?.underReviewCount || "0",
+    approved: data?.approvedCount || "0",
     action: data?.action || "NA",
-    data: data || "NA"
+    data: data || "NA",
   }));
-// console.log(getApplicationOverview)
+  // console.log(getApplicationOverview)
   const downloadAll = async () => {
     try {
       await downloadFile({
@@ -115,22 +121,10 @@ const ApplicationList = () => {
           </span>
         </span>
       </div>
-      <span className="flex flex-row items-center justify-between mr-6">
+      <span className="flex md:flex-row sm:flex-col md:items-center sm:items-start justify-between mr-6">
         <span className="flex flex-row items-center mb-3 m-6 mt-6 sm:ml-[27%] md:ml-[19%] ">
           {" "}
-          <span className="text-body">Show</span>
-          <select
-            className="ml-3 border px-2 py-1 w-10 h-11 rounded outline-none"
-            value={perPage}
-            onChange={handlePerPageChange}
-          >
-            {perPageOptions.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-          <span className="px-3 text-body">entries</span>
+         
           <select
             className="ml-3 border px-2 py-1 w-40 h-11 rounded outline-none"
             onChange={handleTypeFilter}
@@ -140,11 +134,11 @@ const ApplicationList = () => {
               Submitted By
             </option>
             <option value="student">Student</option>
-            <option value="company">Agent</option>
+            <option value="agent">Agent</option>
           </select>
           <span className="flex flex-row items-center ml-9">
             <CustomInput
-              className="h-11 md:w-80 sm:w-48 rounded-md text-body placeholder:px-3 pl-7 border border-[#E8E8E8] outline-none"
+              className="h-11 md:w-80 sm:w-40 rounded-md text-body placeholder:px-3 pl-7 border border-[#E8E8E8] outline-none"
               type="text"
               placeHodler="Search by User Name & Application Id "
               name="search"
@@ -158,30 +152,50 @@ const ApplicationList = () => {
         </span>
         <span
           onClick={downloadAll}
-          className="bg-primary ml-5 text-white px-4 rounded-md py-2 cursor-pointer"
+          className="bg-primary ml-5 sm:ml-[27%] text-white px-4 rounded-md py-2 cursor-pointer"
         >
           Download
         </span>
       </span>
-      <div className="mt-3 mr-6 ml-[19%] ">
-        <CustomTableNine
-          tableHead={TABLE_HEAD}
-          tableRows={TABLE_ROWS}
-          action="View List"
-          linkOne={"/admin/student-applications"}
-          icon={<FaRegEye />}
-        />
-      </div>
+      {loading ? (
+        <div
+          className={`w-1  mt-12 ${
+            location.pathname === "/student-profile" ? "ml-[45%]" : "ml-[53%]"
+          }`}
+        >
+          <Loader />
+        </div>
+      ) : TABLE_ROWS?.length > 0 ? (
+        <>
+          <div className="mt-3 mr-6 md:ml-[19%] sm:ml-[26%]">
+            <CustomTableNine
+              tableHead={TABLE_HEAD}
+              tableRows={TABLE_ROWS}
+              action="View List"
+              linkOne={"/admin/student-applications"}
+              icon={<FaRegEye />}
+            />
+          </div>
 
-      <div className="mt-12 ml-52 mb-10">
-        <Pagination
-          currentPage={currentPage}
-          hasNextPage={currentPage * perPage < totalUsersCount}
-          hasPreviousPage={currentPage > 1}
-          onPageChange={handlePageChange}
-          totalPagesCount={totalPagesCount}
-        />
-      </div>
+          <div className="mt-12 ml-52 mb-10">
+            <Pagination
+              currentPage={currentPage}
+              hasNextPage={currentPage * perPage < totalUsersCount}
+              hasPreviousPage={currentPage > 1}
+              onPageChange={handlePageChange}
+              totalPagesCount={totalPagesCount}
+            />
+          </div>
+        </>
+      ) : (
+        <div className="ml-52">
+          <Dnf
+            dnfImg={dnf}
+            headingText="Start Your Journey!"
+            bodyText="No Application Data Available "
+          />
+        </div>
+      )}
     </>
   );
 };

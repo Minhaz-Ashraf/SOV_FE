@@ -30,11 +30,16 @@ const initialParentDocument = {
   motherPanCard: "",
 };
 const initialSiblingDocument = {
-  siblingAdharCard: "",
+  siblingAadharCard: "",
   siblingPanCard: "",
 };
 
-const CourseFeeFamilyDocUpdate = ({ appId, updatedData, profileViewPath, userId }) => {
+const CourseFeeFamilyDocUpdate = ({
+  appId,
+  updatedData,
+  profileViewPath,
+  userId,
+}) => {
   const { applicationDataById } = useSelector((state) => state.agent);
   const dispatch = useDispatch();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -153,18 +158,17 @@ const CourseFeeFamilyDocUpdate = ({ appId, updatedData, profileViewPath, userId 
   };
 
   const deleteFile = async (fileUrl, fileType) => {
-    
     if (!fileUrl) return;
 
     const fileUrls = Array.isArray(fileUrl) ? fileUrl : [fileUrl];
 
     fileUrls.forEach((url) => {
-        if (typeof url === "string" && url.startsWith("http")) {
-            setDeletedFiles((prevFiles) => [
-                ...prevFiles.filter((f) => f.fileType !== fileType),
-                { fileUrl: url, fileType },
-            ]);
-        }
+      if (typeof url === "string" && url.startsWith("http")) {
+        setDeletedFiles((prevFiles) => [
+          ...prevFiles.filter((f) => f.fileType !== fileType),
+          { fileUrl: url, fileType },
+        ]);
+      }
     });
 
     // Remove the file locally
@@ -198,17 +202,16 @@ const CourseFeeFamilyDocUpdate = ({ appId, updatedData, profileViewPath, userId 
     try {
       setIsSubmitting(true);
       // Delete files marked for deletion
-      for (const { fileUrl } of deletedFiles) {
-        const storageRef = ref(storage, fileUrl);
-        try {
-          await deleteObject(storageRef);
-    await deleteDocument(fileUrl)
-
-          // toast.success(`File ${fileUrl} deleted successfully.`);
-        } catch (error) {
-          // toast.error(`Error deleting file: ${fileUrl}`);
-        }
-      }
+      // for (const { fileUrl } of deletedFiles) {
+      //   const storageRef = ref(storage, fileUrl);
+      //   try {
+      //     //       await deleteObject(storageRef);
+      //     // await deleteDocument(fileUrl)
+      //     // toast.success(`File ${fileUrl} deleted successfully.`);
+      //   } catch (error) {
+      //     // toast.error(`Error deleting file: ${fileUrl}`);
+      //   }
+      // }
 
       const updatedCourseFee = { ...courseFee };
 
@@ -249,7 +252,7 @@ const CourseFeeFamilyDocUpdate = ({ appId, updatedData, profileViewPath, userId 
           } catch (error) {
             toast.error(`Error uploading ${file.name}.`);
             setIsSubmitting(false);
-           } finally {
+          } finally {
             setIsSubmitting(false);
           }
         })
@@ -262,21 +265,24 @@ const CourseFeeFamilyDocUpdate = ({ appId, updatedData, profileViewPath, userId 
         fatherPanCard: courseFee.parentDocument.fatherPanCard || "",
         motherPanCard: courseFee.parentDocument.motherPanCard || "",
       };
-      
+
       // Check if both father and mother Aadhar and PAN cards are available
       const areParentsAvailable =
-        payload.fatherAadharCard && payload.motherAadharCard &&
-        payload.fatherPanCard && payload.motherPanCard;
-      
+        payload.fatherAadharCard &&
+        payload.motherAadharCard &&
+        payload.fatherPanCard &&
+        payload.motherPanCard;
+
       // Conditionally add sibling data to the payload
       if (!areParentsAvailable) {
-        payload.siblingAdharCard = courseFee.siblingDocument.siblingAdharCard || "";
+        payload.siblingAdharCard =
+          courseFee.siblingDocument.siblingAdharCard || "";
         payload.siblingPanCard = courseFee.siblingDocument.siblingPanCard || "";
       }
-      
+
       // If you want to log the payload for debugging
       // console.log("Payload:", payload);
-      
+
       const res = await updateCourseFeeFamilyDoc(appId, payload);
 
       toast.success(res.message || "Data added successfully.");

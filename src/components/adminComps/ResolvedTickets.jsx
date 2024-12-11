@@ -8,10 +8,11 @@ import { dnf } from "../../assets";
 import { useDispatch } from "react-redux";
 import { setUpdateTicket } from "../../features/adminSlice";
 
-const ResolvedTickets = ({ data, isLoading }) => {
+const ResolvedTickets = ({ data, isLoading, currentPage, setPage}) => {
     const dispatch = useDispatch();
   useEffect(() => {
     dispatch(setUpdateTicket("resolved"));
+    setPage(1)
   }, [dispatch]);
   const TABLE_HEAD = [
     "S.No.",
@@ -24,7 +25,7 @@ const ResolvedTickets = ({ data, isLoading }) => {
     "Action",
   ];
   const TABLE_ROWS = data?.tickets?.map((ticket, index) => ({
-    sno: index + 1,
+    sno: (currentPage - 1) * 10 + index + 1, 
     ticketNo: ticket?.ticketId || "NA",
     name: ticket?.name || "NA",
     type: ticket?.userType || "NA",
@@ -56,7 +57,7 @@ const ResolvedTickets = ({ data, isLoading }) => {
   }
 
   return (
-    <div className="mt-6 mr-6">
+    <div className="mt-6 md:mr-6 sm:ml-5">
       <CustomTableFive
         tableHead={TABLE_HEAD}
         tableRows={TABLE_ROWS}

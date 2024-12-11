@@ -17,7 +17,7 @@ import Dnf from "../components/Dnf";
 import ApplicationChoosePop from "../components/dashboardComp/ApplicationChoosePop";
 
 const ApplicationView = ({stId, adminPath, adminAccess}) => {
-  
+  const role = localStorage.getItem("role");
   const location = useLocation();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -26,12 +26,12 @@ const ApplicationView = ({stId, adminPath, adminAccess}) => {
   const { studentData } = useSelector((state) => state.general);
   const studentId = 
   location.pathname === "/student-profile" 
-    ? stId || (adminPath && adminAccess) 
-    : location.state || location.state;
+    ? stId || (adminPath && adminAccess) || location?.state?.notifyId
+    : location.state || location.state || location?.state?.notifyId;
 console.log(stId)
   const [isLoading, setIsLoading] = useState(true);
   const [perPage, setPerPage] = useState(10);
-  const totalUsersCount = studentApplicationData?.total || 0;
+  const totalUsersCount = studentApplicationData?.totalApplications || 0;
   const currentPage = studentApplicationData?.currentPage || 1;
   const totalPagesCount = studentApplicationData?.totalPages || 1;
   const dispatch = useDispatch();
@@ -147,7 +147,7 @@ console.log(stId)
                   />
                   <span className="flex flex-col">
                     <span className="text-primary font-medium text-[13px]">
-                      {totalUsersCount || "NA"} Applications
+                      {totalUsersCount || "0"} Applications
                     </span>
                     <span className="text-sidebar text-[18px] font-medium ">
                       {studentData?.studentInformation?.personalInformation
@@ -177,28 +177,16 @@ console.log(stId)
           className={`mt-6 mr-6 ${
             location.pathname === "/student-profile"
               ? "ml-6"
-              : "md:ml-[19.5%] sm:ml-[27%]"
+              : "md:ml-[19.5%]  sm:ml-[27%]"
           }`}
         >
           <span className="flex flex-row items-center mb-3">
             <span className="flex flex-row justify-between w-full items-center">
               <span className="flex flex-row items-center ">
                 {" "}
-                <span className="text-body">Show</span>
+            
                 <select
-                  className="ml-3 border px-2 py-1 w-10 h-11 rounded outline-none"
-                  value={perPage}
-                  onChange={handlePerPageChange}
-                >
-                  {perPageOptions.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
-                <span className="px-3 text-body">entries</span>
-                <select
-                  className="ml-3 border px-2 py-1 w-40 h-11 rounded outline-none"
+                  className="ml-3 border px-2 py-1 md:w-40 sm:w-20 h-11 rounded outline-none"
                   value={isType}
                   onChange={handleApplicatioTypeChange}
                 >
@@ -211,7 +199,7 @@ console.log(stId)
                 </select>
                 <span className="flex flex-row items-center  ml-9">
                   <CustomInput
-                    className="h-11 w-80 rounded-md text-body placeholder:px-3 pl-7 border border-[#E8E8E8] outline-none"
+                    className="h-11 md:w-80 sm:w-60 rounded-md text-body placeholder:px-3 pl-7 border border-[#E8E8E8] outline-none"
                     type="text"
                     placeHodler="Search by application ID"
                     name="search"
@@ -250,7 +238,7 @@ console.log(stId)
               tableHead={TABLE_HEAD}
               tableRows={TABLE_ROWS}
               SecondLink="/offerLetter-apply"
-              action={"Edit/View"}
+              action={  role === "0" ? "View": "Edit/View"}
               icon={<FaRegEye />}
               // link="/offerLetter/edit"
               customLinkState={TABLE_ROWS?.map((data) => data?._id)}

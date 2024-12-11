@@ -4,7 +4,7 @@ import { BsKeyFill } from "react-icons/bs";
 import PasswordField from "../components/reusable/PasswordField";
 import { toast } from "react-toastify";
 
-import {  changeAdminPassword } from "../features/adminApi";
+import { changeAdminPassword } from "../features/adminApi";
 import AdminSidebar from "../components/dashboardComp/AdminSidebar";
 import socketServiceInstance from "../services/socket";
 import { useSelector } from "react-redux";
@@ -20,7 +20,7 @@ const ChangeAdminPassword = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { getAdminProfile } = useSelector((state) => state.admin);
 
-const userId = getAdminProfile?.data?._id
+  const userId = getAdminProfile?.data?._id;
   const handleInput = (e) => {
     const { name, value } = e.target;
     if (name === "confirmPassword") {
@@ -48,18 +48,21 @@ const userId = getAdminProfile?.data?._id
     };
     try {
       const res = await changeAdminPassword(payload);
-      toast.success(res.message || "Password changed successfully");
+      toast.success(
+        res.message ||
+          "Password changed successfully Please relogin with changed password"
+      );
       if (socketServiceInstance.isConnected()) {
         //from agent to admin
-        const data = { userId : userId, reason : "password" }
-    
-        socketServiceInstance.socket.emit(
-          "DELETE_AUTH_TOKEN",
-          data
-        );
+        const data = { userId: userId, reason: "password" };
+
+        socketServiceInstance.socket.emit("DELETE_AUTH_TOKEN", data);
       } else {
         console.error("Socket connection failed, cannot emit notification.");
       }
+      navigate("/admin/role/auth/login");
+      localStorage.removeItem("userAuthToken");
+      localStorage.removeItem("role");
       setErrors({});
     } catch (error) {
       console.log(error);
@@ -69,19 +72,20 @@ const userId = getAdminProfile?.data?._id
 
   return (
     <>
-      <Header/>
+      <Header />
       <div>
         <span className="fixed overflow-y-scroll scrollbar-hide bg-white">
           <AdminSidebar />
         </span>
       </div>
       <div className="font-poppins">
-        <span className="flex md:flex-row sm:flex-col items-center bg-white mt-20 md:ml-[16.5%] sm:ml-[22%] pb-6">
+        <span className="flex items-center pt-16 md:ml-[16.5%] sm:ml-[22%]">
+          {" "}
           <span>
             <p className="text-[28px] font-bold text-sidebar mt-6 ml-9">
               Change Password
             </p>
-            <p className="mt-1 md:font-normal sm:font-light text-body md:pr-[8%] sm:pr-[20%] ml-9">
+            <p className="mt-1 font-normal text-body ml-9 pr-[30%]">
               Edit your password
             </p>
           </span>
@@ -93,7 +97,7 @@ const userId = getAdminProfile?.data?._id
           </span>
           <span className="font-semibold">Password</span>
         </div>
-        <div className="bg-white rounded-md mb-20 md:ml-[31.5%] md:mr-[16%] px-8 py-6 sm:ml-[26%]">
+        <div className="bg-white rounded-md mb-20 sm:mx-9 md:ml-[31.5%] md:mr-[16%] px-8 py-6 sm:ml-[28%]">
           <PasswordField
             name="password"
             value={isPassword.password}
@@ -113,6 +117,10 @@ const userId = getAdminProfile?.data?._id
               toggleVisibility={togglePasswordVisibility}
               error={errors.newPassword}
             />
+            <p className="text-[13px] text-primary pt-[9px] font-poppins">
+              Use 10 or more characters including - alphabets, numbers and
+              special characters.
+            </p>
           </div>
           <div className="mt-6">
             <PasswordField

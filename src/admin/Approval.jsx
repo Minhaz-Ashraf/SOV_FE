@@ -10,11 +10,12 @@ import Rejected from "../components/adminComps/Rejected";
 import { IoSearchOutline } from "react-icons/io5";
 import { CustomInput } from "../components/reusable/Input";
 import Pagination from "../components/dashboardComp/Pagination";
+import { useLocation, useSearchParams } from "react-router-dom";
 
 const Approval = () => {
+  const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { approvals } = useSelector((state) => state.admin);
-
-  // console.log(approvals)
   const { updateState, tabType } = useSelector((state) => state.admin);
   const [search, setSearch] = useState("");
   const [perPage, setPerPage] = useState(10);
@@ -25,13 +26,18 @@ const Approval = () => {
   const currentPage = approvals?.currentPage || 1;
   const totalPagesCount = approvals?.totalPages || 1;
 
+  // Manage the active tab using searchParams
+  const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "pending");
+
   const handlePageChange = (pageNumber) => {
     setPage(pageNumber);
   };
+
   const handlePerPageChange = (e) => {
     setPerPage(parseInt(e.target.value));
     setPage(1);
   };
+
   const perPageOptions = [];
   for (let i = 10; i <= Math.min(totalUsersCount, 100); i += 10) {
     perPageOptions.push(i);
@@ -41,10 +47,7 @@ const Approval = () => {
     setSearch(e.target.value);
     setPage(1);
   };
-  // const handleTypeFilter = (e) => {
-  //   setIsFilterType(e.target.value);
-  //   setPage(1);
-  // };
+
   const dispatch = useDispatch();
   const tabs = [
     {
@@ -63,7 +66,7 @@ const Approval = () => {
       name: "rejected",
       label: "Rejected",
       component: Rejected,
-      props: { data: approvals?.data},
+      props: { data: approvals?.data },
     },
   ];
 
@@ -86,16 +89,31 @@ const Approval = () => {
     }
   }, [dispatch, tabType, search, page, perPage, isTypeFilter, updateState]);
 
+  useEffect(() => {
+    // Check the pathname and reset the active tab if needed
+    if (location.pathname !== "/admin/approvals") {
+      setActiveTab("pending");
+      setSearchParams({ tab: "pending" }); // Update the search params
+    } else {
+      setActiveTab(searchParams.get("tab") || "pending"); // Set from search params
+    }
+  }, [location.pathname, searchParams]);
+
+  const handleTabChange = (tabName) => {
+    setActiveTab(tabName);
+    setSearchParams({ tab: tabName });
+  };
+
   return (
     <>
       <Header customLink="/agent/shortlist" />
       <div>
-        <span className="fixed overflow-y-scroll scrollbar-hide  bg-white">
+        <span className="fixed overflow-y-scroll scrollbar-hide bg-white">
           <AdminSidebar />
         </span>
       </div>
-      <div className=" bg-white">
-        <span className="flex items-center pt-16 md:ml-[16.5%] sm:ml-[22%]  ">
+      <div className="bg-white">
+        <span className="flex items-center pt-16 md:ml-[16.5%] sm:ml-[22%]">
           <span>
             <p className="text-[28px] font-bold text-sidebar mt-6 ml-9">
               Approvals
@@ -107,35 +125,11 @@ const Approval = () => {
         </span>
       </div>
 
-      <span className="flex flex-row items-center mb-3 m-6 mt-6 sm:ml-[27%] md:ml-[19%] ">
-        {" "}
-        <span className="text-body">Show</span>
-        <select
-          className="ml-3 border px-2 py-1 w-10 h-11 rounded outline-none"
-          value={perPage}
-          onChange={handlePerPageChange}
-        >
-          {perPageOptions.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
-        <span className="px-3 text-body">entries</span>
-        {/* <select
-          className="ml-3 border px-2 py-1 w-40 h-11 rounded outline-none"
-          onChange={handleTypeFilter}
-          value={isTypeFilter}
-        >
-          <option value="" className="text-body">
-            User Type
-          </option>
-          <option value="student">Student</option>
-          <option value="company">Agent</option>
-        </select> */}
-        <span className="flex flex-row items-center ml-9 ">
+      <span className="flex flex-row items-center mb-3 m-6 mt-6 sm:ml-[27%] md:ml-[19%]">
+      
+        <span className="flex flex-row items-center  ">
           <CustomInput
-            className="h-11 md:w-80 sm:w-48 rounded-md text-body  placeholder:px-3 pl-7 border border-[#E8E8E8] outline-none"
+            className="h-11 md:w-80 sm:w-80 rounded-md text-body  placeholder:px-3 pl-7 border border-[#E8E8E8] outline-none"
             type="text"
             placeHodler="Search by User Name & User Id"
             name="search"
@@ -149,11 +143,11 @@ const Approval = () => {
       </span>
 
       <div className="sm:ml-14 md:ml-0">
-        <TabBar tabs={tabs} />
+        <TabBar tabs={tabs} activeTab={activeTab} onTabChange={handleTabChange} />
       </div>
       <div className="mt-12 mb-10">
         <Pagination
-               currentPage={currentPage}
+          currentPage={currentPage}
           hasNextPage={currentPage * perPage < totalUsersCount}
           hasPreviousPage={currentPage > 1}
           onPageChange={handlePageChange}

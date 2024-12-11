@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Header from "../components/dashboardComp/Header";
 import Sidebar from "../components/dashboardComp/Sidebar";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import { studentInfo } from "../features/studentSlice";
 import { studentById } from "../features/generalSlice";
 import StudentRecieveDocument from "../components/dashboardComp/StudentRecieveDocument";
@@ -11,17 +11,19 @@ import TabBar from "../components/dashboardComp/TabBar";
 
 const Documents = () => {
   const role = localStorage.getItem("role");
+  const location = useLocation();
   const studentId = localStorage.getItem("student");
   const { studentInfoData } = useSelector((state) => state.student);
-
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState(
+    searchParams.get("tab") || "myDocument"
+  );
   const studentData =
     role === "0"
       ? useSelector((state) => state.admin.getStudentDataById)
       : role === "3"
       ? studentInfoData?.data
       : useSelector((state) => state.general.studentData);
-
-  const location = useLocation();
   const dispatch = useDispatch();
   const profileView = location.state?.isprofileView;
   const [profileUpdated, setProfileUpdated] = useState(false);
@@ -59,6 +61,21 @@ const Documents = () => {
     },
   ];
 
+  useEffect(() => {
+    // Check the pathname and reset the active tab if needed
+    if (location.pathname !== "/student/document") {
+      setActiveTab("myDocument");
+      setSearchParams({ tab: "myDocument" }); // Update the search params
+    } else {
+      setActiveTab(searchParams.get("tab") || "myDocument"); // Set from search params
+    }
+  }, [location.pathname, searchParams]);
+
+  const handleTabChange = (tabName) => {
+    setActiveTab(tabName);
+    setSearchParams({ tab: tabName });
+  };
+
   return (
     <>
       <Header customLink="/agent/shortlist" />
@@ -76,7 +93,10 @@ const Documents = () => {
         </p>
       </div>
       <div className="sm:ml-[9%] md:ml-0">
-        <TabBar tabs={tabs} />
+        <TabBar
+          tabs={tabs}
+          activeTab={activeTab} onTabChange={handleTabChange} 
+        />
       </div>
     </>
   );

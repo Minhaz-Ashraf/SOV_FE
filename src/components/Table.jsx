@@ -26,7 +26,13 @@ import socketServiceInstance from "../services/socket";
 import { v4 as uuidv4 } from "uuid";
 import { MdOutlineUploadFile } from "react-icons/md";
 import RemovePopUp from "./adminComps/RemovePopUp";
-import { adminUrlData, getAllAgentList, getAllStudentList } from "../features/adminSlice";
+import {
+  adminUrlData,
+  getAllAgentList,
+  getAllStudentList,
+} from "../features/adminSlice";
+import { RiDeleteBin6Line } from "react-icons/ri";
+import { extractFileName, extractFileNames } from "../constant/commonfunction";
 
 export function CustomTable({
   tableHead = [],
@@ -147,23 +153,18 @@ export function CustomTableTwo({
   SecondLink,
   secondCustomState,
   SecondAction,
-  customLinkState,
-  ThirdAction,
+  customData,
+  customDataTwo,
+  customDataThree,
 }) {
   const location = useLocation();
-  const dispatch =useDispatch();
-  const [isData, setIsData] =useState({
-    studentId: "",
-    appId:"",
-  })
+  const dispatch = useDispatch();
+
   const [fileUrl, setFileUrl] = useState(null);
   const [uploadingState, setUploadingState] = useState({});
+  const { getStudentDataById } = useSelector((state) => state.admin);
 
   const handleFileUpload = async (e, studentId, type, rowId) => {
-    setIsData({
-      studentId: studentId,
-      appId: rowId
-    })
     const file = e.target.files[0];
     if (!file) return;
     setUploadingState((prev) => ({ ...prev, [rowId]: true }));
@@ -185,8 +186,69 @@ export function CustomTableTwo({
         documentName: file.name,
         DocumentType: type,
         studentId: studentId,
+        applicationId: rowId,
       };
       await uploadApplications(uploadData); // Update with your API call
+      customDataThree?.forEach((item) => {
+        dispatch(adminUrlData(item)); // Dispatch each item individually
+      });
+      if (getStudentDataById.studentInformation.agentId) {
+        if (socketServiceInstance.isConnected()) {
+          //from agent to admin
+          const notificationData = {
+            title: " RECEIVED_OFFER_LETTER_AGENT",
+            message: `Received the document from admin  ${
+              getStudentDataById?.studentInformation?.personalInformation
+                .firstName +
+              " " +
+              getStudentDataById?.studentInformation?.personalInformation
+                .lastName
+            } ${
+              getStudentDataById?.studentInformation?.stId
+            } `,
+            path: "/student-profile",
+            pathData: {
+              studentId: getStudentDataById?.studentInformation?._id,
+            },
+            recieverId: getStudentDataById.studentInformation.agentId,
+          };
+
+          socketServiceInstance.socket.emit(  
+            "NOTIFICATION_ADMIN_TO_AGENT",
+            notificationData
+          );
+        } else {
+          console.error("Socket connection failed, cannot emit notification.");
+        }
+      }
+      if (getStudentDataById.studentInformation.studentId) {
+        if (socketServiceInstance.isConnected()) {
+          //from student to admin
+          const notificationData = {
+            title: " RECEIVED_OFFER_LETTER_STUDENT",
+            message:  `Received the document from admin  ${
+              getStudentDataById?.studentInformation?.personalInformation
+                .firstName +
+              " " +
+              getStudentDataById?.studentInformation?.personalInformation
+                .lastName
+            } ${
+              getStudentDataById?.studentInformation?.stId
+            } `,
+            path: "/student/visa-update",
+            pathData: {
+              studentId: getStudentDataById?.studentInformation?._id,
+            },
+            recieverId: getStudentDataById.studentInformation.studentId,
+          };
+          socketServiceInstance.socket.emit(
+            "NOTIFICATION_ADMIN_TO_STUDENT",
+            notificationData
+          );
+        } else {
+          console.error("Socket connection failed, cannot emit notification.");
+        }
+      }
 
       toast.success(`${file.name} uploaded successfully!`);
 
@@ -195,6 +257,7 @@ export function CustomTableTwo({
       setUploadingState((prev) => ({ ...prev, [rowId]: false }));
     } catch (error) {
       toast.error("Error uploading file. Please try again.");
+      console.log(error) 
     } finally {
       setUploadingState((prev) => ({ ...prev, [rowId]: false }));
     }
@@ -207,20 +270,25 @@ export function CustomTableTwo({
       // Delete file from Firebase
       await deleteObject(storageRef);
 
-      await deleteApplication(fileUrl);
+      await deleteApplication({fileUrl:fileUrl});
 
       toast.success("File deleted successfully!");
 
       // Fetch the updated application data
-      dispatch(fetchApplications());
+      customDataThree?.forEach((item) => {
+        dispatch(adminUrlData(item)); // Dispatch each item individually
+      });
     } catch (error) {
       toast.error("Error deleting file. Please try again.");
     }
   };
-useEffect(()=>{
-  dispatch(adminUrlData({ studentId: isData?.studentId, applicationId: isData?.appId }));
+  useEffect(() => {
+    customDataThree?.forEach((item) => {
+      dispatch(adminUrlData(item)); // Dispatch each item individually
+    });
+  }, [dispatch]);
 
-},[dispatch])
+  console.log(customDataThree, "test");
 
   return (
     <Card className="h-full w-full overflow-scroll scrollbar-hide font-poppins">
@@ -365,70 +433,153 @@ useEffect(()=>{
                     : "NA"}
                 </Typography>
               </td>
+              {console.log(row?.type?.studentInformationId, customDataTwo)}
               {location.pathname === "/admin/student-applications" && (
                 <td className="p-4">
-                  {!fileUrl ? (
-                    <>
-                      <Typography
-                        as="label"
-                        htmlFor={`pdf-upload-${row?.appId}`}
-                        variant="small"
-                        color="blue-gray"
-                        className="font-medium cursor-pointer"
-                      >
-                        <span className="flex items-center gap-3 justify-center">
-                          {uploadingState[row.appId] ? (
-                            "Uploading..."
-                          ) : (
-                            <>
-                              <span className="font-normal text-sidebr">
-                                Upload
-                              </span>
-                              <span className="font-body text-primary text-[22px]">
-                                <MdOutlineUploadFile />
-                              </span>
-                            </>
-                          )}
-                        </span>
-                      </Typography>
-                      {console.log(row)}
-                      <input
-                        type="file"
-                        id={`pdf-upload-${row?.appId}`}
-                        accept="application/pdf"
-                        className="hidden"
-                        onChange={(e) =>
-                          handleFileUpload(
-                            e,
-                            row?.studentId,
-                            row.type?.offerLetter
-                              ? "offerLetter"
-                              : row.type?.visa
-                              ? "visa"
-                              : row.type?.courseFeeApplication
-                              ? "courseFee"
-                              : "NA",
-                            row.appId
-                          )
-                        }
-                      />
-                    </>
-                  ) : (
-                    <div className="flex items-center gap-3">
-                      <button
-                        className="px-4 py-2 bg-green-500 text-white rounded-md"
-                        onClick={() => window.open(fileUrl, "_blank")}
-                      >
-                        View
-                      </button>
-                      <button
-                        className="px-4 py-2 bg-red-500 text-white rounded-md"
-                        onClick={() => handleFileDelete(fileUrl, row)}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  )}
+                  {customDataTwo?.length > 0 &&
+                    (() => {
+                      const matchingDoc = customDataTwo.find(
+                        (data) =>
+                          data.studentId.trim().normalize() ===
+                          row?.type?._id.trim().normalize()
+                      );
+
+                      if (matchingDoc) {
+                        console.log("Matching Document Found:", matchingDoc);
+                        return (
+                          <div className="flex items-center justify-center gap-2">
+                            {matchingDoc.document &&
+                            matchingDoc.document.length > 0 ? (
+                              <>
+                                <button
+                                  className="text-primary rounded-md"
+                                  onClick={() =>
+                                    window.open(
+                                      matchingDoc.document[0],
+                                      "_blank"
+                                    )
+                                  }
+                                >
+                                  View
+                                </button>
+                                <button
+                                  className="px-4 py-1 text-primary text-[20px] rounded-md"
+                                  onClick={() =>
+                                    handleFileDelete(
+                                      matchingDoc.document[0],
+                                      row
+                                    )
+                                  }
+                                >
+                                  <RiDeleteBin6Line />
+                                </button>
+                              </>
+                            ) : (
+                              <span>No Document Found</span>
+                            )}
+                          </div>
+                        );
+                      }
+
+                      console.log("No matching document found.");
+                      return <span>  <>
+                        <Typography
+                          as="label"
+                          htmlFor={`pdf-upload-${row?.appId}`}
+                          variant="small"
+                          color="blue-gray"
+                          className="font-medium cursor-pointer"
+                        >
+                          <span className="flex items-center gap-3 justify-center">
+                            {uploadingState[row?.appId] ? (
+                              "Uploading..."
+                            ) : (
+                              <>
+                                <span className="font-normal text-sidebr">
+                                  Upload
+                                </span>
+                                <span className="font-body text-primary text-[22px]">
+                                  <MdOutlineUploadFile />
+                                </span>
+                              </>
+                            )}
+                          </span>
+                        </Typography>
+
+                        {/* Hidden input for file upload */}
+                        <input
+                          type="file"
+                          id={`pdf-upload-${row?.appId}`}
+                          accept="application/pdf"
+                          className="hidden"
+                          onChange={(e) =>
+                            handleFileUpload(
+                              e,
+                              row?.studentId,
+                              row?.type?.offerLetter
+                                ? "offerLetter"
+                                : row?.type?.visa
+                                ? "visa"
+                                : row?.type?.courseFeeApplication
+                                ? "courseFee"
+                                : "NA",
+                              row?.appId
+                            )
+                          }
+                        />
+                      </></span>;
+                    })()}
+
+                  {/* Upload section if no matching document is found */}
+                  {customDataTwo?.length === 0 ||
+                    (!customDataTwo && (
+                      <>
+                        <Typography
+                          as="label"
+                          htmlFor={`pdf-upload-${row?.appId}`}
+                          variant="small"
+                          color="blue-gray"
+                          className="font-medium cursor-pointer"
+                        >
+                          <span className="flex items-center gap-3 justify-center">
+                            {uploadingState[row?.appId] ? (
+                              "Uploading..."
+                            ) : (
+                              <>
+                                <span className="font-normal text-sidebr">
+                                  Upload
+                                </span>
+                                <span className="font-body text-primary text-[22px]">
+                                  <MdOutlineUploadFile />
+                                </span>
+                              </>
+                            )}
+                          </span>
+                        </Typography>
+
+                        {/* Hidden input for file upload */}
+                        <input
+                          type="file"
+                          id={`pdf-upload-${row?.appId}`}
+                          accept="application/pdf"
+                          className="hidden"
+                          onChange={(e) =>
+                            handleFileUpload(
+                              e,
+                              row?.studentId,
+                              row?.type?.offerLetter
+                                ? "offerLetter"
+                                : row?.type?.visa
+                                ? "visa"
+                                : row?.type?.courseFeeApplication
+                                ? "courseFee"
+                                : "NA",
+                              row?.appId
+                            )
+                          }
+                        />
+                      </>
+                    ))}
                 </td>
               )}
 
@@ -930,7 +1081,7 @@ export function CustomTableFive({
                     {row?.priority}
                   </Typography>
                 </td>
-
+                {console.log(row)}
                 <td className="p-4">
                   <Typography
                     as="a"
@@ -1102,6 +1253,7 @@ export function CustomTableSeven({
   icon,
 }) {
   const dispatch = useDispatch();
+  const role = localStorage.getItem("role");
   const handleRemoveFile = async (id, fileUrl) => {
     try {
       if (!fileUrl) {
@@ -1126,20 +1278,22 @@ export function CustomTableSeven({
         <table className="w-full min-w-max table-auto text-left">
           <thead>
             <tr>
-              {tableHead.map((head) => (
-                <th
-                  key={head}
-                  className="border-b border-blue-gray-100 bg-input p-4"
-                >
-                  <Typography
-                    variant="small"
-                    color="sidebar"
-                    className="font-medium leading-none opacity-70"
+              {tableHead
+                .filter((head) => !(head === "Action" && role === "0")) // Filter out "Action" when role is 0
+                .map((head) => (
+                  <th
+                    key={head}
+                    className="border-b border-blue-gray-100 bg-input p-4"
                   >
-                    {head}
-                  </Typography>
-                </th>
-              ))}
+                    <Typography
+                      variant="small"
+                      color="sidebar"
+                      className="font-medium leading-none opacity-70"
+                    >
+                      {head}
+                    </Typography>
+                  </th>
+                ))}
             </tr>
           </thead>
           <tbody>
@@ -1161,7 +1315,7 @@ export function CustomTableSeven({
                     color="blue-gray"
                     className="font-normal"
                   >
-                    {row.docName}
+                    {extractFileNames(row?.docName)}
                   </Typography>
                 </td>
                 {tableType === "recieve" && (
@@ -1204,26 +1358,27 @@ export function CustomTableSeven({
                     </a>
                   </Typography>
                 </td>
-                {tableType === "upload" && (
-                  <td className="">
-                    <Typography
-                      as="a"
-                      href="#"
-                      variant="small"
-                      color="blue-gray"
-                      className="font-medium"
-                    >
-                      <span
-                        onClick={() => handleRemoveFile(row.docId, row.url)}
-                        className="flex flex-row items-center gap-2"
+                {tableType === "upload" ||
+                  (role !== "0" && (
+                    <td className="">
+                      <Typography
+                        as="a"
+                        href="#"
+                        variant="small"
+                        color="blue-gray"
+                        className="font-medium"
                       >
-                        <span className="font-body border rounded-md border-primary cursor-pointer px-6 py-1">
-                          {actionTwo}
+                        <span
+                          onClick={() => handleRemoveFile(row.docId, row.url)}
+                          className="flex flex-row items-center gap-2"
+                        >
+                          <span className="font-body border rounded-md border-primary cursor-pointer px-6 py-1">
+                            {actionTwo}
+                          </span>
                         </span>
-                      </span>
-                    </Typography>
-                  </td>
-                )}
+                      </Typography>
+                    </td>
+                  ))}
               </tr>
             ))}
           </tbody>
@@ -1247,27 +1402,25 @@ export function CustomTableEight({
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [isId, setIsId] = useState();
-  const handleOpen =(id)=>{
-    setIsId(id)
-    setIsOpen(true)
-
-  }  
-  const closePopUp =()=>{
-    setIsOpen(false)
-  }
+  const handleOpen = (id) => {
+    setIsId(id);
+    setIsOpen(true);
+  };
+  const closePopUp = () => {
+    setIsOpen(false);
+  };
   const handleRemove = async (id) => {
     try {
       const path =
-        location.pathname === `/admin/agent-directory/`
+        location.pathname === `/admin/agent-directory`
           ? `/admin/delete-agent/${id}`
-          : `/admin/remove-student/${id}`;
+          : `/admin/delete-student/${id}`;
 
       const res = await removeAgentorStudent(path);
       // navigate("/removed-user")
-      location.pathname === `/admin/agent-directory/` ?
-      dispatch(getAllAgentList({})) :
-      dispatch(getAllStudentList({})) 
-
+      location.pathname === `/admin/agent-directory`
+        ? dispatch(getAllAgentList({}))
+        : dispatch(getAllStudentList({}));
 
       toast.success(res.message || "Removed successfully");
       if (socketServiceInstance.isConnected()) {
@@ -1360,7 +1513,6 @@ export function CustomTableEight({
                 <td className="p-4">
                   <Typography
                     as="a"
-                    href="#"
                     variant="small"
                     color="blue-gray"
                     className="font-medium"
@@ -1373,7 +1525,6 @@ export function CustomTableEight({
                       }}
                       className="flex flex-row items-center gap-2"
                     >
-                    
                       <span className="text-primary">{icon}</span>
                       <span className="font-body">{action}</span>
                     </Link>
@@ -1385,7 +1536,6 @@ export function CustomTableEight({
                   <td className="p-4">
                     <Typography
                       as="a"
-                      href="#"
                       variant="small"
                       color="blue-gray"
                       className="font-medium"
@@ -1408,13 +1558,12 @@ export function CustomTableEight({
                 <td className="">
                   <Typography
                     as="a"
-                    href="#"
                     variant="small"
                     color="blue-gray"
                     className="font-medium"
                   >
                     <span
-                      onClick={() => handleOpen(row.data?._id)}
+                      onClick={() => handleOpen(row.data?._id || row.data?.id)}
                       className="flex flex-row items-center gap-2"
                     >
                       <span className="font-body border rounded-md border-primary cursor-pointer px-6 py-1">
@@ -1428,7 +1577,7 @@ export function CustomTableEight({
           </tbody>
         </table>
       </Card>
-       
+
       <RemovePopUp
         closePopUp={closePopUp}
         isOpen={isOpen}
@@ -1510,7 +1659,9 @@ export function CustomTableNine({
                     color="blue-gray"
                     className="font-normal"
                   >
-                    {row.submittedby === "student" ? "Student" : `Agent(${row.submittedby}) ` }
+                    {row.submittedby === "student"
+                      ? "Student"
+                      : `Agent(${row.submittedby}) `}
                   </Typography>
                 </td>
                 <td className="p-4">

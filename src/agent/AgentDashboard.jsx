@@ -4,9 +4,10 @@ import Header from "../components/dashboardComp/Header";
 import AgentDashCard from "../components/dashboardComp/AgentDashCard";
 import { adm, article, Group, task } from "../assets";
 import DonoughtChart from "../components/dashboardComp/charts/Donought";
-import LineChart from "../components/dashboardComp/charts/LineChart";
+import LineChart, { LineChartAgent } from "../components/dashboardComp/charts/LineChart";
 import BarChart from "../components/dashboardComp/charts/BarChart";
 import {
+  fetchAgentDashboardData,
   getAllApplications,
   getAllCompletedApplication,
   getAllUnderReviewApplication,
@@ -14,6 +15,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { agentInformation, allStudentCount } from "../features/agentSlice";
 import { totalAgentStudent } from "../features/adminApi";
+import { donoughtFilter, userType } from "../constant/data";
 
 const AgentDashboard = () => {
   const totalStudentCount = useSelector((state) => state.agent.studentCount);
@@ -22,19 +24,36 @@ const AgentDashboard = () => {
   const [underReviewData, setUnderreviewData] = useState();
   const [completedApplication, setCompletedApplication] = useState();
   const [appOverviewCount, setAppOverviewCount] = useState();
+  const [isUserType, setUserType] = useState();
+  const [month, setMonth] = useState('11');
+  const [year, setYear] = useState('2024');
   const [appCount, setAppCount] = useState();
-   const [studentCount, setStudentCount] = useState();
+  const [studentCount, setStudentCount] = useState();
   const [selectedYearLine, setSelectedYearLine] = useState(
     new Date().getFullYear()
   );
   const [selectedYearBar, setSelectedYearBar] = useState(
     new Date().getFullYear()
   );
+
   const [selectedDateDoughnut, setSelectedDateDoughnut] = useState(
     new Date().toISOString().substring(0, 10)
   ); // Date picker state
-  const [years] = useState([2021, 2022, 2023, 2024]); // List of available years
+  const [years] = useState([2024, 2025, 2026, 2027]);
+  const handleDonoughtChange = (e) => {
+    const selectedValue = e.target.value;
+    setSelectedDateDoughnut(selectedValue);
+
+    const [selectedMonth, selectedYear] = selectedValue.split(" ");
+
+    setMonth(selectedMonth);
+    setYear(selectedYear);
+  };
+
   const dispatch = useDispatch();
+  const handleUserChange = (e) => {
+    setUserType(e.target.value);
+  };
 
   useEffect(() => {
     dispatch(allStudentCount());
@@ -69,7 +88,11 @@ const AgentDashboard = () => {
   };
   const getTotalApplicationsOverview = async () => {
     try {
-      const res = await  totalAgentStudent("/agent/application-overview");
+      const res = await totalAgentStudent(
+        "/agent/application-overview",
+        month,
+        year
+      );
       setAppOverviewCount(res);
       console.log(res);
     } catch (error) {
@@ -78,7 +101,11 @@ const AgentDashboard = () => {
   };
   const getTotalStudent = async () => {
     try {
-      const res = await  totalAgentStudent("/agent/user-monthly-counts-agent");
+      const res = await fetchAgentDashboardData(
+        "/agent/user-monthly-counts-agent",
+        null,
+        selectedYearLine
+      );
       setStudentCount(res);
       console.log(res);
     } catch (error) {
@@ -87,7 +114,11 @@ const AgentDashboard = () => {
   };
   const getTotalApplication = async () => {
     try {
-      const res = await  totalAgentStudent("/agent/total-application-monthly-count-agent");
+      const res = await fetchAgentDashboardData(
+        "/agent/total-application-monthly-count-agent",
+        isUserType,
+        selectedYearBar
+      );
       setAppCount(res);
       console.log(res);
     } catch (error) {
@@ -99,12 +130,21 @@ const AgentDashboard = () => {
     getUnderReviewData();
     getCompletedData();
     getTotalApplicationsOverview();
-    getTotalStudent()
-    getTotalApplication();
+    getTotalStudent();
   }, []);
 
+  useEffect(() => {
+    getTotalApplication();
+  }, [isUserType, selectedYearBar]);
+
+  useEffect(() => {
+    getTotalStudent();
+  }, [selectedYearLine]);
+  useEffect(() => {
+    getTotalApplicationsOverview();
+  }, [month, year]);
   const cardData = [
-    { 
+    {
       link: "/agent/student-lists",
       icon: Group,
       count: totalStudentCount?.totalRecords,
@@ -134,31 +174,20 @@ const AgentDashboard = () => {
     },
   ];
 
-  
- 
-const monthNames = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December"
-];
-
-  const barData = {
-    labels: [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ],
-    label: "# of Votes",
-    values: [12, 19, 3, 5, 15, 12, 8, 20],
-  };
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
 
   const donoughtData = {
     labels: ["Offer Letter", "Course Fee Application", "Visa"],
@@ -171,10 +200,10 @@ const monthNames = [
       appOverviewCount?.data?.visaCount || 0,
     ],
   };
-  
+
   const getFilteredDoughnutData = (date) => {
     if (!appOverviewCount?.data) return donoughtData;
-  
+
     const filteredValues = [
       appOverviewCount?.data?.offerLetterCount || 0,
       (appOverviewCount?.data?.totalApplications || 0) -
@@ -182,28 +211,46 @@ const monthNames = [
           (appOverviewCount?.data?.visaCount || 0)),
       appOverviewCount?.data?.visaCount || 0,
     ];
-  
+
     return {
       ...donoughtData,
       values: filteredValues,
     };
-  }; const filteredDoughnutData = getFilteredDoughnutData(selectedDateDoughnut);
+  };
+  const filteredDoughnutData = getFilteredDoughnutData(selectedDateDoughnut);
 
   const filteredLineData = {
     labels: monthNames, // Months as labels
-    label: `# of Users (${selectedYearLine})`,
-    // values: setStudentCount
-    //   .filter((user) => user.year === selectedYearLine)
-    //   .map((user) => user.count),
+    label: `# of Students (${selectedYearBar})`,
+    values: monthNames.map((month, index) => {
+      const monthNumber = index + 1; // Map index to month number (1-12)
+
+      // Ensure appCount exists and is accessed correctly
+      const userCount = studentCount?.students || [];
+      const matchedAppCount = userCount.find(
+        (app) => app.year === selectedYearBar && app.month === monthNumber
+      );
+
+      return matchedAppCount ? matchedAppCount.count : 0; // Return count or 0 if not found
+    }),
   };
-  
 
   const filteredBarData = {
-    ...barData,
+    labels: monthNames, // Months as labels
     label: `# of Applications (${selectedYearBar})`,
-    values: barData.values, // Adjust this if you have year-specific data
+    values: monthNames.map((month, index) => {
+      const monthNumber = index + 1; // Map index to month number (1-12)
+
+      // Ensure appCount exists and is accessed correctly
+      const applicationCounts = appCount?.applicationCounts || [];
+      const matchedAppCount = applicationCounts.find(
+        (app) => app.year === selectedYearBar && app.month === monthNumber
+      );
+
+      return matchedAppCount ? matchedAppCount.count : 0; // Return count or 0 if not found
+    }),
   };
-console.log(appOverviewCount?.data?.visaCount, "test") 
+  console.log(appOverviewCount?.data?.visaCount, "test");
   return (
     <>
       <Header customLink="/agent/shortlist" />
@@ -250,26 +297,45 @@ console.log(appOverviewCount?.data?.visaCount, "test")
                   Application Overview
                 </p>
 
-                <input
-                  type="date"
-                  id="date-doughnut"
-                  value={selectedDateDoughnut}
-                  onChange={(e) => setSelectedDateDoughnut(e.target.value)}
-                  className="border w-10 p-2 rounded-md outline-none text-[13px]"
-                />
+                <span>
+                  <label
+                    htmlFor="year-line"
+                    className="font-medium text-sidebar"
+                  >
+                    Select Year:{" "}
+                  </label>
+                  <select
+                    id="year-line"
+                    value={selectedDateDoughnut}
+                    onChange={handleDonoughtChange}
+                    className="border p-2 rounded-md ml-2 outline-none"
+                  >
+                    {donoughtFilter.map((data) => (
+                      <option key={data.id} value={data.option}>
+                        {data.label}
+                      </option>
+                    ))}
+                  </select>
+                </span>
               </div>
               <div className="md:mx-2 sm:px-16 md:px-0 ">
-                <DonoughtChart data={filteredDoughnutData}  visaCount={appOverviewCount?.data?.visaCount}/>
+                <DonoughtChart
+                  data={filteredDoughnutData}
+                  totalApplication={appOverviewCount?.data?.totalApplications}
+                />
               </div>
             </div>
 
             <div className="px-9 bg-white py-4 rounded-md border border-[#E8E8E8] md:w-[60%] h-auto">
               <span className="flex flex-row justify-between mx-4">
                 <p className="text-sidebar text-[18px] font-semibold mt-3 mb-6">
-                  Total Students
+                  Total Users
                 </p>
                 <span>
-                  <label htmlFor="year-line" className="font-semibold">
+                  <label
+                    htmlFor="year-line"
+                    className="font-medium text-sidebar"
+                  >
                     Select Year:{" "}
                   </label>
                   <select
@@ -288,7 +354,7 @@ console.log(appOverviewCount?.data?.visaCount, "test")
                   </select>
                 </span>
               </span>
-              <LineChart data={filteredLineData} />
+              <LineChartAgent data={filteredLineData} />
             </div>
           </div>
         </div>
@@ -298,23 +364,42 @@ console.log(appOverviewCount?.data?.visaCount, "test")
             <p className="text-sidebar text-[18px] font-bold mt-3 mb-9 ml-9">
               Total Applications
             </p>
-            <div className="mx-2">
-              <label htmlFor="year-bar" className="font-semibold">
-                Select Year:{" "}
-              </label>
-              <select
-                id="year-bar"
-                value={selectedYearBar}
-                onChange={(e) => setSelectedYearBar(parseInt(e.target.value))}
-                className="border p-2 rounded-md outline-none"
-              >
-                {years.map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <span className="flex flex-row items-center">
+              <div className="mx-2">
+                <label htmlFor="year-bar" className="font-medium text-sidebar">
+                  Application Type:{" "}
+                </label>
+                <select
+                  className="ml-3 border px-2 py-1 w-24 h-11 rounded outline-none"
+                  value={isUserType}
+                  onChange={handleUserChange}
+                >
+                  <option value="">All</option>
+                  {userType.map((option) => (
+                    <option key={option.option} value={option.option}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="mx-2">
+                <label htmlFor="year-bar" className="font-medium text-sidebar">
+                  Select Year:{" "}
+                </label>
+                <select
+                  id="year-bar"
+                  value={selectedYearBar}
+                  onChange={(e) => setSelectedYearBar(Number(e.target.value))}
+                  className="border p-2 rounded-md outline-none"
+                >
+                  {years.map((year) => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </span>
           </span>
           <BarChart data={filteredBarData} />
         </div>

@@ -69,7 +69,7 @@ const AdminLogin = () => {
       const res = await adminLogin(role, email, password);
       
       toast.success(res.message || "Login Successful");
-      navigate("/admin/approvals")
+      navigate("/admin/dashboard")
     } catch (error) {
       toast.error(error.message || "Something went wrong");
     } finally {

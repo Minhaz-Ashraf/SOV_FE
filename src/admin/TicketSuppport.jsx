@@ -13,8 +13,10 @@ import Loader from "../components/Loader";
 import ResolvedTickets from "../components/adminComps/ResolvedTickets";
 import { downloadFile } from "../features/adminApi";
 import { toast } from "react-toastify";
+import { useSearchParams } from "react-router-dom";
 
 const TicketSupport = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const dispatch = useDispatch();
   const { ticketAll } = useSelector((state) => state.admin);
   const [search, setSearch] = useState("");
@@ -27,6 +29,14 @@ const TicketSupport = () => {
   const [isPriorityType, setIsPriorityType] = useState("");
   const [loading, setLoading] = useState(true);
   const { updateTicketTab } = useSelector((state) => state.admin);
+  const [dateObj, setDateObj] = useState(null); 
+  const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "pending");
+  const handleDateChange = (e) => {
+    const dateValue = e.target.value; 
+    setDate(dateValue); 
+    setDateObj(dateValue ? new Date(dateValue) : null); 
+    setPage(1); 
+  };
   const handlePerPageChange = (e) => {
     setPerPage(parseInt(e.target.value));
     setPage(1);
@@ -35,15 +45,13 @@ const TicketSupport = () => {
     setIsPriorityType(e.target.value);
     setPage(1);
   };
+// console.log(isDate)
 
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
     setPage(1);
   };
-  const handleDateChange = (e) => {
-    setDate(e.target.value);
-    setPage(1);
-  };
+
   const handlePageChange = (pageNumber) => {
     setPage(pageNumber);
   };
@@ -55,26 +63,27 @@ const TicketSupport = () => {
   useEffect(() => {
     setLoading(true);
     dispatch(
-      getAllTickets({ page, perPage, isPriorityType, search, updateTicketTab })
+      getAllTickets({ page, perPage, isPriorityType, search, updateTicketTab, dateObj })
     );
     setLoading(false);
-  }, [dispatch, page, perPage, isPriorityType, search, updateTicketTab]);
+  }, [dispatch, page, perPage, isPriorityType, search, updateTicketTab, dateObj]);
 
   const tabs = [
     {
       name: "pending",
       label: "Pending",
       component: pendingTicket,
-      props: { data: ticketAll, isLoading: loading, currentPage: currentPage },
+      props: { data: ticketAll, isLoading: loading, currentPage: currentPage, setPage:setPage },
     },
     {
       name: "resolved",
       label: "Resolved",
       component: ResolvedTickets,
-      props: { data: ticketAll },
+      props: { data: ticketAll,  currentPage: currentPage ,setPage:setPage },
     },
   ];
 
+console.log(ticketAll?.tickets?.length)
 
   const downloadAll = async()=>{
     try{
@@ -88,6 +97,19 @@ const TicketSupport = () => {
       toast.error(error.message||"Error downloading") 
     } 
   }
+  useEffect(() => {
+    if (location.pathname !== "/admin/ticket") {
+      setActiveTab("pending");
+      setSearchParams({ tab: "pending" }); 
+    } else {
+      setActiveTab(searchParams.get("tab") || "pending"); 
+    }
+  }, [location.pathname, searchParams]);
+
+  const handleTabChange = (tabName) => {
+    setActiveTab(tabName);
+    setSearchParams({ tab: tabName });
+  };
   return (
     <>
       <Header />
@@ -110,7 +132,7 @@ const TicketSupport = () => {
         </span>
       </div>
       <div className="md:ml-[19.5%] sm:ml-[27%] mt-6 mr-6">
-        <span className="flex justify-between items-center">
+        <span className="flex  md:flex-row sm:flex-col md:justify-between sm:justify-start md:items-center sm:items-start">
           <span className="flex flex-row items-center mb-3">
             <span className="flex flex-row justify-between w-full items-center">
               <span className="flex flex-row items-center ">
@@ -143,7 +165,7 @@ const TicketSupport = () => {
                 <CustomInput
                   type="date"
                   placeHodler="Date"
-                  className="ml-3 border px-2 py-1 w-20 h-11 rounded outline-none"
+                  className="ml-3 border px-2 py-1 w-36 h-11 rounded outline-none"
                   value={isDate}
                   onChange={handleDateChange}
                 />
@@ -151,7 +173,7 @@ const TicketSupport = () => {
                   <CustomInput
                     className="h-11 w-80 rounded-md text-body placeholder:px-3 pl-7 border border-[#E8E8E8] outline-none"
                     type="text"
-                    placeHodler="Search by application ID"
+                    placeHodler="Search by Ticket ID"
                     name="search"
                     value={search}
                     onChange={handleSearchChange}
@@ -174,7 +196,7 @@ const TicketSupport = () => {
         </div>
       ) : (
         <div className="sm:ml-14 md:ml-0">
-          <TabBar tabs={tabs} />
+        <TabBar tabs={tabs} activeTab={activeTab} onTabChange={handleTabChange} setActiveTab={setActiveTab} />
         </div>
       )}
       <div className="mt-12 mb-10 ml-52">

@@ -4,8 +4,8 @@ import { Doughnut } from "react-chartjs-2";
 
 Chart.register(ArcElement, Tooltip, Legend);
 
-const DonoughtCharts = ({ data, totalvisa }) => {
-  console.log(totalvisa, "te") 
+const DonoughtCharts = ({ data, totalApplication }) => {
+  // const totalCount 
   const chartData = {
     labels: data.labels,
     datasets: [
@@ -43,9 +43,9 @@ const DonoughtCharts = ({ data, totalvisa }) => {
     <Doughnut data={chartData} options={chartOptions} />
   
     {/* New relative container */}
-    <span className="flex flex-col items-center absolute top-14 md:left-[60px]  xl:left-[75px]  ">
-        <span className="text-[#0B91BC] font-semibold text-[28px]">{totalvisa || "NA"}</span>
-        <span className="text-[14px] font-light">Visa Application</span>
+    <span className="flex flex-col items-center absolute top-14 md:left-[52px] sm:left-[49px]  xl:left-[75px]  ">
+        <span className="text-[#0B91BC] font-semibold text-[28px]">{totalApplication || "NA"}</span>
+        <span className="text-[14px] font-light">Total Applications</span>
       </span>
 
       <div className="flex flex-wrap justify-center  items-center mt-3 gap-3 text-sidebar text-[12px] ">

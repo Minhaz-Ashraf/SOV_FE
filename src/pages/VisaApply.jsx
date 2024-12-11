@@ -55,6 +55,9 @@ const initialStudentDocument = {
 
 const VisaApply = () => {
   const role = localStorage.getItem("role");
+  const [newFiles, setNewFiles] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [deletedFiles, setDeletedFiles] = useState([]);
   const { agentData } = useSelector((state) => state.agent);
   const studentUserId = useSelector((state) => state.student.studentInfoData);
   const location = useLocation();
@@ -113,76 +116,6 @@ const VisaApply = () => {
     }));
   };
 
-  const handleFilePopupOpen = (fileType) => {
-    setFileType(fileType);
-    setIsPopUp(true);
-  };
-
-  const handleFileUpload = async (filesOrUrls) => {
-    if (!filesOrUrls || filesOrUrls.length === 0) return;
-
-    let uploadedUrls = [];
-
-    // Separate string URLs from files
-    const stringUrls = filesOrUrls.filter((item) => typeof item === "string");
-    const fileObjects = filesOrUrls.filter((item) => item instanceof File);
-
-    // Add string URLs directly
-    if (stringUrls.length > 0) {
-      uploadedUrls.push(...stringUrls);
-    }
-
-    // Upload file objects to Firebase
-    for (const file of fileObjects) {
-      const uniqueFileName = `${uuidv4()}-${file.name}`;
-      const storageRef = ref(storage, `uploads/visa/${uniqueFileName}`);
-      try {
-        const snapshot = await uploadBytes(storageRef, file);
-        const downloadURL = await getDownloadURL(snapshot.ref);
-        uploadedUrls.push(downloadURL);
-        const uploadData = { viewUrl: downloadURL, documentName: file.name, userId: studentId };
-        await uploadDocument(uploadData);
-        toast.success(`${file.name} uploaded successfully!`);
-      } catch (error) {
-        toast.error(`Error uploading ${file.name}. Please try again.`);
-      }
-    }
-
-    // Update the state dynamically
-    if (uploadedUrls.length > 0) {
-      setVisaLetter((prevState) => ({
-        ...prevState,
-        studentDocument: {
-          ...prevState.studentDocument,
-          [isFileType]: uploadedUrls[0], // Set the first uploaded URL under the document type key
-        },
-      }));
-    }
-  };
-
-  const deleteFile = async (fileType) => {
-    const fileUrl = visaLetter.studentDocument[fileType];
-    if (!fileUrl) return;
-    await deleteDocument(fileUrl);
-
-    const storageRef = ref(storage, fileUrl);
-    try {
-      await deleteObject(storageRef);
-
-      // Remove the URL from the state for the given document type
-      setVisaLetter((prevState) => ({
-        ...prevState,
-        studentDocument: {
-          ...prevState.studentDocument,
-          [fileType]: "", // Clear the URL for the specific document type
-        },
-      }));
-      toast.success("File deleted successfully!");
-    } catch (error) {
-      toast.error("Error deleting file. Please try again.");
-    }
-  };
-
   const validateFields = () => {
     const errors = {};
     const { personalDetails, studentDocument } = visaLetter;
@@ -233,35 +166,202 @@ const VisaApply = () => {
 
     return errors;
   };
+  const handleFilePopupOpen = (fileType) => {
+    setFileType(fileType);
+    setIsPopUp(true);
+  };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  // const handleFileUpload = async (filesOrUrls) => {
+  //   if (!filesOrUrls || filesOrUrls.length === 0) return;
+
+  //   let uploadedUrls = [];
+
+  //   // Separate string URLs from files
+  //   const stringUrls = filesOrUrls.filter((item) => typeof item === "string");
+  //   const fileObjects = filesOrUrls.filter((item) => item instanceof File);
+
+  //   // Add string URLs directly
+  //   if (stringUrls.length > 0) {
+  //     uploadedUrls.push(...stringUrls);
+  //   }
+
+  //   // Upload file objects to Firebase
+  //   for (const file of fileObjects) {
+  //     const uniqueFileName = `${uuidv4()}-${file.name}`;
+  //     const storageRef = ref(storage, `uploads/visa/${uniqueFileName}`);
+  //     try {
+  //       const snapshot = await uploadBytes(storageRef, file);
+  //       const downloadURL = await getDownloadURL(snapshot.ref);
+  //       uploadedUrls.push(downloadURL);
+  //       const uploadData = { viewUrl: downloadURL, documentName: file.name, userId: studentId };
+  //       await uploadDocument(uploadData);
+  //       toast.success(`${file.name} uploaded successfully!`);
+  //     } catch (error) {
+  //       toast.error(`Error uploading ${file.name}. Please try again.`);
+  //     }
+  //   }
+
+  //   // Update the state dynamically
+  //   if (uploadedUrls.length > 0) {
+  //     setVisaLetter((prevState) => ({
+  //       ...prevState,
+  //       studentDocument: {
+  //         ...prevState.studentDocument,
+  //         [isFileType]: uploadedUrls[0], // Set the first uploaded URL under the document type key
+  //       },
+  //     }));
+  //   }
+  // };
+
+  const handleFileUpload = (files) => {
+    if (!files || files.length === 0 || !isFileType) return;
+
+    const fileOrUrl = files[0];
+
+    if (fileOrUrl instanceof File) {
+      // Handle File objects
+      const blobUrl = URL.createObjectURL(fileOrUrl);
+
+      setNewFiles((prevFiles) => [
+        ...prevFiles.filter((f) => f.fileType !== isFileType),
+        { file: fileOrUrl, fileType: isFileType, blobUrl },
+      ]);
+
+      // Update state with blob URL for preview
+      setVisaLetter((prevState) => ({
+        ...prevState,
+        studentDocument: {
+          ...prevState.studentDocument,
+          [isFileType]: blobUrl, // Set blob URL temporarily
+        },
+      }));
+
+      // toast.success(`${fileOrUrl.name} has been selected.`);
+    } else if (typeof fileOrUrl === "string") {
+      // Handle URL strings: directly set in the VisaLetter state
+      setVisaLetter((prevState) => ({
+        ...prevState,
+        studentDocument: {
+          ...prevState.studentDocument,
+          [isFileType]: fileOrUrl, // Set the URL directly
+        },
+      }));
+
+      // toast.success("Document URL has been set.");
+    }
+  };
+
+  const deleteFile = async (fileType) => {
+    const fileUrl = visaLetter.studentDocument[fileType];
+    if (!fileUrl) return;
+    // await deleteDocument(fileUrl);
+
+    const fileUrls = Array.isArray(fileUrl) ? fileUrl : [fileUrl];
+
+    fileUrls.forEach((url) => {
+      if (typeof url === "string" && url.startsWith("http")) {
+        setDeletedFiles((prevFiles) => [
+          ...prevFiles.filter((f) => f.fileType !== fileType),
+          { fileUrl: url, fileType },
+        ]);
+      }
+    });
+
+    setVisaLetter((prevState) => ({
+      ...prevState,
+      studentDocument: {
+        ...prevState.studentDocument,
+        [fileType]: "",
+      },
+    }));
+
+    setNewFiles((prevFiles) =>
+      prevFiles.filter((file) => file.fileType !== fileType)
+    );
+
+    // toast.info("File marked for deletion.");
+  };
+
+  const handleSubmit = async () => {
     const validationErrors = validateFields();
-    if (Object.keys(validationErrors).length) {
+
+    if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-      toast.error("Please fill required fields");
+      toast.error("Please fill all required fields");
+
       return;
     }
-    const payload = {
-      country: countryName,
-      studentInformationId: studentId,
-      personalDetails: {
-        ...visaLetter.personalDetails,
-      },
-      offerLetter: visaLetter.studentDocument.offerLetter,
-      gicLetter: visaLetter.studentDocument.gicLetter,
-      medical: visaLetter.studentDocument.medical,
-      pcc: visaLetter.studentDocument.pcc,
-      pal: visaLetter.studentDocument.pal,
-      loa: visaLetter.studentDocument.loa,
-      certificate: Array.isArray(visaLetter.studentDocument.certificate)
-        ? visaLetter.studentDocument.certificate
-        : [visaLetter.studentDocument.certificate],
-    };
+
     try {
-      const res = await visaAdd(payload);
+      setIsSubmitting(true);
+
+      // Handle file deletions
+      // for (const { fileUrl } of deletedFiles) {
+      // const storageRef = ref(storage, fileUrl);
+      //     try {
+      //       await deleteObject(storageRef);
+      // await deleteDocument(fileUrl);
+
+      //       // toast.success(`File ${fileUrl} deleted successfully.`);
+      //     } catch (error) {
+      //       // toast.error(`Error deleting file: ${fileUrl}`);
+      //     }
+      // }
+
+      // Handle new file uploads
+      const updatedStudentDocument = {
+        country: countryName,
+        studentInformationId: studentId,
+        personalDetails: {
+          ...visaLetter.personalDetails,
+        },
+        offerLetter: visaLetter.studentDocument.offerLetter,
+        gicLetter: visaLetter.studentDocument.gicLetter,
+        medical: visaLetter.studentDocument.medical,
+        pcc: visaLetter.studentDocument.pcc,
+        pal: visaLetter.studentDocument.pal,
+        loa: visaLetter.studentDocument.loa,
+        certificate: Array.isArray(visaLetter.studentDocument.certificate)
+          ? visaLetter.studentDocument.certificate
+          : [visaLetter.studentDocument.certificate],
+      };
+
+      for (const { file, fileType, blobUrl } of newFiles) {
+        const uniqueFileName = `${uuidv4()}-${file.name}`;
+        const storageRef = ref(storage, `uploads/visa/${uniqueFileName}`);
+        try {
+          const snapshot = await uploadBytes(storageRef, file);
+          const downloadURL = await getDownloadURL(snapshot.ref);
+
+          // Replace the blob URL with the Firebase URL for the specific field
+          updatedStudentDocument[fileType] = downloadURL;
+          const uploadData = {
+            viewUrl: downloadURL,
+            documentName: file.name,
+            userId: studentId,
+          };
+          await uploadDocument(uploadData);
+          setVisaLetter((prevState) => ({
+            ...prevState,
+            studentDocument: {
+              ...prevState.studentDocument,
+              [fileType]:
+                prevState.studentDocument[fileType] === blobUrl
+                  ? downloadURL
+                  : prevState.studentDocument[fileType],
+            },
+          }));
+        } catch (error) {
+          console.log(error);
+          toast.error(`Error uploading ${file.name}.`);
+        }
+      }
+
+      // Submit the updated data to the backend
+      const res = await visaAdd(updatedStudentDocument);
       setIsConfirmPopUp(true);
-      toast.success(res?.message || "Form Submitted");
+
+      toast.success(res.message || "Data added successfully.");
       if (role === "2" && res?.statusCode === 200) {
         if (socketServiceInstance.isConnected()) {
           //from agent to admin
@@ -354,10 +454,18 @@ const VisaApply = () => {
           console.error("Socket connection failed, cannot emit notification.");
         }
       }
+
+      setIsSubmitting(false);
+
+      // Clear temporary states
+      setNewFiles([]);
+      setDeletedFiles([]);
     } catch (error) {
-      toast.error(error.message || "Something went wrong");
+      toast.error(error.message || "Something went wrong.");
+      console.error("Error during submission:", error);
     }
   };
+
   useEffect(() => {
     if (StudentDataToGet?.studentInformation) {
       setVisaLetter((prevState) => ({
@@ -409,11 +517,15 @@ const VisaApply = () => {
           {role === "3" ? <Sidebar /> : role === "2" ? <AgentSidebar /> : null}
         </span>
         <div className="ml-[17%] pt-16 pb-8 bg-white border-b-2 border-[#E8E8E8]">
-          <span className="flex items-center">
+          <span className="flex  items-center">
             <p className="text-[28px] font-bold text-sidebar mt-6 md:ml-9 sm:ml-20">
-              Apply Visa
+              Apply Visa for ({countryName})
             </p>
           </span>
+          <p className="text-sidebar ml-9 text-[15px]">
+            Check your details and make sure everything looks good. <br /> It's
+            no big deal if it's not - you can always change it.
+          </p>
         </div>
         <div className="ml-[30%] mr-[15%]">
           <div className="bg-white rounded-xl px-8 py-4 pb-12 mt-8">
@@ -506,7 +618,10 @@ const VisaApply = () => {
               key={docType}
             >
               <p className="text-[15px]  text-body">
-                {docType.replace(/([A-Z])/g, " $1")}
+                {docType
+                  .replace(/([A-Z])/g, " $1")
+                  .trim()
+                  .replace(/^./, (str) => str.toUpperCase()) } *
               </p>
               <div className="flex flex-col justify-center items-center border-2 border-dashed border-body rounded-md py-9 mt-5 mb-4">
                 <button
@@ -515,7 +630,10 @@ const VisaApply = () => {
                 >
                   <FiUpload className="mr-2 text-primary text-[29px]" />
                 </button>
-                <p>Upload {docType.replace(/([A-Z])/g, " $1")}</p>
+                <p>Upload   {docType
+                  .replace(/([A-Z])/g, " $1")
+                  .trim()
+                  .replace(/^./, (str) => str.toUpperCase())}</p>
               </div>
               {visaLetter.studentDocument[docType] && (
                 <div className="mt-2 flex items-center">
@@ -546,7 +664,7 @@ const VisaApply = () => {
               onClick={handleSubmit}
               className="bg-primary text-white font-poppins rounded-md px-6 py-2 cursor-pointer"
             >
-              Submit
+              {isSubmitting ? "Submitting..." : "Save"}
             </span>
           </div>
         </div>

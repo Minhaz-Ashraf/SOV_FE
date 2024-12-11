@@ -8,10 +8,11 @@ import { dnf } from "../../assets";
 import { setUpdateTicket } from "../../features/adminSlice";
 import { useDispatch } from "react-redux";
 
-const PendingTicket = ({ data, isLoading }) => {
+const PendingTicket = ({ data, isLoading, currentPage, setPage }) => {
 const dispatch = useDispatch();
   useEffect(() => {
     dispatch(setUpdateTicket("underreview"));
+    setPage(1)
   }, [dispatch]);
 
 
@@ -25,9 +26,9 @@ const dispatch = useDispatch();
     "Priority",
     "Action",
   ];
-console.log(isLoading)
-  const TABLE_ROWS = data?.tickets?.map((ticket, index) => ({
-    sno: index + 1,
+// console.log(data)
+  const TABLE_ROWS = data?.tickets?.map((ticket, index) =>({
+    sno: (currentPage - 1) * 10 + index + 1,
     ticketNo: ticket?.ticketId || "NA",
     name: ticket?.name || "NA",
     type: ticket?.userType || "NA",
@@ -48,7 +49,7 @@ console.log(isLoading)
 
   if (!data?.tickets || data?.tickets?.length === 0) {
     return (
-      <div className="mt-8 font-medium text-body ml-[22%] mr-[15%]">
+      <div className="mt-8 font-medium text-body md:ml-[22%] md:mr-[15%]">
         <Dnf
           dnfImg={dnf}
           headingText="Start Your Journey!"
@@ -59,7 +60,7 @@ console.log(isLoading)
   }
 
   return (
-    <div className="mt-6 mr-6">
+    <div className="mt-6 md:mr-6 sm:ml-5">
       <CustomTableFive
         tableHead={TABLE_HEAD}
         tableRows={TABLE_ROWS}

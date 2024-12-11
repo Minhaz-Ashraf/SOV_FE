@@ -23,6 +23,8 @@ import { storage } from "../utils/fireBase";
 import { agentInformation } from "../features/agentSlice";
 import { ImBin } from "react-icons/im";
 import { v4 as uuidv4 } from "uuid";
+import { editAgentAdmin } from "../features/adminApi";
+import { agentDataProfile } from "../features/adminSlice";
 const initialContactData = {
   title: "",
   firstName: "",
@@ -49,11 +51,13 @@ const initialAdmissionData = {
 
 const maxadmissionsContacts = 5; // Define the maximum number of admissions contacts
 
-const AgentForm2 = ({ hide, handleCancel, updateData }) => {
+const AgentForm2 = ({ hide, handleCancel, updateData, adminId, agentId }) => {
+  const role = localStorage.getItem('role')
+  const { agentProfile } = useSelector((state) => state.admin);
   const { countryOption } = useSelector((state) => state.general);
   const { agentData } = useSelector((state) => state.agent);
   const [resetProfilePic, setResetProfilePic] = useState(false);
-  const contactDetails = agentData;
+  const contactDetails = role === "0" ? agentProfile : agentData;
   const [contactData, setContactData] = useState({
     primaryContact: { ...initialContactData },
     commissionContact: { ...initialcommissionContactData },
@@ -275,6 +279,7 @@ const AgentForm2 = ({ hide, handleCancel, updateData }) => {
   useEffect(() => {
     if (contactDetails) {
       setContactData({
+        companyId:adminId,
         primaryContact: {
           title: contactDetails.primaryContact?.title || "",
           firstName: contactDetails.primaryContact?.firstName || "",
@@ -329,8 +334,19 @@ const AgentForm2 = ({ hide, handleCancel, updateData }) => {
             })
           ),
         };
-        const res = await formTwoSubmit(dataToSubmit, editForm);
 
+
+        let res;
+
+        if (role === "0") {
+          await editAgentAdmin("/company/register-companyContact-admin", dataToSubmit, editForm);
+        } else {
+          res = await formTwoSubmit(dataToSubmit, editForm);
+        }
+      
+        if(role === "0"){
+          dispatch(agentDataProfile(agentId));
+        }
         toast.success(res?.message || "Data added successfully");
         {
           hide === true

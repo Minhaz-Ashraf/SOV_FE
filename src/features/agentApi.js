@@ -398,15 +398,39 @@ export const deleteStudentById = async (id) => {
     }
   }
 };
-export const deleteAgentById = async (id) => {
+export const deleteUserById = async (path) => {
   try {
-    const response = await apiurl.delete(`/company/delete-agent/${id}`);
+    const response = await apiurl.delete(path);
 
     return response.data?.data;
   } catch (error) {
     if (error.response) {
       throw new Error(
         error.response.data.message || "Error while submitting the form"
+      );
+    } else if (error.request) {
+      throw new Error("No response from server. Please try again later.");
+    } else {
+      throw new Error("An unexpected error occurred");
+    }
+  }
+};
+
+
+export const fetchAgentDashboardData = async (endpoint, type, year) => {
+  try {
+    const params = { year }; // Always include year
+    if (type && type !== null) {
+      params.applicationType = type; // Add applicationType only if type is available
+    }
+
+    const response = await apiurl.get(endpoint, { params });
+
+    return response.data?.data;
+  } catch (error) {
+    if (error.response) {
+      throw new Error(
+        error.response.data.message || "Error while fetching data"
       );
     } else if (error.request) {
       throw new Error("No response from server. Please try again later.");

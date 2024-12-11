@@ -11,8 +11,14 @@ import { toast } from "react-toastify";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { updateDocs } from "../../features/generalApi";
 import { v4 as uuidv4 } from "uuid";
+import { chngeApplicationStatus } from "../../features/adminApi";
+import { useSelector } from "react-redux";
 
 const VisaCompleteUpload = ({appId}) => {
+  const { agentData } = useSelector((state) => state.agent);
+  const { studentInfoData } = useSelector((state) => state.student);
+  const { visaStatus } = useSelector((state) => state.general);
+
   const [visaComplete, setVisaComplete] = useState({
     ppr: "",
     visaStamp: "",
@@ -20,10 +26,12 @@ const VisaCompleteUpload = ({appId}) => {
   const [resetppr, setresetPpr] = useState(false);
   const [resetvisaStamp, setresetVisaStamp] = useState(false);
   const [errors, setErrors] = useState({});
+
   const handleFileUpload = async (files, uploadType) => {
     if (!files || files.length === 0) return;
 
     const file = files[0]; 
+    
     const uniqueFileName = `${uuidv4()}-${file.name}`;
     const storageRef = ref(storage, `uploads/withdrawal/${uniqueFileName}`);
 
@@ -107,6 +115,7 @@ const handleSubmit = async()=>{
   
     try{
     const res = await updateDocs(appId, visaComplete);
+    await chngeApplicationStatus(visaStatus?._id, "visagranted", "visa");
     toast.success(res.message || "Document Submitted Successfully")
     }catch(error){
         console.log(error)

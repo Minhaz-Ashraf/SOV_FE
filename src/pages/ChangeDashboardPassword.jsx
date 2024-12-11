@@ -10,13 +10,13 @@ import Sidebar from "../components/dashboardComp/Sidebar";
 
 import socketServiceInstance from "../services/socket";
 import { useSelector } from "react-redux";
-
-
+import { useNavigate } from "react-router-dom";
 
 const ChangeDashboardPassword = () => {
   const { agentData } = useSelector((state) => state.agent);
   const { studentInfoData } = useSelector((state) => state.student);
-  const role = localStorage.getItem('role')
+  const role = localStorage.getItem("role");
+  const navigate = useNavigate();
   const [isPassword, setIsPassword] = useState({
     password: "",
     newPassword: "",
@@ -25,7 +25,10 @@ const ChangeDashboardPassword = () => {
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const userId = role === "3" ? studentInfoData?.data?.studentInformation?._id : agentData?._id
+  const userId =
+    role === "3"
+      ? studentInfoData?.data?.studentInformation?._id
+      : agentData?._id;
 
   const handleInput = (e) => {
     const { name, value } = e.target;
@@ -54,15 +57,17 @@ const ChangeDashboardPassword = () => {
       toast.success(res.message || "Password changed successfully");
       if (socketServiceInstance.isConnected()) {
         //from agent to admin
-        const data = { userId : userId, reason : "password changed" }
+        const data = { userId: userId, reason: "password changed" };
 
-        socketServiceInstance.socket.emit(
-          "DELETE_AUTH_TOKEN",
-          data
-        );
+        socketServiceInstance.socket.emit("DELETE_AUTH_TOKEN", data);
       } else {
         console.error("Socket connection failed, cannot emit notification.");
       }
+      localStorage.removeItem("student");
+      localStorage.removeItem("role");
+      localStorage.removeItem("userAuthToken");
+      navigate("/login");
+
       setErrors({});
     } catch (error) {
       console.log(error);
@@ -75,7 +80,7 @@ const ChangeDashboardPassword = () => {
       <Header customLink="/agent/shortlist" />
       <div>
         <span className="fixed overflow-y-scroll scrollbar-hide bg-white">
-         {role === "2" ?<AgentSidebar />  : <Sidebar/>  } 
+          {role === "2" ? <AgentSidebar /> : <Sidebar />}
         </span>
       </div>
       <div className="font-poppins">
@@ -106,6 +111,7 @@ const ChangeDashboardPassword = () => {
             toggleVisibility={togglePasswordVisibility}
             error={errors.password}
           />
+
           <div className="mt-6">
             <PasswordField
               name="newPassword"
@@ -116,6 +122,10 @@ const ChangeDashboardPassword = () => {
               toggleVisibility={togglePasswordVisibility}
               error={errors.newPassword}
             />
+            <p className="text-[13px] text-primary pt-[9px] font-poppins">
+              Use 10 or more characters including - alphabets, numbers and
+              special characters.
+            </p>
           </div>
           <div className="mt-6">
             <PasswordField

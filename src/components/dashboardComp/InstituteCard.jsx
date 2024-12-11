@@ -74,14 +74,14 @@ const InstituteCard = ({
   );
 };
 
-const StatusComp = ({ statusOne, statusTwo, statusThree, statusFour, statusFive }) => {
+const StatusComp = ({ statusOne, statusTwo, statusThree, statusFour, statusFive, statusSix }) => {
   const statusList = [
     statusOne,
     statusTwo,
     "current",
      statusFour,
      statusFive,
-     "current"
+     statusSix,
   ];
   //
   const cardLabels = [

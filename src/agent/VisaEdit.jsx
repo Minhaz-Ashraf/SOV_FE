@@ -20,7 +20,7 @@ const VisaEdit = () => {
   const { studentData } = useSelector((state) => state.general);
   const dispatch = useDispatch();
   const location = useLocation();
-  const profileView = role === "0"
+  const profileView = role === "0";
   const appId = location.state.id || location.state;
   const [isUpdated, setIsUpdated] = useState(false);
   useEffect(() => {
@@ -57,7 +57,17 @@ const VisaEdit = () => {
           //from student to admin
           const notificationData = {
             title: " STUDENT_RESUBMITTED_VISA_LODGEMENT",
-            message: `${studentInfoData?.data?.studentInformation?.personalInformation.firstName + " " + studentInfoData?.data?.studentInformation?.personalInformation.lastName}  ${studentInfoData?.data?.studentInformation?.stId}  has resubmitted the Visa lodgement application ${applicationDataById?.applicationId} of ${applicationDataById?.visa?.country}   `,
+            message: `${
+              studentInfoData?.data?.studentInformation?.personalInformation
+                .firstName +
+              " " +
+              studentInfoData?.data?.studentInformation?.personalInformation
+                .lastName
+            }  ${
+              studentInfoData?.data?.studentInformation?.stId
+            }  has resubmitted the Visa lodgement application ${
+              applicationDataById?.applicationId
+            } of ${applicationDataById?.visa?.country}   `,
             path: "/admin/applications-review",
             recieverId: "",
           };
@@ -84,7 +94,13 @@ const VisaEdit = () => {
           <Header customLink="/agent/shortlist" />
           <div>
             <span className="fixed overflow-y-scroll scrollbar-hide  bg-white">
-              {role === "3" ? <Sidebar /> : role == "2" ? <AgentSidebar /> : <AdminSidebar/> }
+              {role === "3" ? (
+                <Sidebar />
+              ) : role == "2" ? (
+                <AgentSidebar />
+              ) : (
+                <AdminSidebar />
+              )}
             </span>
           </div>
         </>
@@ -103,14 +119,16 @@ const VisaEdit = () => {
                 big deal if it's not - you can always change it.
               </p>
             </span>
-            {applicationDataById?.visa?.status === "rejected" && (
-              <span
-                onClick={resSubmit}
-                className="px-6 py-2 bg-primary rounded-md text-white cursor-pointer"
-              >
-                Re-Submit
-              </span>
-            )}
+            {(applicationDataById?.visa?.status === "rejected" &&
+              role !== "0"
+               && (
+                <span
+                  onClick={resSubmit}
+                  className="px-6 py-2 bg-primary rounded-md text-white cursor-pointer"
+                >
+                  Re-Submit
+                </span>
+              ))}
           </span>
         )}
       </div>

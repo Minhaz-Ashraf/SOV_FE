@@ -25,12 +25,14 @@ import { FaRegEye } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
 import { profileSkeleton } from "../assets";
 import { studentApplications } from "../features/agentSlice";
-import { statusOption } from "../constant/data";
+import { statusApplicationView, statusOption } from "../constant/data";
 import { MdOutlineUploadFile } from "react-icons/md";
 
 const StudentApplicationView = () => {
   const dispatch = useDispatch();
   const location = useLocation();
+  const { getUrlData } = useSelector((state) => state.admin);
+
   const { studentApplicationData } = useSelector((state) => state.agent);
   const studentId = location.state?.id;
   const { getStudentDataById } = useSelector((state) => state.admin);
@@ -89,7 +91,7 @@ const StudentApplicationView = () => {
       country: data?.preferences?.country || "NA",
       type: data || "NA",
       status: data?.status || "NA",
-      appId: data?._id ,
+      appId: data?._id,
       studentId: studentId,
     })
   );
@@ -105,7 +107,7 @@ const StudentApplicationView = () => {
         </span>
       </div>
       <div className=" bg-white">
-        <div className="flex items-center gap-4 mt-16  md:ml-[18.5%] py-6">
+        <div className="flex items-center gap-4 mt-16  md:ml-[18.5%] sm:ml-[25%] py-6">
           <img
             src={
               getStudentDataById?.studentInformation?.personalInformation
@@ -159,7 +161,7 @@ const StudentApplicationView = () => {
           onChange={handleApplicatioTypeChange}
         >
           <option value="">Status</option>
-          {statusOption.map((option) => (
+          {statusApplicationView.map((option) => (
             <option key={option.option} value={option.option}>
               {option.label}
             </option>
@@ -180,7 +182,8 @@ const StudentApplicationView = () => {
         </span>
       </span>
 
-      <div className="mt-3 mr-6 ml-[19%] ">
+      <div className="mt-3 mr-6 md:ml-[19%] sm:ml-[26%]">
+
         <CustomTableTwo
           tableHead={TABLE_HEAD}
           tableRows={TABLE_ROWS}
@@ -189,14 +192,24 @@ const StudentApplicationView = () => {
           icon={<FaRegEye />}
           // link="/offerLetter/edit"
           ThirdAction={<MdOutlineUploadFile />}
-          
           customLinkState={TABLE_ROWS?.map((data) => data?._id)}
+          customData={TABLE_ROWS?.map(
+            (data) => data?.type?.studentInformationId
+          )}
+
+          customDataTwo={getUrlData?.data?.documents?.map((data) => ({
+            studentId: data?.applicationId,
+            document: data?.document,
+          }))}
+          customDataThree={TABLE_ROWS?.map(
+            (data) => data?.type?._id
+          )}
         />
       </div>
 
       <div className="mt-12 ml-52 mb-10">
         <Pagination
-            currentPage={currentPage}
+          currentPage={currentPage}
           hasNextPage={currentPage * perPage < totalUsersCount}
           hasPreviousPage={currentPage > 1}
           onPageChange={handlePageChange}

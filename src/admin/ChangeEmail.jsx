@@ -88,7 +88,7 @@ const ChangeEmail = () => {
           <AdminSidebar />
         </span>
       </div>
-      <div className="bg-white">
+      <div className="bg-white ">
         <span className="flex items-center pt-16 md:ml-[16.5%] sm:ml-[22%]">
           <span>
             <p className="text-[28px] font-bold text-sidebar mt-6 ml-9">
@@ -102,13 +102,13 @@ const ChangeEmail = () => {
       </div>
 
       {!isEmailChanged ? (
-        <div className="bg-white font-poppins rounded-md mx-72 mt-20 ml-[32%] py-6 px-12">
+        <div className="bg-white font-poppins rounded-md md:mx-72 mt-20 md:ml-[32%] sm:ml-[32%] sm:mx-20 py-6 px-12">
           {/* New Email Input */}
           <div className="mt-5">
             <CustomInput
               type="email"
               name="newEmail"
-              className="h-11 md:w-full sm:w-48 rounded-md text-body bg-input pl-3 border border-[#E8E8E8] outline-none"
+              className="h-11 md:w-full sm:w-full rounded-md text-body bg-input pl-3 border border-[#E8E8E8] outline-none"
               placeHodler="Enter new Email Address"
               value={newEmail}
               onChange={handleInput}
@@ -120,7 +120,7 @@ const ChangeEmail = () => {
             <CustomInput
               type="email"
               name="confirmEmail"
-              className="h-11 md:w-full sm:w-48 rounded-md text-body bg-input pl-3 border border-[#E8E8E8] outline-none"
+              className="h-11 md:w-full sm:w-full rounded-md text-body bg-input pl-3 border border-[#E8E8E8] outline-none"
               placeHodler="Confirm new Email Address"
               value={confirmEmail}
               onChange={handleInput}
@@ -132,7 +132,7 @@ const ChangeEmail = () => {
             <CustomInput
               type="password"
               name="password"
-              className="h-11 md:w-full sm:w-48 rounded-md text-body bg-input pl-3 border border-[#E8E8E8] outline-none"
+              className="h-11 md:w-full sm:w-full rounded-md text-body bg-input pl-3 border border-[#E8E8E8] outline-none"
               placeHodler="Enter your password"
               value={password}
               onChange={handleInput}

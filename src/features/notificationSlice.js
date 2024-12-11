@@ -13,6 +13,7 @@ const notificationsSlice = createSlice({
     error: null,
   },
   reducers: {
+    
     removeNotification: (state, action) => {
       state.notifications = state.notifications.filter(
         (n) => n._id !== action.payload
@@ -57,10 +58,17 @@ const notificationsSlice = createSlice({
       if (!isDuplicate) {
         state.notifications = [notification, ...state.notifications];
       }
+      
+    },
+    markAllAsSeen: (state) => {
+      state.notifications = state.notifications.map((n) => ({
+        ...n,
+        isRead: true,
+      }));
     },
   },
 });
 
-export const { markNotificationAsRead, addAllNotifications, updateNotificationCount, addOneCountToNotification, clearNotificationCount, addNewNotification, removeNotification } = notificationsSlice.actions;
+export const { markNotificationAsRead, addAllNotifications, updateNotificationCount, addOneCountToNotification, clearNotificationCount, addNewNotification, removeNotification, markAllAsSeen } = notificationsSlice.actions;
 
 export default notificationsSlice.reducer;

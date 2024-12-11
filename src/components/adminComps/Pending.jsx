@@ -49,7 +49,9 @@ const Pending = ({ data }) => {
       if (applicationData.customUserId.startsWith("AG")) {
         let notificationTitle = "";
         let notificationMessage = "";
-        
+        let path = "";
+        let pathData = "";
+          
         if (type === "courseFeeApplication") {
           notificationTitle = status === "approved" 
             ? "COURSE_FEE_APPROVED_AGENT" 
@@ -57,6 +59,9 @@ const Pending = ({ data }) => {
           notificationMessage = status === "approved"
             ? `Course Fee Application (${applicationData.applicationId})  has been approved for the ${applicationData.fullName} ${applicationData.studentId}`
             : `Course Fee Application (${applicationData.applicationId})  has been rejected for the ${applicationData.fullName} ${applicationData.studentId}.Rejection Reason :- {${message}}`;
+            path = "/agent/applications/lists"
+            pathData = applicationData.studentInformationId
+            // pathData = 
         } else if (type === "visa") {
           notificationTitle = status === "approved" 
             ? "VISA_LODGEMENT_APPROVED_AGENT" 
@@ -64,6 +69,8 @@ const Pending = ({ data }) => {
           notificationMessage = status === "approved"
             ? `Visa Lodgement Application (${applicationData.applicationId})  has been approved for the ${applicationData.fullName} ${applicationData.studentId} for ${applicationData.country}.`
             : `Visa Lodgement Application (${applicationData.applicationId})  has been rejected for the ${applicationData.fullName} ${applicationData.studentId} for ${applicationData.country}. Rejection Reason :- {${message}}`;
+            path = "/agent/applications/lists"
+            pathData = applicationData.studentInformationId
         } else if (type === "offerLetter") {
           notificationTitle = status === "approved" 
             ? "OFFER_LETTER_APPROVED_AGENT" 
@@ -71,6 +78,8 @@ const Pending = ({ data }) => {
           notificationMessage = status === "approved"
             ? `Offer letter(${applicationData.applicationId})  has been approved for ${applicationData.institution} for the ${applicationData.fullName} ${applicationData.studentId}.`
             : `Offer letter(${applicationData.applicationId})  has been rejected for ${applicationData.institution} for the ${applicationData.fullName} ${applicationData.studentId}.Rejection Reason :- {${message}}`;
+            path = "/agent/applications/lists"
+            pathData = pplicationData.studentInformationId
         }
       
         if (socketServiceInstance.isConnected()) {
@@ -78,7 +87,8 @@ const Pending = ({ data }) => {
             title: notificationTitle,
             message: notificationMessage,
             path: `/agent/application/lists`,
-            pathData: {pathId:applicationData?.mgdbId},
+            pathData: { studentId: pathData },
+
             recieverId: applicationData.userId,
           };
       
@@ -94,7 +104,7 @@ const Pending = ({ data }) => {
       if (applicationData.customUserId.startsWith("ST")) {
         let notificationTitle = "";
         let notificationMessage = "";
-      
+        let path="";
         if (type === "courseFeeApplication") {
           notificationTitle = status === "approved" 
             ? "COURSE_FEE_APPROVED_STUDENT" 
@@ -102,6 +112,7 @@ const Pending = ({ data }) => {
           notificationMessage = status === "approved"
             ? `Course Fee Application (${applicationData.applicationId})  has been approved.`
             : `Course Fee Application (${applicationData.applicationId})  has been rejected Rejection Reason :- {${message}}`;
+             path = "/student/application"
         } else if (type === "visa") {
           notificationTitle = status === "approved" 
             ? "VISA_LODGEMENT_APPROVED_STUDENT" 
@@ -109,6 +120,7 @@ const Pending = ({ data }) => {
           notificationMessage = status === "approved"
             ? `Visa Lodgement Application (${applicationData.applicationId}) has been approved for ${applicationData.country}.`
             : `Visa Lodgement Application (${applicationData.applicationId}) has been rejected for ${applicationData.country}. Rejection Reason :- {${message}}`;
+              path = "/student/application"
         } else if (type === "offerLetter") {
           notificationTitle = status === "approved" 
             ? "OFFER_LETTER_APPROVED_STUDENT" 
@@ -116,6 +128,7 @@ const Pending = ({ data }) => {
           notificationMessage = status === "approved"
             ? `Offer letter(${applicationData.applicationId})  has been approved of ${applicationData.institution}.`
             : `Offer letter(${applicationData.applicationId})  has been rejected for ${applicationData.institution} Rejection Reason :- {${message}}`;
+              path = "/student/application"
         }
       
         if (socketServiceInstance.isConnected()) {
@@ -144,7 +157,7 @@ const Pending = ({ data }) => {
   };
 
   const applications = data?.applications;
-  console.log(applications);
+  // console.log(applications);
   return (
     <div className="mt-4">
       {location.pathname === "/admin/applications-review" ? (
@@ -156,11 +169,13 @@ const Pending = ({ data }) => {
                 isApproval={false}
                 updateStatus={applicationStatus}
                 newStatus="approved"
-                linkTwo="/application-view"
+                
+                linkTwo={application?.type === "offerLetter" ? "/application-view" : application?.type === "visa" ? "/visa-view" : application?.type === "courseFeeApplication" ? "/coursefee-view" : null}
                 name={application.fullName}
                 userId={application?.customUserId}
                 mgdbId={application?.mgdbId}
                 applicationType={application?.type}
+                agentId={null}
                 description={
                   application?.customUserId?.startsWith("AG-")
                     ? `${application?.agentName} has filled ${application?.type} for his/her student ${application?.fullName}`
@@ -199,14 +214,19 @@ const Pending = ({ data }) => {
               updateStatus={updateStatus}
               newStatus="completed"
               id={item?._id}
+              agentId={item?.agentId}
               linkTwo="/agent-profile"
               linkOne="/student-profile"
               rejectStatus="rejected"
               name={`${item?.firstName} ${item?.lastName}` || "Unknown User"}
               description={
-                `${item?.firstName} ${
-                  item?.lastName
-                } has requested to register as an ${
+                `${item?.firstName} ${item?.lastName} ${
+                  item?.status === "requestedForReapproval"
+                    ? `${
+                        item?.type === "agent" ? "agent" : "student"
+                      } has requested for reapproval of the profile .`
+                    : "has requested to register as an"
+                } ${
                   item?.type === "agent" ? "agent" : "student"
                 } on SOV portal` || "Unknown User"
               }

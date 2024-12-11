@@ -38,7 +38,7 @@ import PopUp from "../components/reusable/PopUp";
 import { greenTick } from "../assets";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import Sidebar from "../components/dashboardComp/Sidebar";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 const initialPersonalInfo = {
   fullName: "",
@@ -59,13 +59,13 @@ const initialStudentDocument = {
 };
 
 const initialParentDocument = {
-  fatherAdharCard: "",
+  fatherAadharCard: "",
   fatherPanCard: "",
-  motherAdharCard: "",
+  motherAadharCard: "",
   motherPanCard: "",
 };
 const initialSiblingDocument = {
-  siblingAdharCard: "",
+  siblingAadharCard: "",
   siblingPanCard: "",
 };
 
@@ -76,6 +76,9 @@ const initialofferLetterAnsPassport = {
 
 const courseFeeApplication = () => {
   const role = localStorage.getItem("role");
+  const [deletedFiles, setDeletedFiles] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [newFiles, setNewFiles] = useState([]);
   const studentUserId = useSelector((state) => state.student.studentInfoData);
   const { agentData } = useSelector((state) => state.agent);
   const location = useLocation();
@@ -236,160 +239,137 @@ const courseFeeApplication = () => {
     seFileType(fileType);
     PopUpOpen();
   };
-  const handleFileUpload = async (filesOrUrls, uploadType) => {
-    if (!filesOrUrls || filesOrUrls.length === 0) return;
-  
-    let uploadedUrls = [];
-  
-    // Separate string URLs from files
-    const stringUrls = filesOrUrls.filter((item) => typeof item === "string");
-    const fileObjects = filesOrUrls.filter((item) => item instanceof File);
-  
-    // Add string URLs directly to the array
-    if (stringUrls.length > 0) {
-      uploadedUrls.push(...stringUrls);
+  const handleFileUpload = (files) => {
+    if (!files || files.length === 0) return;
+
+    const fileOrUrl = files[0];
+
+    if (fileOrUrl instanceof File) {
+      const blobUrl = URL.createObjectURL(fileOrUrl);
+      setNewFiles((prevFiles) => [
+        ...prevFiles.filter((f) => f.fileType !== isFileType),
+        { file: fileOrUrl, fileType: isFileType, blobUrl },
+      ]);
+
+      setCourseFee((prevState) => {
+        const updatedState = { ...prevState };
+        if (isFileType in updatedState.studentDocument) {
+          updatedState.studentDocument[isFileType] = blobUrl;
+        } else if (isFileType in updatedState.parentDocument) {
+          updatedState.parentDocument[isFileType] = blobUrl;
+        } else if (isFileType in updatedState.siblingDocument) {
+          updatedState.siblingDocument[isFileType] = blobUrl;
+        } else if (isFileType in updatedState.offerLetterAnsPassport) {
+          updatedState.offerLetterAnsPassport[isFileType] = blobUrl;
+        }
+        return updatedState;
+      });
     }
-  
-    // Upload file objects to Firebase
-    for (const file of fileObjects) {
+  };
+
+  const deleteFile = (fileUrl, fileType) => {
+    if (!fileUrl) return;
+
+    setDeletedFiles((prevFiles) => [...prevFiles, { fileUrl, fileType }]);
+
+    setCourseFee((prevState) => {
+      const updatedState = { ...prevState };
+      if (fileType in updatedState.studentDocument) {
+        updatedState.studentDocument[fileType] = "";
+      } else if (fileType in updatedState.parentDocument) {
+        updatedState.parentDocument[fileType] = "";
+      } else if (fileType in updatedState.siblingDocument) {
+        updatedState.siblingDocument[fileType] = "";
+      } else if (fileType in updatedState.offerLetterAnsPassport) {
+        updatedState.offerLetterAnsPassport[fileType] = "";
+      }
+      return updatedState;
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const validationErrors = validateFields();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      toast.error("Please fill required fields");
+      return;
+    }
+
+    // Upload new files to Firebase
+    for (const newFile of newFiles) {
+      const { file, fileType } = newFile;
       const uniqueFileName = `${uuidv4()}-${file.name}`;
-      const storageRef = ref(storage, `uploads/courseFeeApplication/${uniqueFileName}`);
+      const storageRef = ref(
+        storage,
+        `uploads/courseFeeApplication/${uniqueFileName}`
+      );
       try {
         const snapshot = await uploadBytes(storageRef, file);
         const downloadURL = await getDownloadURL(snapshot.ref);
-        uploadedUrls.push(downloadURL);
-        const uploadData = { viewUrl: downloadURL, documentName: file.name, userId: studentId };
+        setCourseFee((prevState) => {
+          const updatedState = { ...prevState };
+          if (fileType in updatedState.studentDocument) {
+            updatedState.studentDocument[fileType] = downloadURL;
+          } else if (fileType in updatedState.parentDocument) {
+            updatedState.parentDocument[fileType] = downloadURL;
+          } else if (fileType in updatedState.siblingDocument) {
+            updatedState.siblingDocument[fileType] = downloadURL;
+          } else if (fileType in updatedState.offerLetterAnsPassport) {
+            updatedState.offerLetterAnsPassport[fileType] = downloadURL;
+          }
+          return updatedState;
+        });
+        const uploadData = {
+          viewUrl: downloadURL,
+          documentName: file.name,
+          userId: studentId,
+        };
         await uploadDocument(uploadData);
         toast.success(`${file.name} uploaded successfully!`);
       } catch (error) {
         toast.error(`Error uploading ${file.name}. Please try again.`);
       }
     }
-  
-    // Update the state dynamically
-    if (uploadedUrls.length > 0) {
-      setCourseFee((prevState) => {
-        const newCourseFee = { ...prevState };
-  
-        // Update the appropriate section based on uploadType
-        if (uploadType in newCourseFee.studentDocument) {
-          newCourseFee.studentDocument[uploadType] = uploadedUrls[0];
-        } else if (uploadType in newCourseFee.parentDocument) {
-          newCourseFee.parentDocument[uploadType] = uploadedUrls[0];
-        } else if (uploadType in newCourseFee.siblingDocument) {
-          newCourseFee.siblingDocument[uploadType] = uploadedUrls[0];
-        } else if (uploadType in newCourseFee.offerLetterAnsPassport) {
-          newCourseFee.offerLetterAnsPassport[uploadType] = uploadedUrls[0];
-        }
-  
-        return newCourseFee;
-      });
-    }
-  };
-  
 
-  const deleteFile = async (fileUrl, uploadType) => {
-    if (!fileUrl) return;
-    await deleteDocument(fileUrl)
+    // Delete files from Firebase
+    // for (const deletedFile of deletedFiles) {
+    //   const { fileUrl, fileType } = deletedFile;
+    //   const storageRef = ref(storage, fileUrl);
+    //   try {
+    //     await deleteObject(storageRef);
+    //     toast.success("File deleted successfully!");
+    //   } catch (error) {
+    //     toast.error("Error deleting file. Please try again.");
+    //   }
+    // }
 
-    const storageRef = ref(storage, fileUrl);
-    try {
-      // Delete the file from Firebase storage
-      await deleteObject(storageRef);
-
-      toast.success("File deleted successfully!");
-
-      // Update the state to remove the deleted URL
-      setCourseFee((prevState) => {
-        const newState = { ...prevState };
-
-        if (uploadType in newState.studentDocument) {
-          // Filter URL from studentDocument array or property
-          newState.studentDocument[uploadType] = Array.isArray(
-            newState.studentDocument[uploadType]
-          )
-            ? newState.studentDocument[uploadType].filter(
-                (url) => url !== fileUrl
-              )
-            : "";
-        } else if (uploadType in newState.parentDocument) {
-          // Filter URL from parentDocument array or property
-          newState.parentDocument[uploadType] = Array.isArray(
-            newState.parentDocument[uploadType]
-          )
-            ? newState.parentDocument[uploadType].filter(
-                (url) => url !== fileUrl
-              )
-            : "";
-        } else if (uploadType in newState.siblingDocument) {
-          // Filter URL from siblingDocument array or property
-          newState.siblingDocument[uploadType] = Array.isArray(
-            newState.siblingDocument[uploadType]
-          )
-            ? newState.siblingDocument[uploadType].filter(
-                (url) => url !== fileUrl
-              )
-            : "";
-        } else if (uploadType in newState.offerLetterAnsPassport) {
-          // Filter URL from offerLetterAnsPassport array or property
-          newState.offerLetterAnsPassport[uploadType] = Array.isArray(
-            newState.offerLetterAnsPassport[uploadType]
-          )
-            ? newState.offerLetterAnsPassport[uploadType].filter(
-                (url) => url !== fileUrl
-              )
-            : "";
-        }
-
-        return newState;
-      });
-    } catch (error) {
-      toast.error("Error deleting file. Please try again.");
-    }
-  };
-
-  // Handle form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const validationErrors = validateFields();
-
-    if (Object.keys(validationErrors).length === 0) {
-      console.log("Form is valid");
-    } else {
-      setErrors(validationErrors);
-      toast.error("Please fill required fields");
-      console.log("Form has errors", validationErrors);
-      return; // Stop the submission process if there are validation errors
-    }
     const payload = {
-      personalDetails: {
-        ...courseFee.personalDetails,
-      },
-      studentDocument: {
-        ...courseFee.studentDocument,
-      },
-      parentDocument: {
-        ...courseFee.parentDocument,
-      },
-      siblingDocument:{
-        ...courseFee.siblingDocument,
-      },
-      offerLetterAnsPassport: {
-        ...courseFee.offerLetterAnsPassport,
-      },
+      ...courseFee,
       studentInformationId: studentId,
     };
+
     try {
-      // Submit the form
+      setIsSubmitting(true);
       const res = await courseFeeAdd(payload);
       confirmPopUpOpen();
       toast.success(res?.message || "Form Submitted");
+      // Trigger notifications based on role
       if (role === "2" && res?.statusCode === 200) {
         if (socketServiceInstance.isConnected()) {
           //from agent to admin
           const notificationData = {
-          title: " AGENT_SUBMITTED_COURSE_FEE",
-            message: `${agentData?.companyDetails?.businessName} ${agentData?.agId} has submitted the course fee application   ${applicationDataById?.applicationId} for the student ${studentData?.studentInformation?.personalInformation?.firstName + " " + studentData?.studentInformation?.personalInformation?.lastName} ${studentData?.studentInformation?.stId}`,
+            title: " AGENT_SUBMITTED_COURSE_FEE",
+            message: `${agentData?.companyDetails?.businessName} ${
+              agentData?.agId
+            } has submitted the course fee application   ${
+              applicationDataById?.applicationId
+            } for the student ${
+              studentData?.studentInformation?.personalInformation?.firstName +
+              " " +
+              studentData?.studentInformation?.personalInformation?.lastName
+            } ${studentData?.studentInformation?.stId}`,
             path: "/admin/applications-review",
             recieverId: "",
           };
@@ -406,20 +386,22 @@ const courseFeeApplication = () => {
           //from student to admin
           const notificationData = {
             title: " STUDENT_SUBMITTED_COURSE_FEE",
-            message: `${studentInfoData?.data?.studentInformation?.personalInformation?.firstName + " " + studentInfoData?.data?.studentInformation?.personalInformation?.lastName } ${studentInfoData?.data?.studentInformation?.stId}  has submitted the course fee application.  `,
+            message: `${
+              studentInfoData?.data?.studentInformation?.personalInformation
+                ?.firstName +
+              " " +
+              studentInfoData?.data?.studentInformation?.personalInformation
+                ?.lastName
+            } ${
+              studentInfoData?.data?.studentInformation?.stId
+            }  has submitted the course fee application.  `,
             agentId: agentData?._id,
             agId: agentData?.agId,
             agentName: agentData?.companyDetails?.businessName,
             studentId: studentId,
             stId: studentInfoData?.data?.studentInformation?.stId,
             studentName: courseFee.personalDetails.fullName,
-            countryName: "",
             path: "/admin/applications-review",
-            collegeName: "",
-            applicationId: "",
-            ticketId: "",
-            appId: "",
-            ticId: "",
             recieverId: agentData?._id,
           };
 
@@ -431,12 +413,12 @@ const courseFeeApplication = () => {
           console.error("Socket connection failed, cannot emit notification.");
         }
       }
-      
+      setIsSubmitting(false);
     } catch (error) {
       toast.error(error.message || "Something went wrong");
-      console.log(error);
     }
   };
+
   useEffect(() => {
     if (StudentDataToGet?.studentInformation) {
       setCourseFee((prevState) => ({
@@ -493,6 +475,7 @@ const courseFeeApplication = () => {
               Apply Course Fee Application
             </p>
           </span>
+          <p className="text-sidebar ml-9 text-[15px]">Check your details and make sure everything looks good. <br /> It's no big deal if it's not - you can always change it.</p>
         </div>
         <div className="ml-[30%] mr-[15%]">
           <div className="bg-white rounded-xl px-8 py-4 pb-12 mt-8 ">
@@ -594,32 +577,36 @@ const courseFeeApplication = () => {
               <p>Upload Aadhar Card</p>
             </div>
             {courseFee.studentDocument?.aadharCard &&
-                  typeof courseFee.studentDocument.aadharCard === "string" &&
-                  courseFee.studentDocument.aadharCard.startsWith("http") && (
-                    <div className="mt-4">
-                      <p className="text-secondary font-semibold">
-                        Uploaded Document:
-                      </p>
-                      <ul>
-                        <li className="flex items-center mt-2">
-                          <a
-                            href={courseFee.studentDocument.aadharCard}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-primary rounded-sm px-6 py-2 border border-greyish"
-                          >
-                            Uploaded Document
-                          </a>
-                          <button
-                            onClick={() => deleteFile(courseFee.studentDocument.aadharCard, "aadharCard")}
-                            className="ml-4 text-red-500"
-                          >
-                            <RiDeleteBin6Line />
-                          </button>
-                        </li>
-                      </ul>
-                    </div>
-                  )}
+              typeof courseFee.studentDocument.aadharCard === "string" && (
+                <div className="mt-4">
+                  <p className="text-secondary font-semibold">
+                    Uploaded Document:
+                  </p>
+                  <ul>
+                    <li className="flex items-center mt-2">
+                      <a
+                        href={courseFee.studentDocument.aadharCard}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary rounded-sm px-6 py-2 border border-greyish"
+                      >
+                        Uploaded Document
+                      </a>
+                      <button
+                        onClick={() =>
+                          deleteFile(
+                            courseFee.studentDocument.aadharCard,
+                            "aadharCard"
+                          )
+                        }
+                        className="ml-4 text-red-500"
+                      >
+                        <RiDeleteBin6Line />
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              )}
             <p className="text-[15px] mt-3 text-body">Pan Card</p>
             <div className="flex flex-col justify-center items-center border-2 border-dashed border-body rounded-md py-9 mt-9 mb-4">
               <button
@@ -632,32 +619,36 @@ const courseFeeApplication = () => {
             </div>
 
             {courseFee.studentDocument?.panCard &&
-                  typeof courseFee.studentDocument.panCard === "string" &&
-                  courseFee.studentDocument.panCard.startsWith("http") && (
-                    <div className="mt-4">
-                      <p className="text-secondary font-semibold">
-                        Uploaded Document:
-                      </p>
-                      <ul>
-                        <li className="flex items-center mt-2">
-                          <a
-                            href={courseFee.studentDocument.panCard}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-primary rounded-sm px-6 py-2 border border-greyish"
-                          >
-                            Uploaded Document
-                          </a>
-                          <button
-                            onClick={() => deleteFile(courseFee.studentDocument.panCard, "panCard")}
-                            className="ml-4 text-red-500"
-                          >
-                            <RiDeleteBin6Line />
-                          </button>
-                        </li>
-                      </ul>
-                    </div>
-                  )}
+              typeof courseFee.studentDocument.panCard === "string" && (
+                <div className="mt-4">
+                  <p className="text-secondary font-semibold">
+                    Uploaded Document:
+                  </p>
+                  <ul>
+                    <li className="flex items-center mt-2">
+                      <a
+                        href={courseFee.studentDocument.panCard}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary rounded-sm px-6 py-2 border border-greyish"
+                      >
+                        Uploaded Document
+                      </a>
+                      <button
+                        onClick={() =>
+                          deleteFile(
+                            courseFee.studentDocument.panCard,
+                            "panCard"
+                          )
+                        }
+                        className="ml-4 text-red-500"
+                      >
+                        <RiDeleteBin6Line />
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              )}
           </div>
           <div className="bg-white rounded-xl px-8 py-4 pb-12 mt-6">
             <span className="font-bold text-[25px] text-secondary">
@@ -795,32 +786,37 @@ const courseFeeApplication = () => {
               <p>Upload Offer Letter</p>
             </div>
             {courseFee.offerLetterAnsPassport?.offerLetter &&
-                  typeof courseFee.offerLetterAnsPassport.offerLetter === "string" &&
-                  courseFee.offerLetterAnsPassport.offerLetter.startsWith("http") && (
-                    <div className="mt-4">
-                      <p className="text-secondary font-semibold">
-                        Uploaded Document:
-                      </p>
-                      <ul>
-                        <li className="flex items-center mt-2">
-                          <a
-                            href={courseFee.offerLetterAnsPassport.offerLetter}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-primary rounded-sm px-6 py-2 border border-greyish"
-                          >
-                            Uploaded Document
-                          </a>
-                          <button
-                            onClick={() => deleteFile(courseFee.offerLetterAnsPassport.offerLetter, "offerLetter")}
-                            className="ml-4 text-red-500"
-                          >
-                            <RiDeleteBin6Line />
-                          </button>
-                        </li>
-                      </ul>
-                    </div>
-                  )}
+              typeof courseFee.offerLetterAnsPassport.offerLetter ===
+                "string" && (
+                <div className="mt-4">
+                  <p className="text-secondary font-semibold">
+                    Uploaded Document:
+                  </p>
+                  <ul>
+                    <li className="flex items-center mt-2">
+                      <a
+                        href={courseFee.offerLetterAnsPassport.offerLetter}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary rounded-sm px-6 py-2 border border-greyish"
+                      >
+                        Uploaded Document
+                      </a>
+                      <button
+                        onClick={() =>
+                          deleteFile(
+                            courseFee.offerLetterAnsPassport.offerLetter,
+                            "offerLetter"
+                          )
+                        }
+                        className="ml-4 text-red-500"
+                      >
+                        <RiDeleteBin6Line />
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              )}
             <p className="text-[15px] mt-3 text-body">Passport</p>
             <div className="flex flex-col justify-center items-center border-2 border-dashed border-body rounded-md py-9 mt-9 mb-4">
               <button
@@ -830,44 +826,46 @@ const courseFeeApplication = () => {
                 <FiUpload className="mr-2 text-primary text-[29px]" />
               </button>
               <p>Upload Passport</p>
-              
-              
             </div>
 
             {courseFee.offerLetterAnsPassport?.passport &&
-                  typeof courseFee.offerLetterAnsPassport.passport === "string" &&
-                  courseFee.offerLetterAnsPassport.passport.startsWith("http") && (
-                    <div className="mt-4">
-                      <p className="text-secondary font-semibold">
-                        Uploaded Document:
-                      </p>
-                      <ul>
-                        <li className="flex items-center mt-2">
-                          <a
-                            href={courseFee.offerLetterAnsPassport.passport}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-primary rounded-sm px-6 py-2 border border-greyish"
-                          >
-                            Uploaded Document
-                          </a>
-                          <button
-                            onClick={() => deleteFile(courseFee.offerLetterAnsPassport.passport, "passport")}
-                            className="ml-4 text-red-500"
-                          >
-                            <RiDeleteBin6Line />
-                          </button>
-                        </li>
-                      </ul>
-                    </div>
-                  )}
+              typeof courseFee.offerLetterAnsPassport.passport === "string" && (
+                <div className="mt-4">
+                  <p className="text-secondary font-semibold">
+                    Uploaded Document:
+                  </p>
+                  <ul>
+                    <li className="flex items-center mt-2">
+                      <a
+                        href={courseFee.offerLetterAnsPassport.passport}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary rounded-sm px-6 py-2 border border-greyish"
+                      >
+                        Uploaded Document
+                      </a>
+                      <button
+                        onClick={() =>
+                          deleteFile(
+                            courseFee.offerLetterAnsPassport.passport,
+                            "passport"
+                          )
+                        }
+                        className="ml-4 text-red-500"
+                      >
+                        <RiDeleteBin6Line />
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              )}
           </div>
           <div className="flex justify-end mb-12 mt-12">
             <span
               onClick={handleSubmit}
               className="bg-primary text-white font-poppins rounded-md px-6 py-2 cursor-pointer"
             >
-              Submit
+              {isSubmitting ? "Submitting..." : "Save"}
             </span>
           </div>
         </div>

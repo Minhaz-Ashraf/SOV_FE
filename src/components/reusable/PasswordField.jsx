@@ -8,7 +8,7 @@ const PasswordField = ({ name, value, handleInput, showPassword, toggleVisibilit
     <div className=" relative font-poppins">
       <span className="text-secondary text-[14px]">{label}*</span>
       <CustomInput
-        className="w-full h-12 bg-input rounded-md mt-3 px-3 outline-none  "
+        className="w-full h-12 bg-input text-body rounded-md mt-3 px-3 outline-none  "
         name={name}
         value={value}
         onChange={handleInput}

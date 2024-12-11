@@ -10,21 +10,24 @@ import { FaRegEye } from "react-icons/fa";
 import { CustomInput } from "../components/reusable/Input";
 import { IoSearchOutline } from "react-icons/io5";
 import { downloadFile } from "../features/adminApi";
+import Dnf from "../components/Dnf";
+import { dnf } from "../assets";
+import Loader from "../components/Loader";
 
 const StudentDirectory = () => {
   const dispatch = useDispatch();
   const location = useLocation();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [perPage, setPerPage] = useState(10);
+  const agentId = location?.state?.id
   const path =
     location.pathname === "/admin/agent-student"
-      ? "/studentInformation/agent-student-admin"
+      ? `/studentInformation/agent-student-admin`
       : "/admin/student-directory";
-
   // Select data from Redux
-
+console.log(location)
   const { getAllStudentData } = useSelector((state) => state.admin);
   const totalUsersCount =
     getAllStudentData?.data?.pagination?.totalDocuments || 0;
@@ -49,7 +52,9 @@ const StudentDirectory = () => {
   const handlePageChange = (pageNumber) => setPage(pageNumber);
 
   useEffect(() => {
-    dispatch(getAllStudentList({ path, page, perPage, search }));
+    setLoading(true);
+    dispatch(getAllStudentList({ path, page, perPage, search, agentId }));
+    setLoading(false);
   }, [dispatch, page, perPage, search]);
 
   const TABLE_HEAD = [
@@ -108,23 +113,11 @@ const StudentDirectory = () => {
       <div className=" mt-6 mr-6 ">
         <span className="flex flex-row items-center mb-3 ml-[20%]">
           <span className="flex flex-row justify-between w-full items-center">
-            <span className="flex flex-row items-center">
-              <span className="text-body">Show</span>
-              <select
-                className="ml-3 border px-2 py-1 w-10 h-11 rounded outline-none"
-                value={perPage}
-                onChange={handlePerPageChange}
-              >
-                {perPageOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-              <span className="px-3 text-body">entries</span>
-              <span className="flex flex-row items-center  ml-9">
+            <span className="flex flex-row items-center sm:ml-5">
+             
+              <span className="flex flex-row items-center  sm:ml-9 md:-ml-6">
                 <CustomInput
-                  className="h-11 w-80 rounded-md text-body placeholder:px-3 pl-7 border border-[#E8E8E8] outline-none"
+                  className="h-11 md:w-80 sm:w-60 rounded-md text-body placeholder:px-3 pl-7 border border-[#E8E8E8] outline-none"
                   type="text"
                   placeHodler="Search by application ID"
                   name="search"
@@ -153,15 +146,25 @@ const StudentDirectory = () => {
           </span>
         </span>
       </div>
+      {loading ? (
+        <div
+          className={`w-1  mt-12 ${
+            location.pathname === "/student-profile" ? "ml-[45%]" : "ml-[53%]"
+          }`}
+        >
+          <Loader />
+        </div>
+      ) : TABLE_ROWS?.length > 0 ? (
+        <>
+        <div className="mt-3 mr-6 md:ml-[19%] sm:ml-[26%]">
 
-      <div className="mt-6 mr-6 ml-[19%]">
         <CustomTableEight
           tableHead={TABLE_HEAD}
           tableRows={TABLE_ROWS}
           action="View"
           linkOne={"/student-profile"}
           icon={<FaRegEye />}
-          actionTwo={"Remove"}
+          actionTwo={"Delete"}
         />
       </div>
 
@@ -174,7 +177,18 @@ const StudentDirectory = () => {
           totalPagesCount={totalPagesCount}
         />
       </div>
+      
     </>
+  ) : (
+        <div className="md:ml-[13%] ml-[18%]">
+          <Dnf
+            dnfImg={dnf}
+            headingText="Start Your Journey!"
+            bodyText="No Student Found"
+          />
+        </div>
+      )}
+      </>
   );
 };
 

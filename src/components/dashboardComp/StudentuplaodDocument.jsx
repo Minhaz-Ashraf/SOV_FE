@@ -16,7 +16,7 @@ import { CustomInput } from "../reusable/Input";
 import { IoSearchOutline } from "react-icons/io5";
 
 const StudentUploadDocument = ({ adminPath, studentId }) => {
-
+console.log(studentId)
   const role = localStorage.getItem('role');
   const { getAllDocuments } = useSelector((state) => state.general);
   const dispatch = useDispatch();
@@ -31,7 +31,7 @@ const StudentUploadDocument = ({ adminPath, studentId }) => {
   const [perPage, setPerPage] = useState(10);
   const path =
     role === "0"
-      ? "/document/all-admin"
+      ? `/document/all-admin/${studentId}`
       : role === "2" || role === "3"
       ? `/document/all/${studentId}`
       : null;
@@ -142,20 +142,8 @@ const StudentUploadDocument = ({ adminPath, studentId }) => {
         <span className="flex flex-row items-center mb-3">
           <span className="flex flex-row justify-between w-full items-center">
             <span className="flex flex-row items-center">
-              <span className="text-body">Show</span>
-              <select
-                className="ml-3 border px-2 py-1 w-10 h-11 rounded outline-none"
-                value={perPage}
-                onChange={handlePerPageChange}
-              >
-                {perPageOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-              <span className="px-3 text-body">entries</span>
-              <span className="flex flex-row items-center  ml-9">
+             
+              <span className="flex flex-row items-center  md:ml-9">
                 <CustomInput
                   className="h-11 w-80 rounded-md text-body placeholder:px-3 pl-7 border border-[#E8E8E8] outline-none"
                   type="text"

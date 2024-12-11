@@ -20,7 +20,7 @@ const ReApproval_Request = () => {
   const reApprovalReq = async () => {
     try {
       const payload = {
-        status: "requestedForReaproval",
+        status: "requestedForReapproval",
       };
       const res = await reApprovalRequest(
         role === "2"
@@ -30,7 +30,7 @@ const ReApproval_Request = () => {
           : null,
         payload
       );
-      toast.success(res?.message || "Requested for reaproval");
+      toast.success(res?.message || "Requested for reapproval");
       if (role === "2" && res?.statusCode === 200) {
         if (socketServiceInstance.isConnected()) {
           //from agent to admin

@@ -4,7 +4,7 @@ export const getAllApplicationforApproval = async (
   tabType,
   page,
   perPage,
-  searchQuery,
+  searchQuery
 ) => {
   try {
     const response = await apiurl.get(`/admin/all/applications`, {
@@ -18,9 +18,7 @@ export const getAllApplicationforApproval = async (
     return response.data;
   } catch (error) {
     if (error.response) {
-      throw new Error(
-        error.response.data.message || "Something went wrong"
-      );
+      throw new Error(error.response.data.message || "Something went wrong");
     } else if (error.request) {
       throw new Error("No response from server. Please try again later.");
     } else {
@@ -29,12 +27,7 @@ export const getAllApplicationforApproval = async (
   }
 };
 
-export const getAllApproval = async (
-  tabType,
-  search,
-  page,
-  perPage,
-) => {
+export const getAllApproval = async (tabType, search, page, perPage) => {
   try {
     const response = await apiurl.get(`/admin/all/student-agent-data`, {
       params: {
@@ -47,9 +40,7 @@ export const getAllApproval = async (
     return response.data;
   } catch (error) {
     if (error.response) {
-      throw new Error(
-        error.response.data.message || "Something went wrong"
-      );
+      throw new Error(error.response.data.message || "Something went wrong");
     } else if (error.request) {
       throw new Error("No response from server. Please try again later.");
     } else {
@@ -66,9 +57,7 @@ export const chngeApplicationStatus = async (id, status, section, message) => {
     return response.data;
   } catch (error) {
     if (error.response) {
-      throw new Error(
-        error.response.data.message || "Something went wrong"
-      );
+      throw new Error(error.response.data.message || "Something went wrong");
     } else if (error.request) {
       throw new Error("No response from server. Please try again later.");
     } else {
@@ -78,14 +67,11 @@ export const chngeApplicationStatus = async (id, status, section, message) => {
 };
 export const changeVisaStatus = async (id, payload) => {
   try {
-    const response = await apiurl.patch(
-      `/admin/visa-status/${id}`, payload);
+    const response = await apiurl.patch(`/admin/visa-status/${id}`, payload);
     return response.data;
   } catch (error) {
     if (error.response) {
-      throw new Error(
-        error.response.data.message || "Something went wrong"
-      );
+      throw new Error(error.response.data.message || "Something went wrong");
     } else if (error.request) {
       throw new Error("No response from server. Please try again later.");
     } else {
@@ -103,9 +89,7 @@ export const changeApprovalStatus = async (id, status, type, message) => {
     return response.data;
   } catch (error) {
     if (error.response) {
-      throw new Error(
-        error.response.data.message || "Something went wrong"
-      );
+      throw new Error(error.response.data.message || "Something went wrong");
     } else if (error.request) {
       throw new Error("No response from server. Please try again later.");
     } else {
@@ -121,13 +105,11 @@ export const adminLogin = async (role, email, password) => {
       password,
     });
     localStorage.setItem("userAuthToken", response?.data?.data?.accessToken);
-    localStorage.setItem("role", "0" )
+    localStorage.setItem("role", "0");
     return response.data?.data;
   } catch (error) {
     if (error.response) {
-      throw new Error(
-        error.response.data.message || "Something went wrong"
-      );
+      throw new Error(error.response.data.message || "Something went wrong");
     } else if (error.request) {
       throw new Error("No response from server. Please try again later.");
     } else {
@@ -141,9 +123,7 @@ export const getAgentDataByAdmin = async (id) => {
     return response.data?.data;
   } catch (error) {
     if (error.response) {
-      throw new Error(
-        error.response.data.message || "Something went wrong"
-      );
+      throw new Error(error.response.data.message || "Something went wrong");
     } else if (error.request) {
       throw new Error("No response from server. Please try again later.");
     } else {
@@ -158,9 +138,7 @@ export const getStudentDataByAdmin = async (id) => {
     return response.data?.data;
   } catch (error) {
     if (error.response) {
-      throw new Error(
-        error.response.data.message || "Something went wrong"
-      );
+      throw new Error(error.response.data.message || "Something went wrong");
     } else if (error.request) {
       throw new Error("No response from server. Please try again later.");
     } else {
@@ -170,26 +148,30 @@ export const getStudentDataByAdmin = async (id) => {
 };
 
 // ticket support
-export const getTickets = async (page, perPage, isPriorityType, isStatusType, search, updateTicketTab) => {
+export const getTickets = async (
+  page,
+  perPage,
+  isPriorityType,
+  isStatusType,
+  search,
+  updateTicketTab,
+  dateObj
+) => {
   try {
-    
-    const response = await apiurl.get(`/ticket/all`,{
-      params:{
+    const response = await apiurl.get(`/ticket/all`, {
+      params: {
         page: page,
         limit: perPage,
         priorityStatus: isPriorityType,
         searchData: search,
-        status: updateTicketTab
-        
-
-      }
+        status: updateTicketTab,
+        date: dateObj,
+      },
     });
     return response.data?.data;
   } catch (error) {
     if (error.response) {
-      throw new Error(
-        error.response.data.message || "Something went wrong"
-      );
+      throw new Error(error.response.data.message || "Something went wrong");
     } else if (error.request) {
       throw new Error("No response from server. Please try again later.");
     } else {
@@ -201,14 +183,14 @@ export const getTickets = async (page, perPage, isPriorityType, isStatusType, se
 export const downloadFile = async ({ url, filename }) => {
   try {
     const response = await apiurl.get(url, {
-      responseType: "blob", 
+      responseType: "blob",
     });
 
     const fileUrl = window.URL.createObjectURL(new Blob([response.data]));
 
     const link = document.createElement("a");
     link.href = fileUrl;
-    link.setAttribute("download", filename); 
+    link.setAttribute("download", filename);
     document.body.appendChild(link);
     link.click();
 
@@ -217,7 +199,8 @@ export const downloadFile = async ({ url, filename }) => {
   } catch (error) {
     if (error.response) {
       throw new Error(
-        error.response.data.message || "Something went wrong during the download."
+        error.response.data.message ||
+          "Something went wrong during the download."
       );
     } else if (error.request) {
       throw new Error("No response from server. Please try again later.");
@@ -227,16 +210,13 @@ export const downloadFile = async ({ url, filename }) => {
   }
 };
 
-
 export const getTicketsDataById = async (id) => {
   try {
     const response = await apiurl.get(`/ticket/ticket/${id}`);
     return response.data?.data;
   } catch (error) {
     if (error.response) {
-      throw new Error(
-        error.response.data.message || "Something went wrong"
-      );
+      throw new Error(error.response.data.message || "Something went wrong");
     } else if (error.request) {
       throw new Error("No response from server. Please try again later.");
     } else {
@@ -244,7 +224,12 @@ export const getTicketsDataById = async (id) => {
     }
   }
 };
-export const ticketResolve = async (status, solution, resolvedText, ticketId) => {
+export const ticketResolve = async (
+  status,
+  solution,
+  resolvedText,
+  ticketId
+) => {
   try {
     const response = await apiurl.patch(`/ticket/ticket-subadmin/${ticketId}`, {
       status,
@@ -254,9 +239,7 @@ export const ticketResolve = async (status, solution, resolvedText, ticketId) =>
     return response.data;
   } catch (error) {
     if (error.response) {
-      throw new Error(
-        error.response.data.message || "Something went wrong"
-      );
+      throw new Error(error.response.data.message || "Something went wrong");
     } else if (error.request) {
       throw new Error("No response from server. Please try again later.");
     } else {
@@ -265,16 +248,13 @@ export const ticketResolve = async (status, solution, resolvedText, ticketId) =>
   }
 };
 
-
 export const changeAdminEmail = async (payload) => {
   try {
     const response = await apiurl.post(`/auth/admin/change-email`, payload);
     return response.data;
   } catch (error) {
     if (error.response) {
-      throw new Error(
-        error.response.data.message || "Something went wrong"
-      );
+      throw new Error(error.response.data.message || "Something went wrong");
     } else if (error.request) {
       throw new Error("No response from server. Please try again later.");
     } else {
@@ -288,9 +268,7 @@ export const changeAdminPassword = async (payload) => {
     return response.data;
   } catch (error) {
     if (error.response) {
-      throw new Error(
-        error.response.data.message || "Something went wrong"
-      );
+      throw new Error(error.response.data.message || "Something went wrong");
     } else if (error.request) {
       throw new Error("No response from server. Please try again later.");
     } else {
@@ -304,9 +282,7 @@ export const editProfile = async (payload) => {
     return response.data;
   } catch (error) {
     if (error.response) {
-      throw new Error(
-        error.response.data.message || "Something went wrong"
-      );
+      throw new Error(error.response.data.message || "Something went wrong");
     } else if (error.request) {
       throw new Error("No response from server. Please try again later.");
     } else {
@@ -320,9 +296,7 @@ export const getAdminProfileData = async () => {
     return response.data;
   } catch (error) {
     if (error.response) {
-      throw new Error(
-        error.response.data.message || "Something went wrong"
-      );
+      throw new Error(error.response.data.message || "Something went wrong");
     } else if (error.request) {
       throw new Error("No response from server. Please try again later.");
     } else {
@@ -330,45 +304,44 @@ export const getAdminProfileData = async () => {
     }
   }
 };
-export const getAllAgent = async (page, perPage, search ) => {
+export const getAllAgent = async (page, perPage, search) => {
   try {
-    const response = await apiurl.get(`/admin/all-agent`,{
-     params:{
-      page: page,
-      limit: perPage,
-      search: search,
-      // isApproved: "approved",
-    }
-  });
-    return response.data;
-  } catch (error) {
-    if (error.response) {
-      throw new Error(
-        error.response.data.message || "Something went wrong"
-      );
-    } else if (error.request) {
-      throw new Error("No response from server. Please try again later.");
-    } else {
-      throw new Error("An unexpected error occurred");
-    }
-  }
-};
-export const getAllStudent = async (path, page, perPage, search) => {
-  try {
-    const response = await apiurl.get(path, {
-      params:{
+    const response = await apiurl.get(`/admin/all-agent`, {
+      params: {
         page: page,
         limit: perPage,
-        searchQuery: search,
+        search: search,
+        isApproved: "completed",
         // isApproved: "approved",
-      }
+      },
     });
     return response.data;
   } catch (error) {
     if (error.response) {
-      throw new Error(
-        error.response.data.message || "Something went wrong"
-      );
+      throw new Error(error.response.data.message || "Something went wrong");
+    } else if (error.request) {
+      throw new Error("No response from server. Please try again later.");
+    } else {
+      throw new Error("An unexpected error occurred");
+    }
+  }
+};
+export const getAllStudent = async (path, page, perPage, search, agentId) => {
+  try {
+    const response = await apiurl.get(path, {
+      params: {
+        page: page,
+        limit: perPage,
+        searchQuery: search,
+        agentId: agentId,
+        isApproved: "completed",
+        // isApproved: "approved",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw new Error(error.response.data.message || "Something went wrong");
     } else if (error.request) {
       throw new Error("No response from server. Please try again later.");
     } else {
@@ -377,9 +350,17 @@ export const getAllStudent = async (path, page, perPage, search) => {
   }
 };
 
-export const fetchAdminDashboardData = async (endpoint) => {
+export const fetchAdminDashboardData = async (endpoint, type, year, userType) => {
   try {
-    const response = await apiurl.get(endpoint);
+    const params = { year }; // Always include year
+    if (type && type !== null) {
+      params.applicationType = type;
+    }
+    if (userType && userType !== null) {
+      params.userType = userType;
+    }
+    const response = await apiurl.get(endpoint, { params });
+
     return response.data?.data;
   } catch (error) {
     if (error.response) {
@@ -394,9 +375,11 @@ export const fetchAdminDashboardData = async (endpoint) => {
   }
 };
 export const updateWithdrawalReq = async (payload) => {
-  
   try {
-    const response = await apiurl.put("/withdrawal/withdrawal-complete", payload);
+    const response = await apiurl.put(
+      "/withdrawal/withdrawal-complete",
+      payload
+    );
     return response.data;
   } catch (error) {
     if (error.response) {
@@ -410,12 +393,12 @@ export const updateWithdrawalReq = async (payload) => {
     }
   }
 };
-
 
 export const agentStudent = async () => {
-  
   try {
-    const response = await apiurl.get("/studentInformation/agent-student-admin");
+    const response = await apiurl.get(
+      "/studentInformation/agent-student-admin"
+    );
     return response.data;
   } catch (error) {
     if (error.response) {
@@ -430,16 +413,20 @@ export const agentStudent = async () => {
   }
 };
 
-export const applicationOverviewData = async (page, perPage, search, isTypeFilter ) => {
-  
+export const applicationOverviewData = async (
+  page,
+  perPage,
+  search,
+  isTypeFilter
+) => {
   try {
-    const response = await apiurl.get("/admin/all-student-applications",{
-      params:{
+    const response = await apiurl.get("/admin/all-student-applications", {
+      params: {
         searchData: search,
         page: page,
         limit: perPage,
-        submittedBy: isTypeFilter
-      }
+        submittedBy: isTypeFilter,
+      },
     });
     return response.data;
   } catch (error) {
@@ -455,7 +442,6 @@ export const applicationOverviewData = async (page, perPage, search, isTypeFilte
   }
 };
 export const uploadApplications = async (payload) => {
-  
   try {
     const response = await apiurl.post("/admin/upload-document", payload);
     return response.data;
@@ -472,9 +458,8 @@ export const uploadApplications = async (payload) => {
   }
 };
 export const deleteApplication = async (payload) => {
-  
   try {
-    const response = await apiurl.patch(`delete-admin-document`, payload);
+    const response = await apiurl.patch(`/admin/delete-admin-document`, payload);
     return response.data;
   } catch (error) {
     if (error.response) {
@@ -490,7 +475,6 @@ export const deleteApplication = async (payload) => {
 };
 
 export const removeAgentorStudent = async (path) => {
-  
   try {
     const response = await apiurl.patch(path);
     return response.data;
@@ -506,10 +490,16 @@ export const removeAgentorStudent = async (path) => {
     }
   }
 };
-export const totalAgentStudent = async (path) => {
-  
+export const totalAgentStudent = async (path, month, year, type) => {
   try {
-    const response = await apiurl.get(path);
+    const response = await apiurl.get(path, {
+      params:{
+       month: month,
+       year: year,
+        applicationType: type,
+      //  type: type
+      }
+    });
     return response.data;
   } catch (error) {
     if (error.response) {
@@ -523,14 +513,55 @@ export const totalAgentStudent = async (path) => {
     }
   }
 };
-export const getUrlData = async (studentId, applicationId) => {
-  
+export const getUrlData = async (studentId) => {
   try {
     const response = await apiurl.get(`/admin/get-admin-document`, {
-      params:{
-        studentId: studentId,
-        applicationId: applicationId
-      }
+      params: {
+        applicationId: studentId,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw new Error(
+        error.response.data.message || "Error while fetching data"
+      );
+    } else if (error.request) {
+      throw new Error("No response from server. Please try again later.");
+    } else {
+      throw new Error("An unexpected error occurred");
+    }
+  }
+};
+
+export const editAgentAdmin = async (path, payload, edit, id) => {
+  try {
+    const response = await apiurl.post(path, payload, {
+      params: {
+        edit,
+        companyId: id,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw new Error(
+        error.response.data.message || "Error while fetching data"
+      );
+    } else if (error.request) {
+      throw new Error("No response from server. Please try again later.");
+    } else {
+      throw new Error("An unexpected error occurred");
+    }
+  }
+};
+
+export const editStudentAdmin = async (path, payload, edit) => {
+  try {
+    const response = await apiurl.patch(path, payload, {
+      params: {
+        edit,
+      },
     });
     return response.data;
   } catch (error) {

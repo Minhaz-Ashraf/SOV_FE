@@ -152,7 +152,11 @@ export const sourceOfFinanceOption = [
   { id: 3, option: "Others", label: "Others" },
 ];
 export const interestedDestinationOption = [
-  { id: 0, option: "Australia & New Zeeland", label: "Australia & New Zeeland" },
+  {
+    id: 0,
+    option: "Australia & New Zeeland",
+    label: "Australia & New Zeeland",
+  },
   { id: 1, option: "Uk & Europe", label: "UK & Europe" },
   { id: 2, option: "USA & Canada", label: "USA & Canada" },
 ];
@@ -201,7 +205,7 @@ export const regTypeOption = [
   { id: 2, option: "Corporation", label: "Corporation" },
 ];
 export const applicationTypeOption = [
-  { id: 0, option: "offerLetter", label: "Offer Letter" },
+  { id: 0, option: "agent", label: "Offer Letter" },
   { id: 1, option: "courseFeeApplication", label: "Course Fee Application" },
   { id: 2, option: "visa", label: "Visa" },
 ];
@@ -219,6 +223,16 @@ export const statusTicketOption = [
   { id: 0, option: "underreview", label: "Under Review" },
   { id: 1, option: "resolved", label: "Resolved" },
 ];
+export const appType = [
+  { id: 0, option: "offerLetter", label: "Offer Letter" },
+  { id: 0, option: "courseFeeApplication", label: "Course Fee" },
+  { id: 1, option: "visa", label: "Visa" },
+];
+
+export const userType = [
+  { id: 0, option: "agent", label: "Agent" },
+  { id: 0, option: "student", label: "Student" },
+];
 export const intakeOption = [
   { id: 0, option: "Jan 2025", label: "Jan 2025" },
   { id: 1, option: "May 2025", label: "May 2025" },
@@ -232,4 +246,38 @@ export const intakeOption = [
   { id: 9, option: "May 2027", label: "May 2027" },
   { id: 10, option: "Sep 2027", label: "Sep 2027" },
   { id: 11, option: "Dec 2027", label: "Dec 2027" },
+];
+
+export const donoughtFilter = [
+  { id: 0, option: "11 2024", label: "Nov 2024", year: 2024, month: "November" },
+  { id: 1, option: "12 2024", label: "Dec 2024", year: 2024, month: "December" },
+  { id: 2, option: "1 2025", label: "Jan 2025", year: 2025, month: "January" },
+  { id: 3, option: "2 2025", label: "Feb 2025", year: 2025, month: "February" },
+  { id: 4, option: "3 2025", label: "Mar 2025", year: 2025, month: "March" },
+  { id: 5, option: "4 2025", label: "Apr 2025", year: 2025, month: "April" },
+  { id: 6, option: "5 2025", label: "May 2025", year: 2025, month: "May" },
+  { id: 7, option: "6 2025", label: "Jun 2025", year: 2025, month: "June" },
+  { id: 8, option: "7 2025", label: "Jul 2025", year: 2025, month: "July" },
+  { id: 9, option: "8 2025", label: "Aug 2025", year: 2025, month: "August" },
+  {
+    id: 10,
+    option: "9 2025",
+    label: "Sep 2025",
+    year: 2025,
+    month: "September",
+  },
+  {
+    id: 11,
+    option: "10 2025",
+    label: "Oct 2025",
+    year: 2025,
+    month: "October",
+  },
+  {
+    id: 12,
+    option: "11 2025",
+    label: "Nov 2025",
+    year: 2025,
+    month: "November",
+  },
 ];

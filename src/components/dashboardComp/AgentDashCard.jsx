@@ -11,12 +11,12 @@ const AgentDashCard = ({ icon, label, data, count, link }) => {
           </span>
           <p className="mt-3 text-body text-[15px]">{label}</p>
 
-          <p className="text-sidebar mt-2 font-bold text-[25px]">{count}</p>
+          <p className="text-sidebar mt-2 font-bold text-[25px]">{count || "0"}</p>
 
           <p className="text-body text-[14px] mt-1 ">
             {" "}
             <span className={`${data < 0 ? "text-red-500" : "text-green-500"}`}>
-              {data !== undefined && data !== null ? `${data > 0 ? `+${data}` : data}%` : "N/A"}
+              {data !== undefined && data !== null ? `${data > 0 ? `+${data}` : data}%` : "0"}
             </span>{" "}
             in last 7 days
           </p>

@@ -11,9 +11,12 @@ import Rejected from "../components/adminComps/Rejected";
 import Pagination from "../components/dashboardComp/Pagination";
 import { applicationForApproval } from "../features/adminSlice";
 import { uploadApplications } from "../features/adminApi";
+import { useLocation, useSearchParams } from "react-router-dom";
 
 const ApplicationReview = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const dispatch = useDispatch();
+  const location = useLocation();
   const { applications } = useSelector((state) => state.admin);
   const { updateState, tabType } = useSelector((state) => state.admin);
   const [search, setSearch] = useState("");
@@ -23,7 +26,8 @@ const ApplicationReview = () => {
   const totalUsersCount = applications?.totalRecords || 0;
   const currentPage = applications?.currentPage;
   const totalPagesCount = applications?.totalPages;
-
+ 
+  const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "pending");
   const handlePageChange = (pageNumber) => {
     setPage(pageNumber);
   };
@@ -73,7 +77,20 @@ const ApplicationReview = () => {
       props: { data: applications },
     },
   ];
+  useEffect(() => {
+    // Check the pathname and reset the active tab if needed
+    if (location.pathname !== "/admin/applications-review") {
+      setActiveTab("pending");
+      setSearchParams({ tab: "pending" }); // Update the search params
+    } else {
+      setActiveTab(searchParams.get("tab") || "pending"); // Set from search params
+    }
+  }, [location.pathname, searchParams]);
 
+  const handleTabChange = (tabName) => {
+    setActiveTab(tabName);
+    setSearchParams({ tab: tabName });
+  };
   return (
     <>
       <Header customLink="/agent/shortlist" />
@@ -136,10 +153,10 @@ const ApplicationReview = () => {
         </span>
       </span>
       <div className="sm:ml-14 md:ml-0">
-        <TabBar tabs={tabs} />
+      <TabBar tabs={tabs} activeTab={activeTab} onTabChange={handleTabChange} setActiveTab={setActiveTab} />
       </div>
 
-      <div className="mt-12 mb-10">
+      <div className="mt-12 mb-10 ml-52">
         <Pagination
           currentPage={currentPage}
           hasNextPage={currentPage * perPage < totalUsersCount}

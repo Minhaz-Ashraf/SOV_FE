@@ -30,7 +30,12 @@ import FormSection, {
   ScoreInputForm,
 } from "../components/reusable/FormSection";
 import { intakeOption } from "../constant/data";
-import { deleteDocument, getStudentDataById, newOfferLetter, uploadDocument } from "../features/generalApi";
+import {
+  deleteDocument,
+  getStudentDataById,
+  newOfferLetter,
+  uploadDocument,
+} from "../features/generalApi";
 import AgentSidebar from "../components/dashboardComp/AgentSidebar";
 import PopUp from "../components/reusable/PopUp";
 import { greenTick } from "../assets";
@@ -111,7 +116,9 @@ import { v4 as uuidv4 } from "uuid";
 const ApplyOfferLater = () => {
   const role = localStorage.getItem("role");
   const studentUserId = useSelector((state) => state.student.studentInfoData);
-  const { agentData } = useSelector((state) => state.agent);
+  // const { agentData } = useSelector((state) => state.agent);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const location = useLocation();
   const studentId =
     role === "3"
@@ -146,6 +153,8 @@ const ApplyOfferLater = () => {
   const [errors, setErrors] = useState({});
   const [resetDoc, setResetDoc] = useState(false);
   const [resetSecondDoc, setResetSecondDoc] = useState(false);
+  const [newFiles, setNewFiles] = useState([]);
+  const [deletedFiles, setDeletedFiles] = useState([]);
   useEffect(() => {
     dispatch(studentById(studentId));
   }, [dispatch]);
@@ -155,6 +164,7 @@ const ApplyOfferLater = () => {
       dispatch(getInstituteOption(offerLater.preferences.country));
     }
   }, [dispatch, offerLater?.preferences?.country]);
+
   const PopUpOpen = () => {
     setResetDoc(false);
     setIsPopUp(true);
@@ -304,95 +314,96 @@ const ApplyOfferLater = () => {
     }));
   };
 
+  // Handle phone number separatel
+
+  // const fileObjects = filesOrUrls.filter((item) => item instanceof File); to be research
+
   const handleFilePopupOpen = (fileType) => {
     seFileType(fileType);
     PopUpOpen();
   };
-  const handleFileUpload = async (filesOrUrls, uploadType) => {
-    if (!filesOrUrls || filesOrUrls.length === 0) return;
+  const handleFileUpload = (files, uploadType) => {
+    if (!files || files.length === 0 || !uploadType) return;
 
-    let uploadedUrls = [];
+    const fileOrUrl = files[0];
 
-    // Check if input contains string URLs
-    const stringUrls = filesOrUrls.filter((item) => typeof item === "string");
-    if (stringUrls.length > 0) {
-      uploadedUrls.push(...stringUrls);
-    }
+    if (fileOrUrl instanceof File) {
+      // Handle File objects
+      const blobUrl = URL.createObjectURL(fileOrUrl);
 
-    // Handle file uploads
-    const fileObjects = filesOrUrls.filter((item) => item instanceof File);
-    for (const file of fileObjects) {
-      const uniqueFileName = `${uuidv4()}-${file.name}`;
-      const storageRef = ref(storage, `uploads/offerLetter/${uniqueFileName}`);
-
-      try {
-        const snapshot = await uploadBytes(storageRef, file);
-        const downloadURL = await getDownloadURL(snapshot.ref);
-        uploadedUrls.push(downloadURL);
-        toast.success(`${file.name} uploaded successfully!`);
-        const uploadData = { viewUrl: downloadURL, documentName: file.name, userId: studentId };
-        await uploadDocument(uploadData);
-      } catch (error) {
-        toast.error(`Error uploading ${file.name}. Please try again.`);
-      }
-    }
-
-    // Update state based on uploadType
-    if (uploadType === "certificate" && uploadedUrls.length > 0) {
-      setOfferLater((prevData) => ({
-        ...prevData,
-        certificate: {
-          urls: [...(prevData.certificate.urls || []), ...uploadedUrls],
-        },
-      }));
-    } else if (uploadedUrls.length > 0) {
-      setOfferLater((prevState) => ({
+      // Save file locally to be uploaded later
+      setNewFiles((prevState) => [
         ...prevState,
-        educationDetails: {
-          ...prevState.educationDetails,
-          [uploadType]: uploadedUrls[0], // Set the first uploaded URL
-        },
-      }));
+        { file: fileOrUrl, uploadType },
+      ]);
+
+      // Show a temporary file URL for preview
+      setOfferLater((prevState) => {
+        const currentUrls = Array.isArray(prevState.certificate.url)
+          ? prevState.certificate.url
+          : []; // Ensure it's an array
+        const updatedCertificateUrls = [...currentUrls, blobUrl]; // Append blob URL
+        return {
+          ...prevState,
+          educationDetails: {
+            ...prevState.educationDetails,
+            [uploadType]: blobUrl, // Set blob URL temporarily
+          },
+          certificate: {
+            url: updatedCertificateUrls, // Update the certificate URLs
+          },
+        };
+      });
+
+      // toast.info(`${fileOrUrl.name} will be uploaded upon saving.`);
+    } else if (typeof fileOrUrl === "string") {
+      // Handle URL strings: directly set in the educationDetails state
+      setOfferLater((prevState) => {
+        const currentUrls = Array.isArray(prevState.certificate.url)
+          ? prevState.certificate.url
+          : []; // Ensure it's an array
+        const updatedCertificateUrls = [...currentUrls, fileOrUrl]; // Append URL
+        return {
+          ...prevState,
+          educationDetails: {
+            ...prevState.educationDetails,
+            [uploadType]: fileOrUrl, // Set the URL directly
+          },
+          certificate: {
+            url: updatedCertificateUrls, // Update the certificate URLs
+          },
+        };
+      });
+
+      // toast.info("Document URL has been set.");
     }
   };
 
   const deleteFile = async (fileUrl, uploadType) => {
     if (!fileUrl) return;
 
-    const storageRef = ref(storage, fileUrl);
-    console.log(fileUrl)
-     await deleteDocument(fileUrl)
-    try {
-      await deleteObject(storageRef);
-      toast.success("File deleted successfully!");
-      
-      if (uploadType === "certificate") {
-        setOfferLater((prevData) => ({
-          ...prevData,
-          certificate: {
-            ...prevData.certificate,
-            urls: "",
-          },
-        }));
-        setResetUpload(true);
-      } else {
-        setOfferLater((prevState) => ({
-          ...prevState,
-          educationDetails: {
-            ...prevState.educationDetails,
-            [uploadType]: "",
-          },
-        }));
-        setResetSecondDoc(true);
-      }
-    } catch (error) {
-      toast.error("Error deleting file. Please try again.");
-    }
+    // Add file to deletedFiles array for deferred deletion
+    setDeletedFiles((prevState) => [...prevState, { fileUrl, uploadType }]);
+
+    // Clear the respective field in the state
+    setOfferLater((prevState) => ({
+      ...prevState,
+      educationDetails: {
+        ...prevState.educationDetails,
+        [uploadType]: "",
+      },
+      certificate: {
+        url: prevData.certificate.url.filter((url) => url !== fileUrl),
+      },
+    }));
+    setNewFiles((prevState) =>
+      prevState.filter((file) => !fileUrl.includes(file.name))
+    );
+
+    // toast.info("File marked for deletion. Changes will be applied upon saving.");
   };
 
-  // Handle form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     const validationErrors = validateFields();
 
     if (Object.keys(validationErrors).length === 0) {
@@ -405,6 +416,79 @@ const ApplyOfferLater = () => {
     }
 
     try {
+      setIsSubmitting(true);
+
+      const updatedEducationDetails = { ...offerLater.educationDetails };
+
+      // Upload new files
+      await Promise.all(
+        newFiles.map(async ({ file, uploadType }) => {
+          const uniqueFileName = `${uuidv4()}-${file.name}`;
+          const storageRef = ref(
+            storage,
+            `uploads/offerLetter/${uniqueFileName}`
+          );
+          try {
+            const snapshot = await uploadBytes(storageRef, file);
+            const downloadURL = await getDownloadURL(snapshot.ref);
+
+            // Update temporary object with Firebase URL
+            updatedEducationDetails[uploadType] = downloadURL;
+            const uploadData = {
+              viewUrl: downloadURL,
+              documentName: file.name,
+              userId: userId,
+            };
+            await uploadDocument(uploadData);
+            toast.success(`${file.name} uploaded successfully.`);
+          } catch (error) {
+            toast.error(`Error uploading ${file.name}. Please try again.`);
+          }
+        })
+      );
+
+      // Upload certificates if they exist
+      if (prevData.certificate.url.length > 0) {
+        await Promise.all(
+          prevData.certificate.url.map(async (certUrl) => {
+            const uniqueFileName = `${uuidv4()}-${certUrl.split("/").pop()}`; // Use the original file name
+            const storageRef = ref(
+              storage,
+              `uploads/offerLetter/${uniqueFileName}`
+            );
+            try {
+              // Assuming certUrl is a Blob or File object; if it's a string URL, you may need to fetch it first
+              const response = await fetch(certUrl);
+              const blob = await response.blob();
+              const snapshot = await uploadBytes(storageRef, blob);
+              const downloadURL = await getDownloadURL(snapshot.ref);
+
+              // Update certificate URLs
+              updatedEducationDetails.certificate = {
+                url: [...updatedEducationDetails.certificate.url, downloadURL],
+              };
+              const uploadData = {
+                viewUrl: downloadURL,
+                documentName: uniqueFileName,
+                userId: userId,
+              };
+              await uploadDocument(uploadData);
+              toast.success(`${uniqueFileName} uploaded successfully.`);
+            } catch (error) {
+              toast.error(
+                `Error uploading certificate ${uniqueFileName}. Please try again.`
+              );
+            }
+          })
+        );
+      }
+
+      // Update state with Firebase URLs
+      setOfferLater((prevState) => ({
+        ...prevState,
+        educationDetails: updatedEducationDetails,
+      }));
+
       const convertToNumber = (scoreData) => {
         return {
           reading: Number(scoreData.reading),
@@ -414,19 +498,18 @@ const ApplyOfferLater = () => {
           overallBand: Number(scoreData.overallBand),
         };
       };
-
       const certificateUrls = Array.isArray(offerLater.certificate.urls)
         ? offerLater.certificate.urls
         : offerLater.certificate.urls
         ? [offerLater.certificate.urls]
         : [];
 
-      // Prepare payload
       const updatedOfferLater = {
         ...offerLater,
         certificate: {
           url: certificateUrls,
         },
+
         studentInformationId: studentId,
         educationDetails: {
           educationLevel: selectedEducation,
@@ -439,6 +522,7 @@ const ApplyOfferLater = () => {
         },
       };
 
+      // Add TOEFL, PTE, IELTS scores if they exist
       if (
         offerLater.TOEFL &&
         Object.values(offerLater.TOEFL).some((val) => val)
@@ -465,79 +549,13 @@ const ApplyOfferLater = () => {
       // Submit the form
       const res = await newOfferLetter(updatedOfferLater);
       confirmPopUpOpen();
-      toast.success(res?.message || "Form Submitted");
-      if (role === "2") {
-        if (socketServiceInstance.isConnected()) {
-          //from agent to admin
-          const notificationData = {
-            title: " AGENT_SUBMITTED_OFFER_LETTER",
-            message: `${agentData?.companyDetails?.businessName} ${
-              agentData?.agId
-            } has submitted the offer letter application of ${
-              offerLater.preferences.institution
-            } ${offerLater.preferences.country} for the student ${
-              studentData?.studentInformation?.personalInformation?.firstName +
-              " " +
-              studentData?.studentInformation?.personalInformation?.lastName
-            } ${studentId}
-`,
-            agentId: agentData?._id,
-            agId: agentData?.agId,
-            path: "/admin/applications-review",
-            agentName: agentData?.companyDetails?.businessName,
-            studentId: studentId,
-            stId: "",
-            studentName:
-              studentData?.studentInformation?.personalInformation?.firstName +
-              " " +
-              studentData?.studentInformation?.personalInformation?.lastName,
-            countryName: offerLater.preferences.country,
-            collegeName: offerLater.preferences.institution,
-            applicationId: "",
-            pathData: studentData?.studentInformation?._id,
-            ticketId: "",
-            appId: "",
-            ticId: "",
-            recieverId: agentData?._id,
-          };
+      toast.success(res.message || "Data added successfully.");
 
-          socketServiceInstance.socket.emit(
-            "NOTIFICATION_AGENT_TO_ADMIN",
-            notificationData
-          );
-        } else {
-          console.error("Socket connection failed, cannot emit notification.");
-        }
-      }
-      if (role === "3") {
-        if (socketServiceInstance.isConnected()) {
-          //from student to admin
-          const notificationData = {
-            title: " STUDENT_SUBMITTED_OFFER_LETTER",
-            message: `${
-              studentInfoData?.data?.studentInformation?.personalInformation
-                ?.firstName +
-                " " +
-                studentInfoData?.data?.studentInformation?.personalInformation
-                  ?.lastName || ""
-            } ${
-              studentInfoData?.data?.studentInformation?.stId || ""
-            } has submitted the offer letter application.`,
-            pathData:  studentInfoData?.data?.studentInformation?._id,
-            recieverId: "",
-          };
-
-          socketServiceInstance.socket.emit(
-            "NOTIFICATION_STUDENT_TO_ADMIN",
-            notificationData
-          );
-        } else {
-          console.error("Socket connection failed, cannot emit notification.");
-        }
-      }
+      // Clear temporary states
+      setNewFiles([]);
+      setIsSubmitting(false);
     } catch (error) {
-      toast.error(error.message || "Something went wrong");
-      console.log(error);
+      toast.error("Something went wrong.");
     }
   };
 
@@ -609,8 +627,12 @@ const ApplyOfferLater = () => {
               Apply Offer Letter
             </p>
           </span>
+          <p className="text-sidebar text-[15px]  md:ml-9  sm:ml-20">
+            Check your details and make sure everything looks good. <br /> It's
+            no big deal if it's not - you can always change it.
+          </p>
         </div>
-        <div className="ml-[30%] mr-[15%]">
+        <div className="md:ml-[30%] md:mr-[15%] sm:mr-[8%] sm:ml-[27%]">
           <div className="bg-white rounded-xl px-8 py-4 pb-12 mt-8 ">
             <span className="font-bold text-[25px] text-secondary ">
               Personal Information
@@ -696,11 +718,11 @@ const ApplyOfferLater = () => {
             )}
           </div>
 
-          <div className="bg-white  rounded-xl px-8 py-4 pb-12 mt-6">
-            <span className="font-bold text-[25px] text-secondary  ">
+          <div className="bg-white  rounded-xl md:px-8  py-4 pb-12 mt-6">
+            <span className="font-bold text-[25px] text-secondary  sm:px-6">
               Education Details
             </span>
-            <div className="grid grid-cols-3 mt-4 gap-6 text-body">
+            <div className="grid md:grid-cols-3 grid-cols-2 mt-4 md:px-8 sm:px-6 gap-6 text-body">
               {Object.keys(educationLevels).map((level) => (
                 <span
                   key={level}

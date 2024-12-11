@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getTicketById } from "../../features/adminSlice";
 import { formatDate } from "./../../constant/commonfunction";
+import { RxCross2 } from "react-icons/rx";
 
 const TicketResolvePop = ({ isOpen, closePopUp, isticketId, handleStatus }) => {
   const { ticketById } = useSelector((state) => state.admin);
@@ -28,11 +29,12 @@ const TicketResolvePop = ({ isOpen, closePopUp, isticketId, handleStatus }) => {
     <>
       {isOpen && (
         <div
-          className={`fixed inset-0 flex items-center justify-center popup-backdrop z-50  sm:px-52  px-6 ${
+          className={`fixed inset-0 flex items-center justify-center popup-backdrop z-50  sm:px-20  px-6 ${
             isOpen ? "block" : "hidden"
           }`}
         >
           <div className="bg-white pb-9  rounded-lg md:w-[90%] w-full  relative p-9  font-poppins">
+          <span onClick={closePopUp} className="absolute top-2 right-3 text-[30px] cursor-pointer text-primary"><RxCross2 /></span>
             <span className="flex flex-col justify-start">
               <span
                 className={`rounded-2xl px-3 py-1 w-36 text-center text-white text-[16px] ${
@@ -135,20 +137,22 @@ const TicketResolvePop = ({ isOpen, closePopUp, isticketId, handleStatus }) => {
                 disabled={ticketById?.status === "resolved"}
               ></textarea>
               <div className="flex flex-row items-center justify-end mt-6 gap-4 text-[14px]">
-                <span
+              {ticketById?.status === "underreview" && <><span
                   onClick={closePopUp}
                   className="border text-primary rounded-md px-6 py-2 cursor-pointer"
                 >
                   Cancel
                 </span>
-                {ticketById?.status === "underreview" && 
+               
                 <span
                 onClick={() => handleStatus("resolved", isSolution, isResolvedText, isticketId)}
 
                   className="bg-primary text-white rounded-md px-6 py-2 cursor-pointer"
                 >
                   Resolved
-                </span>}
+                </span>
+                </> 
+                }
               </div>
             </span>
           </div>

@@ -126,6 +126,8 @@ const ProfileEdit = () => {
                 agentData={agentProfileData}
                 locationPath={location}
                 updateData={handleProfileUpdate}
+                adminId={agentProfile?._id}
+                agentId={id}
               />
             )}
           </div>

@@ -88,7 +88,7 @@ export const getStudentById = createAsyncThunk(
 export const getAllTickets = createAsyncThunk(
   "admin/getAllTickets",
   async (
-    { page, perPage, isPriorityType, isStatusType, search, updateTicketTab },
+    { page, perPage, isPriorityType, isStatusType, search, updateTicketTab, dateObj },
     { rejectWithValue }
   ) => {
     console.log(updateTicketTab)
@@ -100,6 +100,7 @@ export const getAllTickets = createAsyncThunk(
         isStatusType,
         search,
         updateTicketTab,
+        dateObj
       );
       return response;
     } catch (error) {
@@ -139,9 +140,9 @@ export const getAllAgentList = createAsyncThunk(
 );
 export const getAllStudentList = createAsyncThunk(
   "admin/getAllStudentList",
-  async ({path, page, perPage, search}, { rejectWithValue }) => {
+  async ({path, page, perPage, search, agentId}, { rejectWithValue }) => {
     try {
-      const response = await getAllStudent(path, page, perPage, search);
+      const response = await getAllStudent(path, page, perPage, search, agentId);
       return response;
     } catch (error) {
       return rejectWithValue(
@@ -178,10 +179,10 @@ export const adminApplicationOverview = createAsyncThunk(
 );
 export const adminUrlData = createAsyncThunk(
   "admin/adminUrlData",
-  async ({studentId, applicationId }, { rejectWithValue }) => {
+  async (studentId, { rejectWithValue }) => {
     try {
-      const response = await getUrlData(studentId, applicationId );
-      console.log(studentId, applicationId)
+      const response = await getUrlData(studentId);
+      console.log(response, "test")
       return response;
     } catch (error) {
       return rejectWithValue(
@@ -208,7 +209,7 @@ const adminSlice = createSlice({
     getStudentDataById: null,
     getAdminProfile: null,
     getApplicationOverview: null,
-    getUrlData: null,
+    getUrlData: [],
   },
   reducers: {
     setTabType: (state, action) => {
@@ -276,7 +277,6 @@ const adminSlice = createSlice({
       })
       .addCase(getAllTickets.fulfilled, (state, action) => {
         state.status = "succeeded";
-
         state.ticketAll = action.payload;
       })
       .addCase(getAllTickets.rejected, (state, action) => {
@@ -342,13 +342,15 @@ const adminSlice = createSlice({
       .addCase(adminApplicationOverview.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload || action.error.message;
-      }) .addCase(adminUrlData.pending, (state) => {
+      }) 
+      .addCase(adminUrlData.pending, (state) => {
         state.status = "loading";
       })
       .addCase(adminUrlData.fulfilled, (state, action) => {
         state.status = "succeeded";
+        console.log(action)
 
-        state.geturlData = action.payload;
+        state.getUrlData = action.payload;
       })
       .addCase(adminUrlData.rejected, (state, action) => {
         state.status = "failed";

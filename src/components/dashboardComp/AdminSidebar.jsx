@@ -1,16 +1,17 @@
 import React, { useState } from "react";
 import { BsFillCollectionFill, BsFillTicketPerforatedFill, BsPieChartFill } from "react-icons/bs";
-import { FaPassport, FaUserCheck } from "react-icons/fa";
+import { FaPassport, FaUserCheck, FaUsers } from "react-icons/fa";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { IoDocumentTextSharp } from "react-icons/io5";
 import { Link, useLocation } from "react-router-dom";
 import { CgProfile } from "react-icons/cg";
-import { MdOutlineHistory } from "react-icons/md";
+import { MdDocumentScanner, MdOutlineHistory } from "react-icons/md";
 import { AiFillQuestionCircle } from "react-icons/ai";
 import { RiLogoutBoxRLine } from "react-icons/ri";
 import LogoutPop from "../login/LogoutPop";
 import ImageComponent from "../reusable/Input";
 import { logo } from "../../assets";
+import { FaUserGroup } from "react-icons/fa6";
 
 const AdminSidebar = () => {
   const location = useLocation();
@@ -32,34 +33,38 @@ const AdminSidebar = () => {
       label: "Dashboard",
     },
     {
-      pathPage: "/admin/approvals",
-      icon: <FaUserCheck />,
-      label: "Approvals",
-    },
-    {
-      pathPage: "/admin/applications-review",
-      icon:<IoDocumentTextSharp /> ,
-      label: "Applications Review",
-   
-    },
-    {
       pathPage: "/admin/student-directory",
-      icon: <IoDocumentTextSharp />,
+      icon: <FaUsers/>
+      ,
       label: "Students",
       otherPath: "/student-profile",
     },
     {
       pathPage: "/admin/agent-directory",
-      icon: <IoDocumentTextSharp />,
+      icon: <FaUserGroup />,
       label: "Agents",
-      otherPath: "/admin/agent-student"
+      otherPath: "/admin/agent-student",
+      otherPathTwo: "/agent-profile"
+    },
+    {
+      pathPage: "/admin/approvals",
+      icon: <FaUserCheck />,
+      label: "Approvals",
     },
     {
       pathPage: "/admin/application-list",
-      icon: <FaPassport />,
+      icon: <IoDocumentTextSharp />,
       label: "Applications ",
       otherPath: "/admin/student-applications",
     },
+    {
+      pathPage: "/admin/applications-review",
+      icon:<MdDocumentScanner /> ,
+      label: "Applications Review",
+   
+    },
+   
+   
   
   ];
 
@@ -140,7 +145,7 @@ const AdminSidebar = () => {
             </Link>
              <Link to="/admin/change-password">
               <li
-                className={`text-sidebar py-2 mb-2 cursor-pointer md:pl-[52px] sm:pl-14 md:ml-0  hover:bg-[#f5ebeb] hover:text-primary ${
+                className={`text-sidebar py-2 mb-2 cursor-pointer md:pl-[52px] sm:pl-14 md:ml-1  hover:bg-[#f5ebeb] hover:text-primary ${
                   path === "/admin/change-password" &&
                   "bg-[#FBD5D5] border-l-4 border-primary text-primary"
                 }`}

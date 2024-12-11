@@ -53,8 +53,8 @@ const StudentEdit = ({
             </span>
           </span>
           {profileView === "/admin/approvals" ||
-          profileView === "/admin/applications-review" ||
-          adminPath
+          profileView === "/admin/applications-review" 
+    
             ? ""
             : !isEditing && (
                 <span
@@ -199,8 +199,7 @@ const StudentEdit = ({
             <span className="font-semibold text-[22px]">Residence Address</span>
           </span>
           {profileView === "/admin/approvals" ||
-          profileView === "/admin/applications-review" ||
-          adminPath
+          profileView === "/admin/applications-review" 
             ? ""
             : !isResidenceProfile && (
                 <span
@@ -270,8 +269,7 @@ const StudentEdit = ({
             <span className="font-semibold text-[22px]">Preferences</span>
           </span>
           {profileView === "/admin/approvals" ||
-          profileView === "/admin/applications-review" ||
-          adminPath
+          profileView === "/admin/applications-review" 
             ? ""
             : !isPrefenceProfile && (
                 <span

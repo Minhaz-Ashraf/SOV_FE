@@ -15,6 +15,8 @@ import { getStudentData, studentInfo } from "../features/studentSlice";
 import PopUp from "../components/reusable/PopUp";
 import { check } from "../assets";
 import socketServiceInstance from "../services/socket";
+import { editStudentAdmin } from "../features/adminApi";
+import { getStudentById } from "../features/adminSlice";
 
 const Form3 = ({
   customClass,
@@ -23,6 +25,8 @@ const Form3 = ({
   studentFormId,
   updateData,
 }) => {
+  const role = localStorage.getItem("role");
+  const { getStudentDataById } = useSelector((state) => state.admin);
   const { prefCountryOption } = useSelector((state) => state.general);
   const { courses } = useSelector((state) => state.general);
   const { instituteOption } = useSelector((state) => state.general);
@@ -31,12 +35,11 @@ const Form3 = ({
   const studentInformation = hide ? studentInfoData : studentData;
   const dispatch = useDispatch();
   const formId = studentInformation?.data?.studentInformation?._id;
-  const preference = studentInformation?.data?.studentInformation?.preferences;
+  const preference = role === "0" ? getStudentDataById?.studentInformation?.preferences : studentInformation?.data?.studentInformation?.preferences;
   const studentId = localStorage.getItem("form") || studentFormId
   const [isPopUp, setIsPopUp] = useState(false);
   const editForm = hide === true ? "edit" : null;
   const submitId = hide ? formId : studentId;
-  const role = localStorage.getItem('role')
   const [preferenceData, setPreferenceData] = useState({
     preferredCountry: "",
     preferredState: "",
@@ -117,7 +120,18 @@ const Form3 = ({
     if (validateFields()) {
       setLoading(true);
       try {
-        const res = await studentPreference(preferenceData, studentId, editForm);
+        let res;
+      
+
+        if (role === "0") {
+          await editStudentAdmin(`/studentInformation/preference-admin/${studentId}`, preferenceData, editForm);
+        } else {
+          res = await studentAddress(preferenceData, studentId, editForm);
+        }
+        if(role === "0"){
+          dispatch(getStudentById(studentId));
+        }
+
         toast.success(
           res?.message || "Personal Information Submitted successfully"
         );
