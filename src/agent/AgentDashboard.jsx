@@ -250,7 +250,7 @@ const AgentDashboard = () => {
       return matchedAppCount ? matchedAppCount.count : 0; // Return count or 0 if not found
     }),
   };
-  console.log(appOverviewCount?.data?.visaCount, "test");
+  // console.log(appOverviewCount?.data?.visaCount, "test");
   return (
     <>
       <Header customLink="/agent/shortlist" />

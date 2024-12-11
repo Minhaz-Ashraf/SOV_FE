@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation, Link } from "react-router-dom";
 import Pagination from "../components/dashboardComp/Pagination";
 import { CustomTableEight } from "../components/Table";
-import { getAllAgentList } from "../features/adminSlice";
+import { getAllAgentList, setNullStudentDirectory } from "../features/adminSlice";
 import AdminSidebar from "../components/dashboardComp/AdminSidebar";
 import Header from "../components/dashboardComp/Header";
 import { FaRegEye } from "react-icons/fa";
@@ -18,7 +18,7 @@ const AgentDirectory = () => {
   const dispatch = useDispatch();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [perPage, setPerPage] = useState(10);
 
   // Select data from Redux
@@ -47,9 +47,10 @@ const AgentDirectory = () => {
   const handlePageChange = (pageNumber) => setPage(pageNumber);
 
   useEffect(() => {
-    setLoading(true);
+    // setLoading(true);
     dispatch(getAllAgentList({ page, perPage, search }));
-    setLoading(false);
+
+    // setLoading(false);
   }, [dispatch, page, perPage, search]);
 
   const TABLE_HEAD = [
@@ -94,7 +95,10 @@ const AgentDirectory = () => {
         </span>
         <div className="md:ml-[17%] ml-[22%] pt-14 font-poppins">
           <p className="md:text-[28px] text-[24px] font-bold text-sidebar mt-6 ml-9">
-            Agent Directory
+            Agent Directory ({totalUsersCount})
+          </p>
+          <p className="text-sidebar text-[15px]  md:ml-9  sm:ml-20">
+          Manage and view agent details in one place.
           </p>
         </div>
       </div>
@@ -107,7 +111,7 @@ const AgentDirectory = () => {
                 <CustomInput
                   className="h-11 md:w-80 sm:w-60 rounded-md  text-body placeholder:px-3 pl-7 border border-[#E8E8E8] outline-none"
                   type="text"
-                  placeHodler="Search by application ID"
+                  placeHodler="Search by agent Id and agent name"
                   name="search"
                   value={search}
                   onChange={handleSearchChange}

@@ -30,6 +30,7 @@ import {
   adminUrlData,
   getAllAgentList,
   getAllStudentList,
+  getAllTickets,
 } from "../features/adminSlice";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { extractFileName, extractFileNames } from "../constant/commonfunction";
@@ -914,9 +915,12 @@ export function CustomTableFive({
   action,
   icon,
 }) {
+  const dispatch = useDispatch();
+
   const [isOpen, setIsOpen] = useState(false);
   const ticketData = useSelector((state) => state.admin.ticketById);
-
+ const test = null
+ const status = "resolved"
   console.log(ticketData);
   const [isticketId, setTicketId] = useState();
   const role = localStorage.getItem("role");
@@ -941,6 +945,8 @@ export function CustomTableFive({
         resolvedText,
         ticketId
       );
+      dispatch(
+      getAllTickets({ test, test, test, test, status, test }))
       toast.success(res?.message || "Status Updated Successfully");
       if (ticketData.createdById.startsWith("AG")) {
         if (socketServiceInstance.isConnected()) {

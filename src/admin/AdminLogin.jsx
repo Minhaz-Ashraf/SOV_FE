@@ -7,9 +7,12 @@ import { adminLogin } from "../features/adminApi";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import Mobile from "../components/Mobile";
+import { useDispatch } from "react-redux";
+import { adminProfileData } from "../features/adminSlice";
 
 const AdminLogin = () => {
     const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [isLogin, setIsLogin] = useState({
     email: "",
     password: ""
@@ -67,15 +70,17 @@ const AdminLogin = () => {
       const role = "0";
       const { email, password } = isLogin;
       const res = await adminLogin(role, email, password);
-      
       toast.success(res.message || "Login Successful");
       navigate("/admin/dashboard")
+      dispatch(adminProfileData())
+
     } catch (error) {
       toast.error(error.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <>

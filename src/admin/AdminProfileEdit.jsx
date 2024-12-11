@@ -205,8 +205,9 @@ useEffect(() => {
       phone: getAdminProfile?.data?.phone || "",
     }));
   }
+
 }, [getAdminProfile?.data]);
- console.log(profileEdit.dob)
+//  console.log(profileEdit.dob)
   return (
     <>
       <Header />

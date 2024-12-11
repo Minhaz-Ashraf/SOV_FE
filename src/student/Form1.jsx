@@ -139,6 +139,9 @@ const Form1 = ({
   useEffect(() => {
     if (hide === true) {
       dispatch(studentInfo(studentFormId));
+      if (role === "0") {
+      dispatch(getStudentById(studentFormId));
+      }
     }
     if (hide === false) {
       dispatch(getStudentData(studentId));

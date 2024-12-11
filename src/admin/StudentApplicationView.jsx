@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Header from "../components/dashboardComp/Header";
 import AdminSidebar from "../components/dashboardComp/AdminSidebar";
-import TabBar from "../components/dashboardComp/TabBar";
-import Pending from "../components/adminComps/Pending";
 import { useDispatch, useSelector } from "react-redux";
 import { CustomInput } from "../components/reusable/Input";
 import { IoSearchOutline } from "react-icons/io5";
-import Approved from "../components/adminComps/Approved";
-import Rejected from "../components/adminComps/Rejected";
 import Pagination from "../components/dashboardComp/Pagination";
 import {
   adminApplicationOverview,
@@ -23,10 +19,12 @@ import { downloadFile } from "../features/adminApi";
 import { toast } from "react-toastify";
 import { FaRegEye } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
-import { profileSkeleton } from "../assets";
+import { dnf, profileSkeleton } from "../assets";
 import { studentApplications } from "../features/agentSlice";
 import { statusApplicationView, statusOption } from "../constant/data";
 import { MdOutlineUploadFile } from "react-icons/md";
+import Loader from "../components/Loader";
+import Dnf from "../components/Dnf";
 
 const StudentApplicationView = () => {
   const dispatch = useDispatch();
@@ -39,12 +37,18 @@ const StudentApplicationView = () => {
   const [isType, setIsType] = useState("");
   const [search, setSearch] = useState("");
   const [perPage, setPerPage] = useState(10);
-
+  const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const totalUsersCount = studentApplicationData?.totalApplications || 0;
   const currentPage = studentApplicationData?.currentPage || 1;
   const totalPagesCount = studentApplicationData?.totalPages || 1;
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
 
+    return () => clearTimeout(timer);
+  }, []);
   const handlePageChange = (pageNumber) => {
     setPage(pageNumber);
   };
@@ -98,6 +102,9 @@ const StudentApplicationView = () => {
   useEffect(() => {
     dispatch(getStudentById(studentId));
   }, [dispatch, studentId]);
+
+
+
   return (
     <>
       <Header customLink="/agent/shortlist" />
@@ -142,7 +149,7 @@ const StudentApplicationView = () => {
       </div>
       <span className="flex flex-row items-center mb-3 m-6 mt-6 sm:ml-[27%] md:ml-[19%] ">
         {" "}
-        <span className="text-body">Show</span>
+        {/* <span className="text-body">Show</span>
         <select
           className="ml-3 border px-2 py-1 w-10 h-11 rounded outline-none"
           value={perPage}
@@ -154,7 +161,7 @@ const StudentApplicationView = () => {
             </option>
           ))}
         </select>
-        <span className="px-3 text-body">entries</span>
+        <span className="px-3 text-body">entries</span> */}
         <select
           className="ml-3 border px-2 py-1 w-40 h-11 rounded outline-none"
           value={isType}
@@ -171,7 +178,7 @@ const StudentApplicationView = () => {
           <CustomInput
             className="h-11 md:w-80 sm:w-48 rounded-md text-body placeholder:px-3 pl-7 border border-[#E8E8E8] outline-none"
             type="text"
-            placeHodler="Search by User Name & Application Id "
+            placeHodler="Search by Application Id "
             name="search"
             value={search}
             onChange={handleSearchChange}
@@ -181,7 +188,16 @@ const StudentApplicationView = () => {
           </span>
         </span>
       </span>
-
+      {loading ? (
+        <div
+          className={`w-1  mt-12 ${
+            location.pathname === "/student-profile" ? "ml-[45%]" : "ml-[53%]"
+          }`}
+        >
+          <Loader />
+        </div>
+      ) : TABLE_ROWS?.length > 0 ? (
+        <>
       <div className="mt-3 mr-6 md:ml-[19%] sm:ml-[26%]">
 
         <CustomTableTwo
@@ -216,6 +232,16 @@ const StudentApplicationView = () => {
           totalPagesCount={totalPagesCount}
         />
       </div>
+      </>
+      ) : (
+        <div className="ml-52">
+          <Dnf
+            dnfImg={dnf}
+            headingText="Start Your Journey!"
+            bodyText="No Application Data Available "
+          />
+        </div>
+      )}
     </>
   );
 };

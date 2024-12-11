@@ -8,8 +8,10 @@ import { changeAdminPassword } from "../features/adminApi";
 import AdminSidebar from "../components/dashboardComp/AdminSidebar";
 import socketServiceInstance from "../services/socket";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const ChangeAdminPassword = () => {
+  const navigate = useNavigate();
   const [isPassword, setIsPassword] = useState({
     password: "",
     newPassword: "",

@@ -31,13 +31,15 @@ const Rejected = ({ data }) => {
                 isApproval={false}
                 newStatus="approved"
                 name={application.fullName}
+                agentId={application?.institutionId}
+
                 userId={application?.customUserId}
                 applicationType={application?.type}
                 currentStatus="rejected"
                 rejectionMessage={application?.message}
                 linkTwo="/application-view"
                 id={application?.institutionId}
-                agentId={null}
+                // agentId={null}
                 userType={
                   application?.customUserId?.startsWith("AG-")
                     ? "Agent"

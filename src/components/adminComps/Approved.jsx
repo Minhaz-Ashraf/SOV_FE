@@ -45,7 +45,8 @@ const Approved = ({ data }) => {
                 userId={application?.customUserId}
                 applicationType={application?.type}
                 currentStatus="approved"
-                agentId={null}
+                agentId={application?.institutionId}
+
                 linkTwo="/application-view"
                 id={application?.institutionId}
                 description={

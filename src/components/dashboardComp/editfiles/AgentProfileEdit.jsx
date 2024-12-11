@@ -148,7 +148,7 @@ const AgentProfileEdit = ({ agentData, locationPath, updateData, adminId, agentI
         <div
           className={`transition-all duration-500 ease-in-out transform ${
             toggleStates.isOne
-              ? "min-h-[100vh] translate-y-0 opacity-100"
+              ? "md:md:min-h-[100vh] sm:h-[87vh] sm:h-[87vh] translate-y-0 opacity-100"
               : "max-h-0 -translate-y-10 opacity-0 overflow-hidden"
           }`}
         >
@@ -312,7 +312,7 @@ const AgentProfileEdit = ({ agentData, locationPath, updateData, adminId, agentI
         <div
           className={`transition-all duration-500 ease-in-out transform ${
             toggleStates.isTwo
-              ? "min-h-[100vh] translate-y-0 opacity-100"
+              ? "md:min-h-[100vh] sm:h-[87vh] translate-y-0 opacity-100"
               : "max-h-0 -translate-y-10 opacity-0 overflow-hidden"
           }`}
         >
@@ -417,7 +417,7 @@ const AgentProfileEdit = ({ agentData, locationPath, updateData, adminId, agentI
         <div
           className={`transition-all duration-500 ease-in-out transform ${
             toggleStates.isThree
-              ? "min-h-[100vh] translate-y-0 opacity-100"
+              ? "md:min-h-[100vh] sm:h-[87vh] translate-y-0 opacity-100"
               : "max-h-0 -translate-y-10 opacity-0 overflow-hidden"
           }`}
         >
@@ -640,7 +640,7 @@ const AgentProfileEdit = ({ agentData, locationPath, updateData, adminId, agentI
         <div
           className={`transition-all duration-500 ease-in-out transform ${
             toggleStates.isFour
-              ? "min-h-[100vh] translate-y-0 opacity-100"
+              ? "md:min-h-[100vh] sm:h-[87vh] translate-y-0 opacity-100"
               : "max-h-0 -translate-y-10 opacity-0 overflow-hidden"
           }`}
         >
@@ -734,7 +734,7 @@ const AgentProfileEdit = ({ agentData, locationPath, updateData, adminId, agentI
         <div
           className={`transition-all duration-500 ease-in-out transform ${
             toggleStates.isFive
-              ? "min-h-[100vh] translate-y-0 opacity-100"
+              ? "md:min-h-[100vh] sm:h-[87vh] translate-y-0 opacity-100"
               : "max-h-0 -translate-y-10 opacity-0 overflow-hidden"
           }`}
         >
@@ -820,7 +820,7 @@ const AgentProfileEdit = ({ agentData, locationPath, updateData, adminId, agentI
         <div
           className={`transition-all duration-500 ease-in-out transform ${
             toggleStates.isSix
-              ? "min-h-[100vh] translate-y-0 opacity-100"
+              ? "md:min-h-[100vh] sm:h-[87vh] translate-y-0 opacity-100"
               : "max-h-0 -translate-y-10 opacity-0 overflow-hidden"
           }`}
         >

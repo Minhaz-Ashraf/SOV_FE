@@ -342,7 +342,7 @@ const AgentForm1 = ({ hide, handleCancel, updateData, adminId, agentId}) => {
           <div className="flex justify-end">
             <button
               onClick={handleSubmit}
-              className=" bg-primary mb-20 mt-6 text-white cursor-pointer px-6 py-2 rounded-md"
+              className=" bg-primary md:mb-20 sm:mb-6 mt-6 text-white cursor-pointer px-6 py-2 rounded-md"
             >
               Submit and Continue
             </button>

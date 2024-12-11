@@ -45,7 +45,7 @@ const BarChart = ({ data }) => {
       x: {
         title: {
           display: true,
-          text: 'Categories',
+          text: 'Months',
           font: {
             size: 16,
           },
@@ -57,7 +57,7 @@ const BarChart = ({ data }) => {
       y: {
         title: {
           display: true,
-          text: 'Values',
+          text: 'Applications',
           font: {
             size: 16,
           },

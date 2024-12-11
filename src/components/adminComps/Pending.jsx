@@ -10,10 +10,12 @@ import { useDispatch } from "react-redux";
 import { setTabType } from "../../features/adminSlice";
 import { DataNotFound } from "../Dnf";
 import socketServiceInstance from "../../services/socket";
+import Loader from "../Loader";
 
 const Pending = ({ data }) => {
   const location = useLocation();
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(true);
   const [approvalUpdated, setApprovalUpdated] = useState(false);
   const [applicationUpdated, setApplicationUpdated] = useState(false);
   const fetchStatus =
@@ -157,6 +159,29 @@ const Pending = ({ data }) => {
   };
 
   const applications = data?.applications;
+
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+
+
+  if (loading) {
+    return (
+      <div
+      className={`w-1  mt-12 ${
+     "ml-[42%]"
+      }`}
+    >
+      <Loader />
+    </div>
+    );
+  }
   // console.log(applications);
   return (
     <div className="mt-4">
@@ -169,13 +194,13 @@ const Pending = ({ data }) => {
                 isApproval={false}
                 updateStatus={applicationStatus}
                 newStatus="approved"
-                
+                agentId={application?.institutionId}
                 linkTwo={application?.type === "offerLetter" ? "/application-view" : application?.type === "visa" ? "/visa-view" : application?.type === "courseFeeApplication" ? "/coursefee-view" : null}
                 name={application.fullName}
                 userId={application?.customUserId}
                 mgdbId={application?.mgdbId}
                 applicationType={application?.type}
-                agentId={null}
+                
                 description={
                   application?.customUserId?.startsWith("AG-")
                     ? `${application?.agentName} has filled ${application?.type} for his/her student ${application?.fullName}`

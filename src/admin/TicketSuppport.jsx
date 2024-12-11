@@ -61,11 +61,11 @@ const TicketSupport = () => {
     perPageOptions.push(i);
   }
   useEffect(() => {
-    setLoading(true);
+    // setLoading(true);
     dispatch(
       getAllTickets({ page, perPage, isPriorityType, search, updateTicketTab, dateObj })
     );
-    setLoading(false);
+    // setLoading(false);
   }, [dispatch, page, perPage, isPriorityType, search, updateTicketTab, dateObj]);
 
   const tabs = [
@@ -83,7 +83,17 @@ const TicketSupport = () => {
     },
   ];
 
-console.log(ticketAll?.tickets?.length)
+// console.log(ticketAll?.tickets?.length)
+
+useEffect(() => {
+  const timer = setTimeout(() => {
+    setLoading(false);
+  }, 2000);
+
+  return () => clearTimeout(timer);
+}, []);
+
+
 
   const downloadAll = async()=>{
     try{
@@ -195,11 +205,12 @@ console.log(ticketAll?.tickets?.length)
           <Loader />
         </div>
       ) : (
+        <>
         <div className="sm:ml-14 md:ml-0">
         <TabBar tabs={tabs} activeTab={activeTab} onTabChange={handleTabChange} setActiveTab={setActiveTab} />
         </div>
-      )}
-      <div className="mt-12 mb-10 ml-52">
+
+        <div className="mt-12 mb-10 ml-52">
         <Pagination
           currentPage={currentPage}
           hasNextPage={currentPage * perPage < totalUsersCount}
@@ -208,6 +219,9 @@ console.log(ticketAll?.tickets?.length)
           totalPagesCount={totalPagesCount}
         />
       </div>
+      </>
+      )}
+     
     </>
   );
 };

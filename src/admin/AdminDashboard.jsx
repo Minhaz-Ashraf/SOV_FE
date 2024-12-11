@@ -377,17 +377,17 @@ const [userDataType, setUserDataType]  = useState('');
             ))}
           </span>
 
-          <div className="flex md:flex-row flex-col w-full gap-4 px-9 mt-6 mb-9">
+          <div className="flex md:flex-row flex-col w-full gap-4 px-6 mt-6 mb-9">
             <div className="px-9 bg-white py-4 rounded-md border border-[#E8E8E8] md:w-[40%] h-auto ">
-              <div className="  flex flex-row items-center justify-between">
+              <div className="  flex flex-row items-center justify-between w-full">
                 <p className="text-sidebar text-[18px] font-semibold mt-3 mb-6">
                   Application Overview
                 </p>
 
-                <span>
+                <span className="flex items-center">
                   <label
                     htmlFor="year-line"
-                    className="font-medium text-sidebar"
+                    className="font-medium text-sidebar w-28"
                   >
                     Select Year:{" "}
                   </label>
@@ -396,7 +396,7 @@ const [userDataType, setUserDataType]  = useState('');
                     value={selectedDateDoughnut}
                     onChange={handleDonoughtChange} 
 
-                    className="border p-2 rounded-md ml-2 outline-none"
+                    className="border p-2 rounded-md  outline-none"
                   >
                     {donoughtFilter.map((data) => (
                       <option
@@ -424,27 +424,7 @@ const [userDataType, setUserDataType]  = useState('');
                 </p>
 
                 <div className="flex gap-3 items-center">
-                <span>
-                  <label
-                    htmlFor="year-line"
-                    className="font-medium text-sidebar"
-                  >
-                    Select User:{" "}
-                  </label>
-                  <select
-                    id="year-line"
-                    value={userDataType}
-                   onChange={handleUserTypeChange}
-                    className="border p-2 rounded-md ml-2 outline-none"
-                  >
-                  <option value="">User Type</option>
-                       {userType.map((option) => (
-                    <option key={option.option} value={option.option}>
-                      {option.label}
-                    </option>
-                  ))}
-                  </select>
-                </span>
+              
                 <span>
                   <label
                     htmlFor="year-line"

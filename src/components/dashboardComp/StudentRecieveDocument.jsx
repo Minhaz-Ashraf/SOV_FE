@@ -74,7 +74,7 @@ const StudentRecieveDocument = ({ studentId }) => {
         <span className="flex flex-row items-center mb-3">
           <span className="flex flex-row justify-between w-full items-center">
             <span className="flex flex-row items-center">
-              <span className="text-body">Show</span>
+              {/* <span className="text-body">Show</span>
               <select
                 className="ml-3 border px-2 py-1 w-10 h-11 rounded outline-none"
                 value={perPage}
@@ -86,7 +86,7 @@ const StudentRecieveDocument = ({ studentId }) => {
                   </option>
                 ))}
               </select>
-              <span className="px-3 text-body">entries</span>
+              <span className="px-3 text-body">entries</span> */}
               <select
                 className="ml-3 border px-2 py-1 w-40 h-11 rounded outline-none"
                 value={isType}

@@ -194,7 +194,7 @@ const AgentForm4 = ({ hide, handleCancel, updateData, adminId, agentId }) => {
 
     try {
       await deleteObject(storageRef);
-      toast.success("File deleted successfully!");
+      // toast.success("File deleted successfully!");
 
       if (uploadType === "businessRegistrationDocument") {
         setOverviewData((prevData) => ({
@@ -219,7 +219,7 @@ const AgentForm4 = ({ hide, handleCancel, updateData, adminId, agentId }) => {
       }
     } catch (error) {
       console.error("Error deleting file:", error);
-      toast.error("Error deleting file. Please try again.");
+      // toast.error("Error deleting file. Please try again.");
     }
   };
 

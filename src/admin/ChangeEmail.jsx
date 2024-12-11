@@ -7,8 +7,10 @@ import { changeAdminEmail } from '../features/adminApi';
 import { greenCheck } from '../assets';
 import socketServiceInstance from '../services/socket';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 const ChangeEmail = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     newEmail: '',
     confirmEmail: '',
@@ -57,7 +59,7 @@ const ChangeEmail = () => {
       if (res.statusCode === 200) {
         setIsEmailChanged(true);
         setTimeout(() => {
-          window.location.href = '/admin/role/auth/login';
+        navigate('/admin/role/auth/login');
           localStorage.removeItem('userAuthToken');
           localStorage.removeItem('role');
 

@@ -15,22 +15,26 @@ import { dnf } from "../assets";
 import Loader from "../components/Loader";
 
 const StudentDirectory = () => {
+
   const dispatch = useDispatch();
   const location = useLocation();
+  
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [perPage, setPerPage] = useState(10);
-  const agentId = location?.state?.id
+  const agentId = location?.state?.id;
   const path =
     location.pathname === "/admin/agent-student"
       ? `/studentInformation/agent-student-admin`
       : "/admin/student-directory";
   // Select data from Redux
-console.log(location)
+  // console.log(location);
   const { getAllStudentData } = useSelector((state) => state.admin);
   const totalUsersCount =
-    getAllStudentData?.data?.pagination?.totalDocuments || 0;
+    getAllStudentData?.data?.pagination?.totalDocuments ||
+    getAllStudentData?.data?.pagination?.totalRecords ||
+    0;
   const currentPage = getAllStudentData?.data?.pagination?.currentPage || 1;
   const totalPagesCount = getAllStudentData?.data?.pagination?.totalPages || 1;
 
@@ -38,7 +42,13 @@ console.log(location)
     { length: Math.min(totalUsersCount, 100) / 10 },
     (_, i) => (i + 1) * 10
   );
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
 
+    return () => clearTimeout(timer);
+  }, []);
   const handlePerPageChange = (e) => {
     setPerPage(parseInt(e.target.value));
     setPage(1);
@@ -52,9 +62,9 @@ console.log(location)
   const handlePageChange = (pageNumber) => setPage(pageNumber);
 
   useEffect(() => {
-    setLoading(true);
+    // setLoading(true);
     dispatch(getAllStudentList({ path, page, perPage, search, agentId }));
-    setLoading(false);
+    // setLoading(false);
   }, [dispatch, page, perPage, search]);
 
   const TABLE_HEAD = [
@@ -78,7 +88,7 @@ console.log(location)
         name: personalInfo
           ? `${personalInfo.firstName || "NA"} ${personalInfo.lastName || ""}`
           : "NA",
-        stId:  data?.stId || "_",
+        stId: data?.stId || "_",
         email: personalInfo?.email || "NA",
         phone: personalInfo?.phone?.phone || "NA",
         data: data || "NA",
@@ -106,7 +116,10 @@ console.log(location)
         </span>
         <div className="md:ml-[17%] ml-[22%] pt-14 font-poppins">
           <p className="md:text-[28px] text-[24px] font-bold text-sidebar mt-6 ml-9">
-            Student Directory
+            Student Directory ({totalUsersCount})
+          </p>{" "}
+          <p className="text-sidebar text-[15px]  md:ml-9  sm:ml-20">
+            Manage and view student details in one place.
           </p>
         </div>
       </div>
@@ -114,12 +127,11 @@ console.log(location)
         <span className="flex flex-row items-center mb-3 ml-[20%]">
           <span className="flex flex-row justify-between w-full items-center">
             <span className="flex flex-row items-center sm:ml-5">
-             
               <span className="flex flex-row items-center  sm:ml-9 md:-ml-6">
                 <CustomInput
                   className="h-11 md:w-80 sm:w-60 rounded-md text-body placeholder:px-3 pl-7 border border-[#E8E8E8] outline-none"
                   type="text"
-                  placeHodler="Search by application ID"
+                  placeHodler="Search by student Id and name"
                   name="search"
                   value={search}
                   onChange={handleSearchChange}
@@ -156,30 +168,28 @@ console.log(location)
         </div>
       ) : TABLE_ROWS?.length > 0 ? (
         <>
-        <div className="mt-3 mr-6 md:ml-[19%] sm:ml-[26%]">
+          <div className="mt-3 mr-6 md:ml-[19%] sm:ml-[26%]">
+            <CustomTableEight
+              tableHead={TABLE_HEAD}
+              tableRows={TABLE_ROWS}
+              action="View"
+              linkOne={"/student-profile"}
+              icon={<FaRegEye />}
+              actionTwo={"Delete"}
+            />
+          </div>
 
-        <CustomTableEight
-          tableHead={TABLE_HEAD}
-          tableRows={TABLE_ROWS}
-          action="View"
-          linkOne={"/student-profile"}
-          icon={<FaRegEye />}
-          actionTwo={"Delete"}
-        />
-      </div>
-
-      <div className="mt-16 mb-10 ml-20">
-        <Pagination
-          currentPage={currentPage}
-          hasNextPage={currentPage * perPage < totalUsersCount}
-          hasPreviousPage={currentPage > 1}
-          onPageChange={handlePageChange}
-          totalPagesCount={totalPagesCount}
-        />
-      </div>
-      
-    </>
-  ) : (
+          <div className="mt-16 mb-10 ml-20">
+            <Pagination
+              currentPage={currentPage}
+              hasNextPage={currentPage * perPage < totalUsersCount}
+              hasPreviousPage={currentPage > 1}
+              onPageChange={handlePageChange}
+              totalPagesCount={totalPagesCount}
+            />
+          </div>
+        </>
+      ) : (
         <div className="md:ml-[13%] ml-[18%]">
           <Dnf
             dnfImg={dnf}
@@ -188,7 +198,7 @@ console.log(location)
           />
         </div>
       )}
-      </>
+    </>
   );
 };
 

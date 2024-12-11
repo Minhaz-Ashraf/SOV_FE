@@ -27,7 +27,7 @@ const StudentProfile = () => {
   const { studentInfoData } = useSelector((state) => state.student);
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState(
-    searchParams.get("tab") || "pending"
+    searchParams.get("tab") || "profile"
   );
   const studentData =
     role === "0"
@@ -35,6 +35,7 @@ const StudentProfile = () => {
       : role === "3"
       ? studentInfoData?.data
       : useSelector((state) => state.general.studentData);
+      console.log(studentData, "check")
 
   const location = useLocation();
   const dispatch = useDispatch();
@@ -42,7 +43,7 @@ const StudentProfile = () => {
     role === "3"
       ? id || location.state.notifyId
       : location?.state?.id || location?.state?.notifyId;
-  //  console.log( studentId, location?.state?.notifyId)
+   console.log( studentId, location)
 
   const profileView = location.state?.isprofileView;
   const [isLoading, setIsLoading] = useState(true);
@@ -129,7 +130,7 @@ const StudentProfile = () => {
   ];
   console.log(location);
   const tabs = useMemo(() => {
-    return role === "3"
+    return role === "3" 
       ? allTabs.filter((tab) => tab.name === "profile")
       : allTabs;
   }, [role]);
@@ -144,7 +145,7 @@ const StudentProfile = () => {
   useEffect(() => {
     // Check the pathname and reset the active tab if needed
     if (location.pathname !== "/student-profile") {
-      setActiveTab("profile");
+      setActiveTab("profile")
       setSearchParams({ tab: "profile" }); // Update the search params
     } else {
       setActiveTab(searchParams.get("tab") || "profile"); // Set from search params

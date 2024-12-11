@@ -15,6 +15,8 @@ const StudentEdit = ({
   studentId,
   adminPath,
 }) => {
+  console.log(data, "check")
+
   const [isEditing, setIsEditing] = useState(false);
   const [isResidenceProfile, setIsResidenceProfile] = useState(false);
   const [isPrefenceProfile, setIsPreferenceProfile] = useState(false);
@@ -181,7 +183,7 @@ const StudentEdit = ({
               <Form1
                 hide={true}
                 handleCancel={handleCancelProfileInfo}
-                studentFormId={data._id}
+                studentFormId={data?._id}
                 updateData={updateData}
               />
             </div>
@@ -251,7 +253,7 @@ const StudentEdit = ({
               <Form2
                 hide={true}
                 handleCancel={handleCancelResidence}
-                studentFormId={data._id}
+                studentFormId={data?._id}
                 updateData={updateData}
               />
             </div>
@@ -323,7 +325,7 @@ const StudentEdit = ({
               <Form3
                 hide={true}
                 handleCancel={handleCancelPreference}
-                studentFormId={data._id}
+                studentFormId={data?._id}
                 updateData={updateData}
               />
             </div>

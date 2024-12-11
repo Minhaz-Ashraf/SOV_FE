@@ -437,13 +437,15 @@ const VisaStatusComponent = ({ studentId }) => {
                 </p>
               </span>
             </span>
+            {role !== "0"  &&
+            <>
             <p className="text-sidebar text-[22px] font-semibold mt-3 text-center">
               Visa lodgement Application Rejected
             </p>
             <p className="text-sidebar text-[16px] text-center font-light mt-3">
               Visa Application has been rejected from embassy for this student.
               and User requested for withdraw the amount.
-            </p>
+            </p> </>}
             <span
               onClick={handleWithdrawalData}
               className="text-primary flex flex-row items-center font-semibold gap-2 text-[16px] rounded-md px-6 py-2  cursor-pointer mt-4"

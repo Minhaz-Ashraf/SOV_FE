@@ -35,7 +35,13 @@ const ApplicationList = () => {
   const totalUsersCount = getApplicationOverview?.data?.totalCount || 0;
   const currentPage = getApplicationOverview?.data?.currentPage;
   const totalPagesCount = getApplicationOverview?.data?.totalPages;
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
 
+    return () => clearTimeout(timer);
+  }, []);
   const handlePageChange = (pageNumber) => {
     setPage(pageNumber);
   };
@@ -60,9 +66,10 @@ const ApplicationList = () => {
     perPageOptions.push(i);
   }
   useEffect(() => {
-    setLoading(true);
+    // setLoading(true);
     dispatch(adminApplicationOverview({ page, perPage, search, isTypeFilter }));
-    setLoading(false);
+  
+    // setLoading(false);
   }, [page, perPage, search, isTypeFilter]);
 
   const TABLE_HEAD = [
@@ -112,7 +119,7 @@ const ApplicationList = () => {
         <span className="flex items-center pt-16 md:ml-[16.5%] sm:ml-[22%]  ">
           <span>
             <p className="text-[28px] font-bold text-sidebar mt-4 ml-9">
-              Application Review ({totalUsersCount})
+              Applications ({totalUsersCount})
             </p>
             <p className="mt-1 font-normal text-body ml-9 pr-[30%] mb-2">
               Review your agents and students applications here. Stay updated on
@@ -140,7 +147,7 @@ const ApplicationList = () => {
             <CustomInput
               className="h-11 md:w-80 sm:w-40 rounded-md text-body placeholder:px-3 pl-7 border border-[#E8E8E8] outline-none"
               type="text"
-              placeHodler="Search by User Name & Application Id "
+              placeHodler="Search by User Name & User Id "
               name="search"
               value={search}
               onChange={handleSearchChange}

@@ -113,18 +113,6 @@ const TicketResolvePop = ({ isOpen, closePopUp, isticketId, handleStatus }) => {
                   </span>
                 </span>
               </div>
-              
-              <span className="text-[14px] text-sidebar mt-6 font-medium">
-                Describe How You Resolved the Issue?
-              </span>
-              <textarea
-                name="isSolution"
-                value={isSolution}
-                className="border border-md h-16 mt-2 px-3 py-3 outline-none text-sidebar text-[14px]"
-                placeholder="Write Here"
-                onChange={handleSolution}
-                disabled={ticketById?.status === "resolved"}
-              ></textarea>
               <span className="text-[14px] text-sidebar mt-4 font-medium">
                 Solution to show the user?
               </span>
@@ -136,6 +124,18 @@ const TicketResolvePop = ({ isOpen, closePopUp, isticketId, handleStatus }) => {
                 onChange={handleInput}
                 disabled={ticketById?.status === "resolved"}
               ></textarea>
+              <span className="text-[14px] text-sidebar mt-6 font-medium">
+                Describe How You Resolved the Issue?
+              </span>
+              <textarea
+                name="isSolution"
+                value={isSolution}
+                className="border border-md h-16 mt-2 px-3 py-3 outline-none text-sidebar text-[14px]"
+                placeholder="Write Here"
+                onChange={handleSolution}
+                disabled={ticketById?.status === "resolved"}
+              ></textarea>
+            
               <div className="flex flex-row items-center justify-end mt-6 gap-4 text-[14px]">
               {ticketById?.status === "underreview" && <><span
                   onClick={closePopUp}

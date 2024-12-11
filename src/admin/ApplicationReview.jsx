@@ -32,15 +32,15 @@ const ApplicationReview = () => {
     setPage(pageNumber);
   };
 
-  const handlePerPageChange = (e) => {
-    setPerPage(parseInt(e.target.value));
-    setPage(1);
-  };
+  // const handlePerPageChange = (e) => {
+  //   setPerPage(parseInt(e.target.value));
+  //   setPage(1);
+  // };
   
-  const handleTypeFilter = (e) =>{
-    setIsFilterType(e.target.value)
-    setPage(1);
-  }
+  // const handleTypeFilter = (e) =>{
+  //   setIsFilterType(e.target.value)
+  //   setPage(1);
+  // }
 
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
@@ -53,6 +53,8 @@ const ApplicationReview = () => {
   }
   useEffect(() => {
     if(tabType === "underreview" || tabType === "approved" || tabType === "rejected"){
+      setPage(1);
+
     dispatch(applicationForApproval({tabType, page, perPage, search, isTypeFilter}));
     }
   }, [page, perPage, updateState, tabType, search, isTypeFilter]);
@@ -114,7 +116,7 @@ const ApplicationReview = () => {
       </div>
       <span className="flex flex-row items-center mb-3 m-6 mt-6 sm:ml-[27%] md:ml-[19%] ">
         {" "}
-        <span className="text-body">Show</span>
+        {/* <span className="text-body">Show</span>
         <select
           className="ml-3 border px-2 py-1 w-10 h-11 rounded outline-none"
           value={perPage}
@@ -126,7 +128,7 @@ const ApplicationReview = () => {
             </option>
           ))}
         </select>
-        <span className="px-3 text-body">entries</span>
+        <span className="px-3 text-body">entries</span> */}
         {/* <select
           className="ml-3 border px-2 py-1 w-40 h-11 rounded outline-none"
            onChange={handleTypeFilter}
@@ -155,8 +157,9 @@ const ApplicationReview = () => {
       <div className="sm:ml-14 md:ml-0">
       <TabBar tabs={tabs} activeTab={activeTab} onTabChange={handleTabChange} setActiveTab={setActiveTab} />
       </div>
+{applications?.applications  ?  
 
-      <div className="mt-12 mb-10 ml-52">
+      <div className="mt-12 mb-10 ">
         <Pagination
           currentPage={currentPage}
           hasNextPage={currentPage * perPage < totalUsersCount}
@@ -164,7 +167,7 @@ const ApplicationReview = () => {
           onPageChange={handlePageChange}
           totalPagesCount={totalPagesCount}
         />
-      </div>
+      </div> : null}
     </>
   );
 };

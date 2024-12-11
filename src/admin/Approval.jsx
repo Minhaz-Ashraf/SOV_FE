@@ -27,7 +27,9 @@ const Approval = () => {
   const totalPagesCount = approvals?.totalPages || 1;
 
   // Manage the active tab using searchParams
-  const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "pending");
+  const [activeTab, setActiveTab] = useState(
+    searchParams.get("tab") || "pending"
+  );
 
   const handlePageChange = (pageNumber) => {
     setPage(pageNumber);
@@ -76,6 +78,8 @@ const Approval = () => {
       tabType === "completed" ||
       tabType === "rejected"
     ) {
+      setPage(1);
+
       dispatch(
         agentStudentApprovals({
           tabType,
@@ -102,6 +106,7 @@ const Approval = () => {
   const handleTabChange = (tabName) => {
     setActiveTab(tabName);
     setSearchParams({ tab: tabName });
+    
   };
 
   return (
@@ -126,7 +131,6 @@ const Approval = () => {
       </div>
 
       <span className="flex flex-row items-center mb-3 m-6 mt-6 sm:ml-[27%] md:ml-[19%]">
-      
         <span className="flex flex-row items-center  ">
           <CustomInput
             className="h-11 md:w-80 sm:w-80 rounded-md text-body  placeholder:px-3 pl-7 border border-[#E8E8E8] outline-none"
@@ -143,7 +147,11 @@ const Approval = () => {
       </span>
 
       <div className="sm:ml-14 md:ml-0">
-        <TabBar tabs={tabs} activeTab={activeTab} onTabChange={handleTabChange} />
+        <TabBar
+          tabs={tabs}
+          activeTab={activeTab}
+          onTabChange={handleTabChange}
+        />
       </div>
       <div className="mt-12 mb-10">
         <Pagination

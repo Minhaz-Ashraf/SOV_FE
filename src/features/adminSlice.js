@@ -221,6 +221,9 @@ const adminSlice = createSlice({
     state.updateState = !state.updateState;
     state.updateTicketTab = action.payload;
   },
+  setNullStudentDirectory :(state, action) => {
+    state.getAllStudentData = [];
+  },
 },
   extraReducers: (builder) => {
     builder
@@ -313,11 +316,13 @@ const adminSlice = createSlice({
       .addCase(getAllStudentList.fulfilled, (state, action) => {
         state.status = "succeeded";
 
-        state.getAllStudentData = action.payload;
+        state.getAllStudentData = action.payload || [];
       })
       .addCase(getAllStudentList.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload || action.error.message;
+        state.getAllStudentData = [];
+
       })
       .addCase(adminProfileData.pending, (state) => {
         state.status = "loading";
@@ -358,5 +363,5 @@ const adminSlice = createSlice({
       });
   },
 });
-export const { setTabType, setUpdateTicket } = adminSlice.actions;
+export const { setTabType, setUpdateTicket, setNullStudentDirectory } = adminSlice.actions;
 export default adminSlice.reducer;
