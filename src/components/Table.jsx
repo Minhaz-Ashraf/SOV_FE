@@ -34,6 +34,8 @@ import {
 } from "../features/adminSlice";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { extractFileName, extractFileNames } from "../constant/commonfunction";
+import { FaRegEye } from "react-icons/fa";
+import { studentApplications } from "../features/agentSlice";
 
 export function CustomTable({
   tableHead = [],
@@ -160,8 +162,7 @@ export function CustomTableTwo({
 }) {
   const location = useLocation();
   const dispatch = useDispatch();
-
-  const [fileUrl, setFileUrl] = useState(null);
+  const nullval = null
   const [uploadingState, setUploadingState] = useState({});
   const { getStudentDataById } = useSelector((state) => state.admin);
 
@@ -190,9 +191,8 @@ export function CustomTableTwo({
         applicationId: rowId,
       };
       await uploadApplications(uploadData); // Update with your API call
-      customDataThree?.forEach((item) => {
-        dispatch(adminUrlData(item)); // Dispatch each item individually
-      });
+      dispatch(studentApplications({ nullval, nullval, studentId, nullval, nullval }));
+
       if (getStudentDataById.studentInformation.agentId) {
         if (socketServiceInstance.isConnected()) {
           //from agent to admin
@@ -204,9 +204,7 @@ export function CustomTableTwo({
               " " +
               getStudentDataById?.studentInformation?.personalInformation
                 .lastName
-            } ${
-              getStudentDataById?.studentInformation?.stId
-            } `,
+            } ${getStudentDataById?.studentInformation?.stId} `,
             path: "/student-profile",
             pathData: {
               studentId: getStudentDataById?.studentInformation?._id,
@@ -214,7 +212,7 @@ export function CustomTableTwo({
             recieverId: getStudentDataById.studentInformation.agentId,
           };
 
-          socketServiceInstance.socket.emit(  
+          socketServiceInstance.socket.emit(
             "NOTIFICATION_ADMIN_TO_AGENT",
             notificationData
           );
@@ -227,15 +225,13 @@ export function CustomTableTwo({
           //from student to admin
           const notificationData = {
             title: " RECEIVED_OFFER_LETTER_STUDENT",
-            message:  `Received the document from admin  ${
+            message: `Received the document from admin  ${
               getStudentDataById?.studentInformation?.personalInformation
                 .firstName +
               " " +
               getStudentDataById?.studentInformation?.personalInformation
                 .lastName
-            } ${
-              getStudentDataById?.studentInformation?.stId
-            } `,
+            } ${getStudentDataById?.studentInformation?.stId} `,
             path: "/student/visa-update",
             pathData: {
               studentId: getStudentDataById?.studentInformation?._id,
@@ -258,27 +254,25 @@ export function CustomTableTwo({
       setUploadingState((prev) => ({ ...prev, [rowId]: false }));
     } catch (error) {
       toast.error("Error uploading file. Please try again.");
-      console.log(error) 
+      console.log(error);
     } finally {
       setUploadingState((prev) => ({ ...prev, [rowId]: false }));
     }
   };
 
-  const handleFileDelete = async (fileUrl) => {
+  const handleFileDelete = async (fileUrl, studentId) => {
     const storageRef = ref(storage, fileUrl);
 
     try {
       // Delete file from Firebase
       await deleteObject(storageRef);
 
-      await deleteApplication({fileUrl:fileUrl});
-
+      await deleteApplication({ fileUrl: fileUrl });
+      dispatch(studentApplications({ nullval, nullval, studentId, nullval, nullval }));
+     
       toast.success("File deleted successfully!");
 
-      // Fetch the updated application data
-      customDataThree?.forEach((item) => {
-        dispatch(adminUrlData(item)); // Dispatch each item individually
-      });
+
     } catch (error) {
       toast.error("Error deleting file. Please try again.");
     }
@@ -434,107 +428,33 @@ export function CustomTableTwo({
                     : "NA"}
                 </Typography>
               </td>
-              {console.log(row?.type?.studentInformationId, customDataTwo)}
+              {/* {console.log(row?.type?.documents)} */}
               {location.pathname === "/admin/student-applications" && (
-                <td className="p-4">
-                  {customDataTwo?.length > 0 &&
-                    (() => {
-                      const matchingDoc = customDataTwo.find(
-                        (data) =>
-                          data.studentId.trim().normalize() ===
-                          row?.type?._id.trim().normalize()
-                      );
-
-                      if (matchingDoc) {
-                        console.log("Matching Document Found:", matchingDoc);
-                        return (
-                          <div className="flex items-center justify-center gap-2">
-                            {matchingDoc.document &&
-                            matchingDoc.document.length > 0 ? (
-                              <>
-                                <button
-                                  className="text-primary rounded-md"
-                                  onClick={() =>
-                                    window.open(
-                                      matchingDoc.document[0],
-                                      "_blank"
-                                    )
-                                  }
-                                >
-                                  View
-                                </button>
-                                <button
-                                  className="px-4 py-1 text-primary text-[20px] rounded-md"
-                                  onClick={() =>
-                                    handleFileDelete(
-                                      matchingDoc.document[0],
-                                      row
-                                    )
-                                  }
-                                >
-                                  <RiDeleteBin6Line />
-                                </button>
-                              </>
-                            ) : (
-                              <span>No Document Found</span>
-                            )}
-                          </div>
-                        );
-                      }
-
-                      console.log("No matching document found.");
-                      return <span>  <>
-                        <Typography
-                          as="label"
-                          htmlFor={`pdf-upload-${row?.appId}`}
-                          variant="small"
-                          color="blue-gray"
-                          className="font-medium cursor-pointer"
-                        >
-                          <span className="flex items-center gap-3 justify-center">
-                            {uploadingState[row?.appId] ? (
-                              "Uploading..."
-                            ) : (
-                              <>
-                                <span className="font-normal text-sidebr">
-                                  Upload
-                                </span>
-                                <span className="font-body text-primary text-[22px]">
-                                  <MdOutlineUploadFile />
-                                </span>
-                              </>
-                            )}
-                          </span>
-                        </Typography>
-
-                        {/* Hidden input for file upload */}
-                        <input
-                          type="file"
-                          id={`pdf-upload-${row?.appId}`}
-                          accept="application/pdf"
-                          className="hidden"
-                          onChange={(e) =>
-                            handleFileUpload(
-                              e,
-                              row?.studentId,
-                              row?.type?.offerLetter
-                                ? "offerLetter"
-                                : row?.type?.visa
-                                ? "visa"
-                                : row?.type?.courseFeeApplication
-                                ? "courseFee"
-                                : "NA",
-                              row?.appId
-                            )
-                          }
-                        />
-                      </></span>;
-                    })()}
-
-                  {/* Upload section if no matching document is found */}
-                  {customDataTwo?.length === 0 ||
-                    (!customDataTwo && (
+                <td className="p-4 ">
+                  <span className="flex items-center gap-3">
+                    {/* View and Delete Buttons */}
+                    {Array.isArray(row?.type?.documents) &&
+                    row?.type?.documents.length > 0 ? (
                       <>
+                        <a
+                          className="flex items-center gap-3 text-primary font-medium"
+                          href={row?.type?.documents[0]}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          View
+                        </a>
+                        <button
+                          className="px-4 py-1 text-primary text-[20px] rounded-md"
+                          onClick={() =>
+                            handleFileDelete(row?.type?.documents[0],   row?.studentId)
+                          }
+                        >
+                          <RiDeleteBin6Line />
+                        </button>
+                      </>
+                    ) : (
+                      <div className="mt-4">
                         <Typography
                           as="label"
                           htmlFor={`pdf-upload-${row?.appId}`}
@@ -547,7 +467,7 @@ export function CustomTableTwo({
                               "Uploading..."
                             ) : (
                               <>
-                                <span className="font-normal text-sidebr">
+                                <span className="font-normal text-sidebar">
                                   Upload
                                 </span>
                                 <span className="font-body text-primary text-[22px]">
@@ -558,7 +478,7 @@ export function CustomTableTwo({
                           </span>
                         </Typography>
 
-                        {/* Hidden input for file upload */}
+                        {/* Hidden File Input */}
                         <input
                           type="file"
                           id={`pdf-upload-${row?.appId}`}
@@ -579,8 +499,11 @@ export function CustomTableTwo({
                             )
                           }
                         />
-                      </>
-                    ))}
+                      </div>
+                    )}
+                  </span>
+
+                  {/* Upload Section */}
                 </td>
               )}
 
@@ -919,8 +842,8 @@ export function CustomTableFive({
 
   const [isOpen, setIsOpen] = useState(false);
   const ticketData = useSelector((state) => state.admin.ticketById);
- const test = null
- const status = "resolved"
+  const test = null;
+  const status = "resolved";
   console.log(ticketData);
   const [isticketId, setTicketId] = useState();
   const role = localStorage.getItem("role");
@@ -945,8 +868,7 @@ export function CustomTableFive({
         resolvedText,
         ticketId
       );
-      dispatch(
-      getAllTickets({ test, test, test, test, status, test }))
+      dispatch(getAllTickets({ test, test, test, test, status, test }));
       toast.success(res?.message || "Status Updated Successfully");
       if (ticketData.createdById.startsWith("AG")) {
         if (socketServiceInstance.isConnected()) {
