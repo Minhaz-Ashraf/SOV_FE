@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUserData } from "../../features/authSlice";
-import { getStudentData } from "../../features/studentSlice";
+import { getStudentData, studentInfo } from "../../features/studentSlice";
 import { getPersonalInfo } from "../../features/studentApi";
 import { getAgentData } from "../../features/agentApi";
 import { agentInformation } from "../../features/agentSlice";
@@ -130,56 +130,58 @@ const LoginComponent = () => {
           }
         } else if (loginData?.role === "3" && res.user._id !== "") {
           dispatch(getStudentData(res.user._id));
+          dispatch(studentInfo(res.user._id));
 
-          const studentInfo = await getPersonalInfo(res.user._id).catch(
+
+          const studentInfoData = await getPersonalInfo(res.user._id).catch(
             (error) => {
               console.log(error);
               navigate("/student-form/1", { state: "passPage" });
               return;
             }
           );
-          console.log(studentInfo);
+          // console.log(studentInfoData);
 
-          if (!studentInfo.data || Object.keys(studentInfo.data).length === 0) {
+          if (!studentInfoData.data || Object.keys(studentInfoData.data).length === 0) {
             navigate("student-form/1", { state: "passPage" });
             return;
           }
           let redirectPath = "";
 
-          if(studentInfo.data.pageStatus?.status === "requestedForReaproval") {
+          if(studentInfoData.data.pageStatus?.status === "requestedForReaproval") {
             redirectPath = `/student/account-deleted`;
-          } else if(studentInfo.data.deleted === true) {
+          } else if(studentInfoData.data.deleted === true) {
             redirectPath = `/student/account-deleted`;
           } else if (
-            studentInfo?.data?.studentInformation?.pageCount === 3 &&
-            studentInfo?.data?.studentInformation?.pageStatus?.status ===
+            studentInfoData?.data?.studentInformation?.pageCount === 3 &&
+            studentInfoData?.data?.studentInformation?.pageStatus?.status ===
               "completed"
           ) {
             redirectPath = `/student/dashboard`;
           }
           if (
-            studentInfo?.data?.studentInformation?.pageCount === 3 &&
-            studentInfo?.data?.studentInformation?.pageStatus?.status ===
+            studentInfoData?.data?.studentInformation?.pageCount === 3 &&
+            studentInfoData?.data?.studentInformation?.pageStatus?.status ===
               "notapproved"
           ) {
             redirectPath = `/waiting`;
           } else if (
-            studentInfo?.data?.studentInformation?.pageCount !== 3 &&
-            studentInfo?.data?.studentInformation?.pageStatus?.status ===
+            studentInfoData?.data?.studentInformation?.pageCount !== 3 &&
+            studentInfoData?.data?.studentInformation?.pageStatus?.status ===
               "registering"
           ) {
-            redirectPath = `/student-form/${studentInfo?.data?.studentInformation?.pageCount}`;
+            redirectPath = `/student-form/${studentInfoData?.data?.studentInformation?.pageCount}`;
           }
           if (
-            studentInfo?.data?.studentInformation?.pageCount === 3 &&
-            studentInfo?.data?.studentInformation?.pageStatus?.status ===
+            studentInfoData?.data?.studentInformation?.pageCount === 3 &&
+            studentInfoData?.data?.studentInformation?.pageStatus?.status ===
               "rejected"
           ) {
             redirectPath = `/student-form/1`;
           }
           if (
-            studentInfo?.data?.studentInformation?.pageCount === 3 &&
-            studentInfo?.data?.studentInformation?.pageStatus?.status ===
+            studentInfoData?.data?.studentInformation?.pageCount === 3 &&
+            studentInfoData?.data?.studentInformation?.pageStatus?.status ===
               "requestedForReaproval"
           ) {
             redirectPath = `/student/account-deleted`;
