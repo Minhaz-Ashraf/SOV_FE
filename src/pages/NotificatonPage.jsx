@@ -4,7 +4,7 @@ import {
   clearNotificationCount,
   removeNotification,
   addAllNotifications,
-  markAllAsSeen
+  markAllAsSeen,
 } from "../features/notificationSlice";
 import Header from "../components/dashboardComp/Header";
 import { FaBell, FaStar } from "react-icons/fa";
@@ -101,12 +101,11 @@ const NotificationPage = () => {
     };
   }, [dispatch, handleScroll, role]);
 
-
   const handleMarkAllAsSeen = () => {
-    if (role === '0' || role === "1") {
-      socketServiceInstance.socket?.emit('NOTIFICATION_ALL_READ_BY_ADMIN', {});
+    if (role === "0" || role === "1") {
+      socketServiceInstance.socket?.emit("NOTIFICATION_ALL_READ_BY_ADMIN", {});
     } else {
-      socketServiceInstance.socket?.emit('NOTIFICATION_ALL_READ_BY_USER', {});
+      socketServiceInstance.socket?.emit("NOTIFICATION_ALL_READ_BY_USER", {});
     }
     dispatch(markAllAsSeen());
   };
@@ -129,10 +128,12 @@ const NotificationPage = () => {
           <RxCross2 />
         </span>
         <p className="text-sidebar font-semibold">
-          {notification.title
-            .replace(/_/g, " ")
-            .replace(/\b(AGENT|STUDENT|ADMIN)\b/g, "")
-            .trim() || "Notification Title"}
+          {notification.title === "RECEIVED_OFFER_LETTER_AGENT"
+            ? "RECIEVED DOCUMENT"
+            : notification.title
+                .replace(/_/g, " ")
+                .replace(/\b(AGENT|STUDENT|ADMIN)\b/g, "")
+                .trim() || "Notification Title"}
         </p>
         <p className="text-body mt-2">
           {notification.message || "No message provided"}
@@ -144,10 +145,16 @@ const NotificationPage = () => {
           <Link
             onClick={() => handleNotificationClick(notification)}
             to={notification.routePath}
-            state={{notifyId:notification.pathData?.studentId}}
+            state={{ notifyId: notification.pathData?.studentId }}
             className="text-primary hover:underline text-sm mt-2"
           >
-            Click to view
+            Click to view{" "}
+            {notification.title === "RECEIVED_OFFER_LETTER_AGENT"
+              ? "> Go to Received document"
+              : notification.title === "VISA_REJECTED_BY_EMBASSY_AGENT" ||
+                notification.title === "VISA_APPROVED_BY_EMBASSY_AGENT"
+              ? "> Go to Visa Status"
+              : null}
           </Link>
         ) : (
           <a
@@ -180,10 +187,8 @@ const NotificationPage = () => {
           ) : null}
         </span>
         <div className="ml-[17%] pt-16 pb-5 bg-white border-b-2 border-[#E8E8E8]">
-        <span className="flex items-center pt-2 md:ml-[0%] sm:ml-7">
-
-          <p className="text-[28px] font-bold text-sidebar mt-6 ml-9">
-
+          <span className="flex items-center pt-2 md:ml-[0%] sm:ml-7">
+            <p className="text-[28px] font-bold text-sidebar mt-6 ml-9">
               Notifications Center
             </p>
           </span>
@@ -193,8 +198,7 @@ const NotificationPage = () => {
           </p>
         </div>
         <div className="mb-20">
-
-        <span className="flex justify-end mr-9 mt-6">
+          <span className="flex justify-end mr-9 mt-6">
             <span
               onClick={handleMarkAllAsSeen}
               className="text-body bg-[#F2F5F7] px-6 py-2 rounded-md cursor-pointer"
