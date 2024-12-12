@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import AgentSidebar from "../components/dashboardComp/AgentSidebar";
 import Header from "../components/dashboardComp/Header";
-import { useLocation, useSearchParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { studentById } from "../features/generalSlice";
 import { profileSkeleton } from "../assets";
@@ -19,31 +19,27 @@ import ApplicationView from "./ApplicationView";
 import StudentuplaodDocument from "./../components/dashboardComp/StudentuplaodDocument";
 import StudentRecieveDocument from "../components/dashboardComp/StudentRecieveDocument";
 import AdminSidebar from "../components/dashboardComp/AdminSidebar";
-import NotificationPage from "./../pages/NotificatonPage";
+import TabBarTwo from "../components/TabBarTwo";
 
 const StudentProfile = () => {
   const role = localStorage.getItem("role");
   const id = localStorage.getItem("student");
   const { studentInfoData } = useSelector((state) => state.student);
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [activeTab, setActiveTab] = useState(
-    searchParams.get("tab") || "profile"
-  );
+
   const studentData =
     role === "0"
       ? useSelector((state) => state.admin.getStudentDataById)
       : role === "3"
       ? studentInfoData?.data
       : useSelector((state) => state.general.studentData);
-      console.log(studentData, "check")
 
   const location = useLocation();
   const dispatch = useDispatch();
+  console.log(location)
   const studentId =
-    role === "3"
-      ? id || location.state.notifyId
-      : location?.state?.id || location?.state?.notifyId;
-   console.log( studentId, location)
+  role === "3"
+    ? id || location.state.notifyId
+    : location?.state?.id || location?.state?.notifyId;
 
   const profileView = location.state?.isprofileView;
   const [isLoading, setIsLoading] = useState(true);
@@ -73,7 +69,7 @@ const StudentProfile = () => {
         profileView: profileView,
         updateData: handleProfileUpdate,
         studentId: studentId,
-        adminPath: location.state?.adminState,
+        adminPath: location.state?.adminState
       },
     },
 
@@ -86,7 +82,7 @@ const StudentProfile = () => {
         profileView: profileView,
         updateData: handleProfileUpdate,
         studentId: studentId,
-        adminPath: location.state?.adminState,
+        adminPath: location.state?.adminState
       },
     },
     {
@@ -98,7 +94,7 @@ const StudentProfile = () => {
         profileView: profileView,
         updateData: handleProfileUpdate,
         studentId: studentId,
-        adminPath: location.state?.adminState,
+        adminPath: location.state?.adminState
       },
     },
     {
@@ -111,7 +107,7 @@ const StudentProfile = () => {
         updateData: handleProfileUpdate,
         stId: studentId,
         adminPath: location.state?.adminState,
-        adminAccess: location?.state?.id,
+        adminAccess: location?.state?.id
       },
     },
     {
@@ -124,17 +120,14 @@ const StudentProfile = () => {
         updateData: handleProfileUpdate,
         studentId: studentId,
         adminPath: location.state?.adminState,
-        adminAccess: location?.state?.id,
+        adminAccess: location?.state?.id
       },
     },
   ];
-  console.log(location);
-  const tabs = useMemo(() => {
-    return role === "3" 
-      ? allTabs.filter((tab) => tab.name === "profile")
-      : allTabs;
-  }, [role]);
-
+  console.log(location)
+  const tabs = role === "3" 
+  ? allTabs.filter(tab => tab.name === "profile") 
+  : allTabs;
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
@@ -142,20 +135,7 @@ const StudentProfile = () => {
 
     return () => clearTimeout(timer);
   }, []);
-  useEffect(() => {
-    // Check the pathname and reset the active tab if needed
-    if (location.pathname !== "/student-profile") {
-      setActiveTab("profile")
-      setSearchParams({ tab: "profile" }); // Update the search params
-    } else {
-      setActiveTab(searchParams.get("tab") || "profile"); // Set from search params
-    }
-  }, [location.pathname, searchParams]);
 
-  const handleTabChange = (tabName) => {
-    setActiveTab(tabName);
-    setSearchParams({ tab: tabName });
-  };
   return (
     <>
       {profileView === "/admin/approvals" ||
@@ -270,11 +250,8 @@ const StudentProfile = () => {
             </span>
 
             <div className="sm:ml-[9%] md:ml-0 ">
-              <TabBar
+              <TabBarTwo
                 tabs={tabs}
-                activeTab={activeTab}
-                onTabChange={handleTabChange}
-                setActiveTab={setActiveTab}
               />
             </div>
           </div>
