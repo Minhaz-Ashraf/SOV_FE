@@ -174,6 +174,7 @@ const CourseFeeDocUpdate = ({
 
       await Promise.all(
         newFiles.map(async ({ file, fileType, blobUrl }) => {
+          // console.log( file, fileType, blobUrl )
           const uniqueFileName = `${uuidv4()}-${file.name}`;
           const storageRef = ref(
             storage,
@@ -193,24 +194,23 @@ const CourseFeeDocUpdate = ({
             await uploadDocument(uploadData);
             setCourseFee((prevState) => ({
               ...prevState,
-              offerLetterAnsPassport: {
-                ...prevState.offerLetterAnsPassport,
-                [fileType]:
-                  prevState.offerLetterAnsPassport[fileType] === blobUrl
-                    ? downloadURL
-                    : prevState.offerLetterAnsPassport[fileType],
-              },
+              offerLetterAnsPassport: updatedOfferLetterAnsPassport
             }));
+
+          
           } catch (error) {
-            toast.error(`Error uploading ${file.name}.`);
+            // toast.error(`Error uploading ${file.name}.`);
           }
         })
       );
-
       const payload = {
-        passport: courseFee.offerLetterAnsPassport.passport,
-        offerLetter: courseFee.offerLetterAnsPassport.offerLetter,
+        ...courseFee,
+        offerLetterAnsPassport: updatedOfferLetterAnsPassport,
       };
+      // const payload = {
+      //   passport: courseFee.offerLetterAnsPassport.passport,
+      //   offerLetter: courseFee.offerLetterAnsPassport.offerLetter,
+      // };
       const res = await updateCourseFeeDoc(appId, payload);
 
       toast.success(res.message || "Data added successfully.");
@@ -336,10 +336,9 @@ const CourseFeeDocUpdate = ({
                 </div>
                 {courseFee.offerLetterAnsPassport?.offerLetter &&
                   typeof courseFee.offerLetterAnsPassport.offerLetter ===
-                    "string" &&
-                  courseFee.offerLetterAnsPassport.offerLetter.startsWith(
-                    "http"
-                  ) && (
+                    "string" 
+                 
+                   && (
                     <div className="mt-4">
                       <p className="text-secondary font-semibold">
                         Uploaded Document:
@@ -383,9 +382,7 @@ const CourseFeeDocUpdate = ({
                 {courseFee.offerLetterAnsPassport?.passport &&
                   typeof courseFee.offerLetterAnsPassport.passport ===
                     "string" &&
-                  courseFee.offerLetterAnsPassport.passport.startsWith(
-                    "http"
-                  ) && (
+                  (
                     <div className="mt-4">
                       <p className="text-secondary font-semibold">
                         Uploaded Document:

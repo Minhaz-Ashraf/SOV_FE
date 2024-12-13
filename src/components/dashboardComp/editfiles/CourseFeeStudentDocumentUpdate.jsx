@@ -194,10 +194,7 @@ const CourseFeeStudentDocumentUpdate = ({
           // Update the state with Firebase URL
           setCourseFee((prevState) => ({
             ...prevState,
-            studentDocument: {
-              ...prevState.studentDocument,
-              [fileType]: downloadURL, // Directly set the Firebase URL
-            },
+            studentDocument: updatedStudentDocument
           }));
 
           toast.success(`${file.name} uploaded successfully.`);
@@ -208,8 +205,8 @@ const CourseFeeStudentDocumentUpdate = ({
 
       // Submit the updated `studentDocument` to the backend
       const payload = {
-        aadharCard: courseFee.studentDocument.aadharCard,
-        panCard: courseFee.studentDocument.panCard,
+        ...courseFee,
+        studentDocument: updatedStudentDocument,
       };
       const res = await updateCourseFeeStudentDoc(appId, payload);
 
