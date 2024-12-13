@@ -203,7 +203,7 @@ const VisaUploadEdit = ({ appId, updatedData, profileViewPath, userId }) => {
 
       // Submit the updated data to the backend
       const payload = { studentDocument: updatedStudentDocument };
-      const res = await updateVisaDocument(appId, payload);
+      const res = await updateVisaDocument(appId, updatedStudentDocument);
 
       toast.success(res.message || "Data added successfully.");
       updatedData();
@@ -405,12 +405,26 @@ const VisaUploadEdit = ({ appId, updatedData, profileViewPath, userId }) => {
                   className="bg-white rounded-xl px-8 py-4 pb- "
                   key={docType}
                 >
-                  <p className="text-[15px]  text-body">
-                    {docType
-                      .replace(/([A-Z])/g, " $1")
-                      .trim()
-                      .replace(/^./, (str) => str.toUpperCase())}
+                  <p className="text-[15px] text-sidebar">
+                    Upload{" "}
+                    {(() => {
+                      // Define a mapping for docType values
+                      const typeMapping = {
+                        certificate: "IELTS/PTE/TOEFL/Certificate",
+                        loa: "LOA/Fee Receipt",
+                      };
+
+                      // Check if the docType is in the mapping, else apply the original transformation
+                      return (
+                        typeMapping[docType] ||
+                        docType
+                          .replace(/([A-Z])/g, " $1")
+                          .trim()
+                          .replace(/^./, (str) => str.toUpperCase())
+                      );
+                    })()}
                   </p>
+
                   <div className="flex flex-col justify-center items-center border-2 border-dashed border-body rounded-md py-9 mt-2 mb-4">
                     <button
                       className="text-black flex items-center"
@@ -420,10 +434,22 @@ const VisaUploadEdit = ({ appId, updatedData, profileViewPath, userId }) => {
                     </button>
                     <p>
                       Upload{" "}
-                      {docType
-                        .replace(/([A-Z])/g, " $1")
-                        .trim()
-                        .replace(/^./, (str) => str.toUpperCase())}
+                      {(() => {
+                        // Define a mapping for docType values
+                        const typeMapping = {
+                          certificate: "IELTS/PTE/TOEFL/Certificate",
+                          loa: "LOA/Fee Receipt",
+                        };
+
+                        // Check if the docType is in the mapping, else apply the original transformation
+                        return (
+                          typeMapping[docType] ||
+                          docType
+                            .replace(/([A-Z])/g, " $1")
+                            .trim()
+                            .replace(/^./, (str) => str.toUpperCase())
+                        );
+                      })()}
                     </p>
                   </div>
                   {visaLetter?.studentDocument[docType] && (
