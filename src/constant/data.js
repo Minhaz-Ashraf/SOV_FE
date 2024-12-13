@@ -205,7 +205,7 @@ export const regTypeOption = [
   { id: 2, option: "Corporation", label: "Corporation" },
 ];
 export const applicationTypeOption = [
-  { id: 0, option: "agent", label: "Offer Letter" },
+  { id: 0, option: "offerLetter", label: "Offer Letter" },
   { id: 1, option: "courseFeeApplication", label: "Course Fee Application" },
   { id: 2, option: "visa", label: "Visa" },
 ];
