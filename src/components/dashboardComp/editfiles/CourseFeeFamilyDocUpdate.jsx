@@ -265,7 +265,7 @@ const CourseFeeFamilyDocUpdate = ({
         fatherPanCard: courseFee.parentDocument.fatherPanCard || "",
         motherPanCard: courseFee.parentDocument.motherPanCard || "",
         siblingAadharCard: courseFee.siblingDocument.siblingAadharCard || "",
-        siblingPanCard: courseFee.siblingDocument.siblingPanCard || ""
+        siblingPanCard: courseFee.siblingDocument.siblingPanCard || "",
       };
 
       // Check if both father and mother Aadhar and PAN cards are available
@@ -354,172 +354,163 @@ const CourseFeeFamilyDocUpdate = ({
                 </span>
               )}
         </div>
-
-        <div className="flex flex-row w-full justify-between mt-6">
-          <span className="w-1/2 flex flex-col text-[15px]">
-            <span className="flex flex-col">
-              <span className="font-light">Father Aadhar Card</span>
-              <span className="font-medium">
-                {applicationDataById?.courseFeeApplication?.parentDocument
-                  ?.fatherAadharCard ? (
-                  <a
-                    className="flex items-center gap-3 text-primary font-medium"
-                    href={
-                      applicationDataById?.courseFeeApplication?.parentDocument
-                        ?.fatherAadharCard
-                    }
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Uploaded
-                    <span>
-                      <FaRegEye />
-                    </span>
-                  </a>
-                ) : (
-                  "NA"
-                )}
-              </span>
-              <span className="font-light mt-6">Mother Aadhar Card</span>
-              <span className="font-medium">
-                {applicationDataById?.courseFeeApplication?.parentDocument
-                  ?.motherAadharCard ? (
-                  <a
-                    className="flex items-center gap-3 text-primary font-medium"
-                    href={
-                      applicationDataById?.courseFeeApplication?.parentDocument
-                        ?.motherAadharCard
-                    }
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Uploaded
-                    <span>
-                      <FaRegEye />
-                    </span>
-                  </a>
-                ) : (
-                  "NA"
-                )}
-              </span>
-            </span>
-          </span>
-          <span className="w-1/2 flex flex-col text-[15px]">
-            <span className="flex flex-col">
-              <span className="font-light mt-4">Father Pan Card</span>
-              <span className="font-medium">
-                {applicationDataById?.courseFeeApplication?.parentDocument
-                  ?.fatherPanCard ? (
-                  <a
-                    className="flex items-center gap-3 text-primary font-medium"
-                    href={
-                      applicationDataById?.courseFeeApplication?.parentDocument
-                        ?.fatherPanCard
-                    }
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Uploaded
-                    <span>
-                      <FaRegEye />
-                    </span>
-                  </a>
-                ) : (
-                  "NA"
-                )}
-              </span>
-              <span className="font-light mt-4">Mother Pan Card</span>
-              <span className="font-medium">
-                {applicationDataById?.courseFeeApplication?.parentDocument
-                  ?.motherPanCard ? (
-                  <a
-                    className="flex items-center gap-3 text-primary font-medium"
-                    href={
-                      applicationDataById?.courseFeeApplication?.parentDocument
-                        ?.motherPanCard
-                    }
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Uploaded
-                    <span>
-                      <FaRegEye />
-                    </span>
-                  </a>
-                ) : (
-                  "NA"
-                )}
+        {applicationDataById?.courseFeeApplication?.parentDocument && (
+          <div className="flex flex-row w-full justify-between mt-6">
+            <span className="w-1/2 flex flex-col text-[15px]">
+              <span className="flex flex-col">
+                <span className="font-light">Father Aadhar Card</span>
+                <span className="font-medium">
+                  {applicationDataById?.courseFeeApplication?.parentDocument
+                    ?.fatherAadharCard ? (
+                    <a
+                      className="flex items-center gap-3 text-primary font-medium"
+                      href={
+                        applicationDataById?.courseFeeApplication
+                          ?.parentDocument?.fatherAadharCard
+                      }
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Uploaded
+                      <span>
+                        <FaRegEye />
+                      </span>
+                    </a>
+                  ) : (
+                    "NA"
+                  )}
+                </span>
+                <span className="font-light mt-6">Mother Aadhar Card</span>
+                <span className="font-medium">
+                  {applicationDataById?.courseFeeApplication?.parentDocument
+                    ?.motherAadharCard ? (
+                    <a
+                      className="flex items-center gap-3 text-primary font-medium"
+                      href={
+                        applicationDataById?.courseFeeApplication
+                          ?.parentDocument?.motherAadharCard
+                      }
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Uploaded
+                      <span>
+                        <FaRegEye />
+                      </span>
+                    </a>
+                  ) : (
+                    "NA"
+                  )}
+                </span>
               </span>
             </span>
-          </span>
-
-
-          
-        </div>
-
-{applicationDataById?.courseFeeApplication?.siblingsDocument  &&  
-        <div className="flex flex-row items-center w-full justify-between">
-        <span className="w-1/2 flex flex-col text-[15px]">
-            <span className="flex flex-col">
-              <span className="font-light mt-4">Sibling Aadhar Card</span>
-              <span className="font-medium">
-                {applicationDataById?.courseFeeApplication?.siblingsDocument
-                  ?.siblingAadharCard ? (
-                  <a
-                    className="flex items-center gap-3 text-primary font-medium"
-                    href={
-                      applicationDataById?.courseFeeApplication?.siblingsDocument
-                        ?.siblingAadharCard
-                    }
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Uploaded
-                    <span>
-                      <FaRegEye />
-                    </span>
-                  </a>
-                ) : (
-                  "NA"
-                )}
+            <span className="w-1/2 flex flex-col text-[15px]">
+              <span className="flex flex-col">
+                <span className="font-light mt-4">Father Pan Card</span>
+                <span className="font-medium">
+                  {applicationDataById?.courseFeeApplication?.parentDocument
+                    ?.fatherPanCard ? (
+                    <a
+                      className="flex items-center gap-3 text-primary font-medium"
+                      href={
+                        applicationDataById?.courseFeeApplication
+                          ?.parentDocument?.fatherPanCard
+                      }
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Uploaded
+                      <span>
+                        <FaRegEye />
+                      </span>
+                    </a>
+                  ) : (
+                    "NA"
+                  )}
+                </span>
+                <span className="font-light mt-4">Mother Pan Card</span>
+                <span className="font-medium">
+                  {applicationDataById?.courseFeeApplication?.parentDocument
+                    ?.motherPanCard ? (
+                    <a
+                      className="flex items-center gap-3 text-primary font-medium"
+                      href={
+                        applicationDataById?.courseFeeApplication
+                          ?.parentDocument?.motherPanCard
+                      }
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Uploaded
+                      <span>
+                        <FaRegEye />
+                      </span>
+                    </a>
+                  ) : (
+                    "NA"
+                  )}
+                </span>
               </span>
-           
-        
             </span>
-          </span>
-          <span className="w-1/2 flex flex-col text-[15px]">
-            <span className="flex flex-col">
-              <span className="font-light mt-4">Sibling Pan Card</span>
-              <span className="font-medium">
-                {applicationDataById?.courseFeeApplication?.siblingsDocument
-                  ?.siblingPanCard ? (
-                  <a
-                    className="flex items-center gap-3 text-primary font-medium"
-                    href={
-                      applicationDataById?.courseFeeApplication?.siblingsDocument
-                        ?.siblingPanCard
-                    }
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Uploaded
-                    <span>
-                      <FaRegEye />
-                    </span>
-                  </a>
-                ) : (
-                  "NA"
-                )}
+          </div>
+        )}
+
+        {applicationDataById?.courseFeeApplication?.siblingsDocument && (
+          <div className="flex flex-row items-center w-full justify-between">
+            <span className="w-1/2 flex flex-col text-[15px]">
+              <span className="flex flex-col">
+                <span className="font-light mt-4">Sibling Aadhar Card</span>
+                <span className="font-medium">
+                  {applicationDataById?.courseFeeApplication?.siblingsDocument
+                    ?.siblingAadharCard ? (
+                    <a
+                      className="flex items-center gap-3 text-primary font-medium"
+                      href={
+                        applicationDataById?.courseFeeApplication
+                          ?.siblingsDocument?.siblingAadharCard
+                      }
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Uploaded
+                      <span>
+                        <FaRegEye />
+                      </span>
+                    </a>
+                  ) : (
+                    "NA"
+                  )}
+                </span>
               </span>
-           
             </span>
-          </span>
-
-          
-
-          
-        </div>
-}
+            <span className="w-1/2 flex flex-col text-[15px]">
+              <span className="flex flex-col">
+                <span className="font-light mt-4">Sibling Pan Card</span>
+                <span className="font-medium">
+                  {applicationDataById?.courseFeeApplication?.siblingsDocument
+                    ?.siblingPanCard ? (
+                    <a
+                      className="flex items-center gap-3 text-primary font-medium"
+                      href={
+                        applicationDataById?.courseFeeApplication
+                          ?.siblingsDocument?.siblingPanCard
+                      }
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Uploaded
+                      <span>
+                        <FaRegEye />
+                      </span>
+                    </a>
+                  ) : (
+                    "NA"
+                  )}
+                </span>
+              </span>
+            </span>
+          </div>
+        )}
         <div
           className={`transition-all duration-500 ease-in-out transform ${
             isOne

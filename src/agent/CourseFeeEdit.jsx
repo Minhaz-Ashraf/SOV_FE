@@ -37,7 +37,7 @@ const CourseFeeEdit = () => {
   };
   const resSubmit = async () => {
     try {
-      const section = "visa";
+      const section = "courseFeeApplication";
       const res = await applicationReSubmit(appId, section);
       dispatch(applicationById(appId));
       toast.success(res.message || "Application Re-Submitted");
