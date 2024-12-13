@@ -1,10 +1,7 @@
 import React, { useEffect } from "react";
 import AdminCard from "./AdminCard";
 import { toast } from "react-toastify";
-import {
-  changeApprovalStatus,
-  chngeApplicationStatus,
-} from "../../features/adminApi";
+
 import { useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setTabType } from "../../features/adminSlice";
@@ -37,7 +34,7 @@ const Rejected = ({ data }) => {
                 applicationType={application?.type}
                 currentStatus="rejected"
                 rejectionMessage={application?.message}
-                linkTwo="/application-view"
+                linkTwo={application?.type === "offerLetter" ? "/application-view" : application?.type === "visa" ? "/visa-view" : application?.type === "courseFeeApplication" ? "/coursefee-view" : null}
                 id={application?.institutionId}
                 // agentId={null}
                 userType={

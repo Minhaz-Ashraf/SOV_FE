@@ -47,7 +47,7 @@ const Approved = ({ data }) => {
                 currentStatus="approved"
                 agentId={application?.institutionId}
 
-                linkTwo="/application-view"
+                linkTwo={application?.type === "offerLetter" ? "/application-view" : application?.type === "visa" ? "/visa-view" : application?.type === "courseFeeApplication" ? "/coursefee-view" : null}
                 id={application?.institutionId}
                 description={
                   application?.customUserId?.startsWith("AG-")
