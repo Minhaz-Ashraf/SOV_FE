@@ -364,7 +364,7 @@ const VisaApply = () => {
       setIsConfirmPopUp(true);
 
       toast.success(res.message || "Data added successfully.");
-      if (role === "2" && res?.statusCode === 200) {
+      if (role === "2") {
         if (socketServiceInstance.isConnected()) {
           //from agent to admin
           const notificationData = {
@@ -388,7 +388,7 @@ const VisaApply = () => {
           console.error("Socket connection failed, cannot emit notification.");
         }
       }
-      if (role === "3" && res?.statusCode === 200) {
+      if (role === "3" ) {
         if (socketServiceInstance.isConnected()) {
           //from agent to admin
           const notificationData = {

@@ -133,29 +133,38 @@ const CourseFeeFamilyDocUpdate = ({
             applicationDataById?.courseFeeApplication?.parentDocument
               ?.motherPanCard || "",
         },
-        studentDocument: {
+        siblingDocument: {
           // Use siblingDocument here instead of studentDocument
           siblingAadharCard:
             applicationDataById?.courseFeeApplication?.siblingsDocument
               ?.siblingAadharCard || "",
           siblingPanCard:
             applicationDataById?.courseFeeApplication?.siblingsDocument
-              ?.siblingAadharCard || "",
+              ?.siblingPanCard || "",
             },
           }));
     }
   }, [applicationDataById]);
 
   const handleFileUpload = (files) => {
-    if (!files || files.length === 0) {
-      return;
-    }
+    if (!files || files.length === 0) return;
 
     const fileOrUrl = files[0];
 
-    if (fileOrUrl instanceof File) {
+    if (typeof fileOrUrl === "string" && fileOrUrl.startsWith("http")) {
+      // Handle Firebase URL case
+      setCourseFee((prevState) => {
+        const updatedState = { ...prevState };
+       if (isFileType in updatedState.parentDocument) {
+          updatedState.parentDocument[isFileType] = fileOrUrl;
+        } else if (isFileType in updatedState.siblingDocument) {
+          updatedState.siblingDocument[isFileType] = fileOrUrl;
+        } 
+        return updatedState;
+      });
+    } else if (fileOrUrl instanceof File) {
+      // Handle File case
       const blobUrl = URL.createObjectURL(fileOrUrl);
-
       setNewFiles((prevFiles) => [
         ...prevFiles.filter((f) => f.fileType !== isFileType),
         { file: fileOrUrl, fileType: isFileType, blobUrl },
@@ -163,82 +172,34 @@ const CourseFeeFamilyDocUpdate = ({
 
       setCourseFee((prevState) => {
         const updatedState = { ...prevState };
-        if (isFileType in updatedState.parentDocument) {
+      if (isFileType in updatedState.parentDocument) {
           updatedState.parentDocument[isFileType] = blobUrl;
         } else if (isFileType in updatedState.siblingDocument) {
           updatedState.siblingDocument[isFileType] = blobUrl;
-        }
+        } 
         return updatedState;
       });
-    } else if (typeof fileOrUrl === "string") {
-      setCourseFee((prevState) => {
-        const updatedState = { ...prevState };
-        if (isFileType in updatedState.parentDocument) {
-          updatedState.parentDocument[isFileType] = fileOrUrl;
-        } else if (isFileType in updatedState.siblingDocument) {
-          updatedState.siblingDocument[isFileType] = fileOrUrl;
-        }
-        return updatedState;
-      });
+    } else {
+      console.warn("Unsupported file type or URL format.");
     }
   };
 
-  const deleteFile = async (fileUrl, fileType) => {
+
+  
+  const deleteFile = (fileUrl, fileType) => {
     if (!fileUrl) return;
-  
-    const fileUrls = Array.isArray(fileUrl) ? fileUrl : [fileUrl];
-  
-    // Mark the file for deletion
-    fileUrls.forEach((url) => {
-      if (typeof url === "string" && url.startsWith("http")) {
-        // Debugging statement to track deleted files
-        console.log(`Marking for deletion: ${url}, type: ${fileType}`);
-        setDeletedFiles((prevFiles) => {
-          // Debugging statement to show previous state
-          console.log("Previous deleted files:", prevFiles);
-          const updatedFiles = [
-            ...prevFiles.filter((f) => f.fileType !== fileType),
-            { fileUrl: url, fileType },
-          ];
-          // Debugging statement to show updated state
-          console.log("Updated deleted files:", updatedFiles);
-          return updatedFiles;
-        });
-      }
-    });
-  
-    // Remove the file locally from courseFee state
+
+    setDeletedFiles((prevFiles) => [...prevFiles, { fileUrl, fileType }]);
+
     setCourseFee((prevState) => {
       const updatedState = { ...prevState };
-  
-      // Debugging statement to show previous courseFee state
-      console.log("Previous courseFee state:", prevState);
-  
-      // Clear the file field in the parentDocument or siblingDocument based on fileType
-      if (updatedState.parentDocument[fileType] !== undefined) {
-        updatedState.parentDocument[fileType] = ""; // Clear the field
-      } else if (updatedState.siblingDocument[fileType] !== undefined) {
-        updatedState.siblingDocument[fileType] = ""; // Clear the field
+      if (fileType in updatedState.parentDocument) {
+        updatedState.parentDocument[fileType] = "";
+      } else if (fileType in updatedState.siblingDocument) {
+        updatedState.siblingDocument[fileType] = "";
       }
-  
-      // Debugging statement to show updated courseFee state
-      console.log("Updated courseFee state:", updatedState);
       return updatedState;
     });
-  
-    // Remove blob URL from newFiles
-    setNewFiles((prevFiles) => {
-      const updatedNewFiles = prevFiles.filter((file) => file.fileType !== fileType);
-      
-      // Debugging statement to show newFiles before and after filtering
-      console.log("New files before filtering:", prevFiles);
-      console.log("New files after filtering:", updatedNewFiles);
-  
-      return updatedNewFiles;
-    });
-  
-    // Optionally, you can uncomment the toast notification for user feedback
-    // toast.info("File marked for deletion.");
   };
   
   const handleSubmit = async () => {
@@ -674,55 +635,56 @@ const CourseFeeFamilyDocUpdate = ({
                   </div>
                 )}
 
-                {selectedOption === "sibling" && (
-                  <div className="mt-6">
-                    <h3 className="font-semibold text-lg">
-                      Sibling Document Upload
-                    </h3>
-                    {Object.keys(courseFee.studentDocument).map((docType) => (
-                      <div
-                        key={docType}
-                        className="flex flex-col items-center border-2 border-dashed border-body rounded-md py-9 mt-4"
-                      >
-                        <button
-                          onClick={() => handleFilePopupOpen(docType)}
-                          className="text-black flex items-center"
-                        >
-                          <FiUpload className="mr-2 text-primary text-[29px]" />
-                        </button>
-                        <p className="mt-2">
-                          {docType
-                            .replace(/([A-Z])/g, " $1")
-                            .replace(/^./, (str) => str.toUpperCase())}
-                        </p>
-                        {courseFee?.studentDocument[docType] && (
-                          <div className="mt-2 flex items-center">
-                            <a
-                              href={courseFee.studentDocument[docType]}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-primary"
-                            >
-                              View Uploaded Document
-                            </a>
-                            <button
-                              onClick={() =>
-                                deleteFile(
-                                  courseFee.studentDocument[docType],
-                                  docType
-                                )
-                              }
-                              className="ml-4 text-red-500"
-                            >
-                              <RiDeleteBin6Line />
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+               {selectedOption === "sibling" && (
+                           <div className="mt-6">
+                             <h3 className="font-semibold text-lg">
+                               Sibling Document Upload
+                             </h3>
+                             {Object.keys(courseFee.siblingDocument).map((docType) => (
+                               <div
+                                 key={docType}
+                                 className="flex flex-col items-center border-2 border-dashed border-body rounded-md py-9 mt-4"
+                               >
+                                 <button
+                                   onClick={() => handleFilePopupOpen(docType)}
+                                   className="text-black flex items-center"
+                                 >
+                                   <FiUpload className="mr-2 text-primary text-[29px]" />
+                                 </button>
+                                 <p className="mt-2">
+                                   {docType
+                                     .replace(/([A-Z])/g, " $1")
+                                     .trim()
+                                     .replace(/^./, (str) => str.toUpperCase())}
+                                 </p>
+                                 {courseFee.siblingDocument[docType] && (
+                                   <div className="mt-2 flex items-center">
+                                     <a
+                                       href={courseFee.siblingDocument[docType]}
+                                       target="_blank"
+                                       rel="noopener noreferrer"
+                                       className="text-primary"
+                                     >
+                                       View Uploaded Document
+                                     </a>
+                                     <button
+                                       onClick={() =>
+                                         deleteFile(
+                                           courseFee.siblingDocument[docType],
+                                           docType
+                                         )
+                                       }
+                                       className="ml-4 text-red-500"
+                                     >
+                                       <RiDeleteBin6Line />
+                                     </button>
+                                   </div>
+                                 )}
+                               </div>
+                             ))}
+                           </div>
+                         )}
+                       </div>
             </>
           )}
         </div>

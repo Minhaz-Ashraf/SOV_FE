@@ -17,6 +17,7 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { v4 as uuidv4 } from "uuid";
 import { chngeApplicationStatus } from "../../features/adminApi";
 import { visaStatusData } from "../../features/generalSlice";
+import socketServiceInstance from "../../services/socket";
 
 const VisaWithdrawlForm = ({ choosedOption, studId }) => {
   const dispatch = useDispatch();
@@ -200,7 +201,7 @@ const VisaWithdrawlForm = ({ choosedOption, studId }) => {
   const handleSubmit = async () => {
     // Run field validations first
     const isValid = validateFields();
-
+  console.log(errors)
     // Proceed only if all fields are valid
     if (!isValid) {
       toast.error("Please fix the validation errors before submitting.");
@@ -323,7 +324,7 @@ const VisaWithdrawlForm = ({ choosedOption, studId }) => {
       <div className="bg-white px-9 py-5 rounded-md">
         <p className="text-[15px] text-body ml-6 mb-5 font-medium">
           {`Student requested for the ${
-            choosedOption === "courseFeeandGic"
+            choosedOption === "courseFeeAndGic"
               ? "Course Fee and GIC"
               : choosedOption === "courseFee"
               ? "Course "

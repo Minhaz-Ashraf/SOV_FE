@@ -154,7 +154,7 @@ const AgentForm6 = ({hide, handleCancel, updateData, adminId, agentId}) => {
   
         toast.success(res?.message || "Data added successfully");
        {hide === true ?       updateData():  PopUpOpen()}
-       if (role === "2" && res?.statusCode === 200) {
+       if (role === "2") {
         if (socketServiceInstance.isConnected()) {
           //from agent to admin
           const notificationData = {

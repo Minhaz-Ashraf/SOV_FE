@@ -12,6 +12,7 @@ import TabBar from "../components/dashboardComp/TabBar";
 const Documents = () => {
   const role = localStorage.getItem("role");
   const location = useLocation();
+  const [isLoading, setIsLoading] =useState()
   const { studentInfoData } = useSelector((state) => state.student);
   const studentId = studentInfoData?.data?.studentInformation?._id
   const [searchParams, setSearchParams] = useSearchParams();
@@ -75,7 +76,13 @@ const Documents = () => {
     setActiveTab(tabName);
     setSearchParams({ tab: tabName });
   };
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
 
+    return () => clearTimeout(timer);
+  }, []);
   return (
     <>
       <Header customLink="/agent/shortlist" />

@@ -25,7 +25,7 @@ const CourseFeeEdit = () => {
   const { studentData } = useSelector((state) => state.general);
   const { agentData } = useSelector((state) => state.agent);
   const profileView = role === "0"
-  const appId = location.state.id || location.state;
+  const appId = location?.state?.id || location?.state;
   const [isUpdated, setIsUpdated] = useState(false);
   console.log(appId)
 
@@ -41,7 +41,7 @@ const CourseFeeEdit = () => {
       const res = await applicationReSubmit(appId, section);
       dispatch(applicationById(appId));
       toast.success(res.message || "Application Re-Submitted");
-      if (role === "2" && res?.statusCode === 200) {
+      if (role === "2") {
         if (socketServiceInstance.isConnected()) {
           //from agent to admin
           const notificationData = {
@@ -59,7 +59,7 @@ const CourseFeeEdit = () => {
           console.error("Socket connection failed, cannot emit notification.");
         }
       }
-      if (role === "3" && res?.statusCode === 200) {
+      if (role === "3") {
         if (socketServiceInstance.isConnected()) {
           //from student to admin
           const notificationData = {

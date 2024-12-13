@@ -86,6 +86,7 @@ const courseFeeApplication = () => {
     role === "3"
       ? studentUserId?.data?.studentInformation?._id
       : location?.state?.id || location?.state;
+      const {applicationDataById} = useSelector((state) => state.admin);
   const { countryOption, studentData } = useSelector((state) => state.general);
   const { studentInfoData } = useSelector((state) => state.student);
   const StudentDataToGet = role === "2" ? studentData : studentInfoData?.data;
@@ -374,7 +375,7 @@ const courseFeeApplication = () => {
       confirmPopUpOpen();
       toast.success(res?.message || "Form Submitted");
       // Trigger notifications based on role
-      if (role === "2" && res?.statusCode === 200) {
+      if (role === "2" ) {
         if (socketServiceInstance.isConnected()) {
           //from agent to admin
           const notificationData = {
@@ -399,7 +400,7 @@ const courseFeeApplication = () => {
           console.error("Socket connection failed, cannot emit notification.");
         }
       }
-      if (role === "3" && res?.statusCode === 200) {
+      if (role === "3" ) {
         if (socketServiceInstance.isConnected()) {
           //from student to admin
           const notificationData = {

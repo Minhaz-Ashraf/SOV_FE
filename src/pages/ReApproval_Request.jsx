@@ -43,7 +43,7 @@ const ReApproval_Request = () => {
         dispatch(studentInfo(studentId))
       }
       toast.success(res?.message || "Requested for reapproval");
-      if (role === "2" && res?.statusCode === 200) {
+      if (role === "2") {
         if (socketServiceInstance.isConnected()) {
           //from agent to admin
           const notificationData = {
@@ -61,7 +61,7 @@ const ReApproval_Request = () => {
           console.error("Socket connection failed, cannot emit notification.");
         }
       }
-      if (role === "3" && res?.statusCode === 200) {
+      if (role === "3") {
         if (socketServiceInstance.isConnected()) {
           //from student to admin
           const notificationData = {

@@ -89,7 +89,7 @@ const Pending = ({ data }) => {
             title: notificationTitle,
             message: notificationMessage,
             path: `/agent/application/lists`,
-            pathData: { studentId: pathData },
+            pathData: { studentId: pathData, notify:"notify" },
 
             recieverId: applicationData.userId,
           };

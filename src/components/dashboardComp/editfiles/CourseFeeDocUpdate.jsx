@@ -203,15 +203,12 @@ const CourseFeeDocUpdate = ({
           }
         })
       );
-      const payload = {
-        ...courseFee,
-        offerLetterAnsPassport: updatedOfferLetterAnsPassport,
-      };
+   
       // const payload = {
       //   passport: courseFee.offerLetterAnsPassport.passport,
       //   offerLetter: courseFee.offerLetterAnsPassport.offerLetter,
       // };
-      const res = await updateCourseFeeDoc(appId, payload);
+      const res = await updateCourseFeeDoc(appId, updatedOfferLetterAnsPassport);
 
       toast.success(res.message || "Data added successfully.");
       updatedData();

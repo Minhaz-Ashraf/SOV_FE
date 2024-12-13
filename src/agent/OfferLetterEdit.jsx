@@ -42,7 +42,7 @@ const OfferLetterEdit = () => {
       const res = await applicationReSubmit(appId, section);
       dispatch(applicationById(appId));
       toast.success(res.message || "Application Re-Submitted");
-      if (role === "2" && res?.statusCode === 200) {
+      if (role === "2" ) {
         if (socketServiceInstance.isConnected()) {
           //from agent to admin
           const notificationData = {
@@ -59,7 +59,7 @@ const OfferLetterEdit = () => {
           console.error("Socket connection failed, cannot emit notification.");
         }
       }
-      if (role === "3" && res?.statusCode === 200) {
+      if (role === "3") {
         if (socketServiceInstance.isConnected()) {
           //from student to admin
           const notificationData = {

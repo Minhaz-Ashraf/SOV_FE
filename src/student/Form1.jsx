@@ -41,15 +41,15 @@ const Form1 = ({
   updateData,
 }) => {
   const role = localStorage.getItem("role");
+  const location = useLocation();
+  const navigate = useNavigate();
   const { getStudentDataById } = useSelector((state) => state.admin);
   const { countryOption } = useSelector((state) => state.general);
-  const location = useLocation();
   const studentInfoData = useSelector((state) => state.student.studentInfoData);
   const studentData = useSelector((state) => state.student.studentInformation);
   const IdToAddStudent = location?.state?.id?.id; // for comppleting pending student profile to get data if exists
   const studentInformation = hide ? studentInfoData : studentData;
   // console.log(studentInformation, IdToAddStudent);
-  const navigate = useNavigate();
   const [resetProfilePic, setResetProfilePic] = useState(false);
   const [resetPassportUpload, setResetPassportUpload] = useState(false);
   const studentId =

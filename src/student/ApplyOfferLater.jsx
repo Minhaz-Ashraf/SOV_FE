@@ -118,6 +118,7 @@ const ApplyOfferLater = () => {
   const studentUserId = useSelector((state) => state.student.studentInfoData);
   // const { agentData } = useSelector((state) => state.agent);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { agentData } = useSelector((state) => state.agent);
 
   const location = useLocation();
   const studentId =
@@ -541,6 +542,76 @@ const ApplyOfferLater = () => {
       // Handle successful submission
       confirmPopUpOpen();
       toast.success(response.message || "Data added successfully.");
+      if (role === "2") {
+        if (socketServiceInstance.isConnected()) {
+          //from agent to admin
+          const notificationData = {
+            title: " AGENT_SUBMITTED_OFFER_LETTER",
+            message: `${agentData?.companyDetails?.businessName} ${
+              agentData?.agId
+            } has submitted the offer letter application of ${
+              offerLater.preferences.institution
+            } ${offerLater.preferences.country} for the student ${
+              studentData?.studentInformation?.personalInformation?.firstName +
+              " " +
+              studentData?.studentInformation?.personalInformation?.lastName
+            } ${studentId}
+`,
+            agentId: agentData?._id,
+            agId: agentData?.agId,
+            agentName: agentData?.companyDetails?.businessName,
+            studentId: studentId,
+            stId: "",
+            studentName:
+              studentData?.studentInformation?.personalInformation?.firstName +
+              " " +
+              studentData?.studentInformation?.personalInformation?.lastName,
+            countryName: offerLater.preferences.country,
+            collegeName: offerLater.preferences.institution,
+            applicationId: "",
+            ticketId: "",
+            appId: "",
+            ticId: "",
+            recieverId: agentData?._id,
+          };
+
+          socketServiceInstance.socket.emit(
+            "NOTIFICATION_AGENT_TO_ADMIN",
+            notificationData
+          );
+        } else {
+          console.error("Socket connection failed, cannot emit notification.");
+        }
+      }
+      if (role === "3") {
+        if (socketServiceInstance.isConnected()) {
+          //from student to admin
+          const notificationData = {
+            title: " STUDENT_SUBMITTED_OFFER_LETTER",
+            message: `${
+              studentInfoData?.data?.studentInformation?.personalInformation
+                ?.firstName +
+                " " +
+                studentInfoData?.data?.studentInformation?.personalInformation
+                  ?.lastName || ""
+            } ${
+              studentInfoData?.data?.studentInformation?.stId || ""
+            } has submitted the offer letter application.`,
+            path: "",
+            recieverId: "",
+          };
+
+          socketServiceInstance.socket.emit(
+            "NOTIFICATION_STUDENT_TO_ADMIN",
+            notificationData
+          );
+        } else {
+          console.error("Socket connection failed, cannot emit notification.");
+        }
+      }
+    
+    
+  
 
       // Clear temporary states
       setNewFiles([]);
