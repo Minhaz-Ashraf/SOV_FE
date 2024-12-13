@@ -200,7 +200,7 @@ const StudentProfile = () => {
                       : "pending"
                   }
                   statusTwo={
-                    studentData?.flags?.offerLetterApproved ? "done" : "current"
+                    studentData?.flags?.offerLetterApproved === "approved" ? "done" :   studentData?.flags?.offerLetterApproved === "approved" ? "pending"  : "current"
                   }
                   statusFive={statusFive}
                   statusFour={
