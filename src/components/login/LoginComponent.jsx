@@ -86,7 +86,7 @@ const LoginComponent = () => {
           dispatch(agentInformation());
       
           let redirectPath = "";
-          if(agentInfo.pageStatus?.status === "requestedForReaproval") {
+          if(agentInfo.pageStatus?.status === "requestedForReapproval") {
             redirectPath = `/agent/account-deleted`;
           } else if(agentInfo.deleted === true) {
             redirectPath = `/agent/account-deleted`;
@@ -109,14 +109,14 @@ const LoginComponent = () => {
               agentInfo.pageStatus.status === "rejected") ||
             agentInfo.pageStatus.status === "rejected"
           ) {
-            redirectPath = "/agent-form/1";}
-          // } else if (
-          //   (agentInfo.pageCount === 6 &&
-          //     agentInfo.pageStatus.status === "requestedForReaproval") ||
-          //   agentInfo.pageStatus.status === "requestedForReaproval"
-          // ) {
-          //   redirectPath = "/agent/account-deleted";
-          // } 
+            redirectPath = "/agent-form/1";
+          } else if (
+            (agentInfo.pageCount === 6 &&
+              agentInfo.pageStatus.status === "requestedForReapproval") ||
+            agentInfo.pageStatus.status === "requestedForReapproval"
+          ) {
+            redirectPath = "/agent/account-deleted";
+          } 
           else if (
             agentInfo.pageCount !== 6 &&
             agentInfo.pageStatus?.status === "registering"
@@ -149,7 +149,7 @@ const LoginComponent = () => {
           }
           let redirectPath = "";
 
-          if(studentInfoData.data.studentInformation.pageStatus?.status === "requestedForReaproval") {
+          if(studentInfoData.data.studentInformation.pageStatus?.status === "requestedForReapproval") {
             redirectPath = `/student/account-deleted`;
           } else if(studentInfoData.data.studentInformation.deleted === true) {
             redirectPath = `/student/account-deleted`;
@@ -180,13 +180,13 @@ const LoginComponent = () => {
           ) {
             redirectPath = `/student-form/1`;
           }
-          // if (
-          //   studentInfoData?.data?.studentInformation?.pageCount === 3 &&
-          //   studentInfoData?.data?.studentInformation?.pageStatus?.status ===
-          //     "requestedForReaproval"
-          // ) {
-          //   redirectPath = `/student/account-deleted`;
-          // }
+          if (
+            studentInfoData?.data?.studentInformation?.pageCount === 3 &&
+            studentInfoData?.data?.studentInformation?.pageStatus?.status ===
+              "requestedForReapproval"
+          ) {
+            redirectPath = `/student/account-deleted`;
+          }
           if (redirectPath) {
             navigate(redirectPath, { state: "passPage" });
           }
