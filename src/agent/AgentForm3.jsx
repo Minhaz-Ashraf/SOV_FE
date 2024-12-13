@@ -99,7 +99,7 @@ const AgentForm3 = ({hide, handleCancel, updateData, adminId, agentId}) => {
         if (role === "0") {
           await editAgentAdmin("/company/register-bankDetails-admin", payload, editForm);
         } else {
-          res = await formTwoSubmit(payload, editForm);
+          res = await formThreeSubmit(payload, editForm);
         }
         if(role === "0"){
           dispatch(agentDataProfile(agentId));
