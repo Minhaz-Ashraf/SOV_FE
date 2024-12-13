@@ -11,7 +11,7 @@ import FormSection from "../components/reusable/FormSection";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { studentAddress } from "../features/studentApi";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { getStudentData, studentInfo } from "../features/studentSlice";
 import { editStudentAdmin } from "../features/adminApi";
 import { getStudentById } from "../features/adminSlice";
@@ -24,6 +24,9 @@ const Form2 = ({
   updateData,
 }) => {
   const role = localStorage.getItem("role");
+  const dispatch = useDispatch();
+    const location = useLocation();
+  const IdToAddStudent = location?.state?.id?.id;
   const { getStudentDataById } = useSelector((state) => state.admin);
   const { countryOption } = useSelector((state) => state.general);
   const studentInfoData = useSelector((state) => state.student.studentInfoData);
@@ -37,8 +40,7 @@ const Form2 = ({
     role === "0"
       ? getStudentDataById?.studentInformation?.mailingAddress
       : studentInformation?.data?.studentInformation?.mailingAddress;
-  const studentId = studentFormId || localStorage.getItem("form") || localStorage.getItem('student')
-  const dispatch = useDispatch();
+  const studentId = studentFormId || IdToAddStudent || localStorage.getItem("form") || localStorage.getItem('student')
 
   const formId = studentInformation?.data?.studentInformation?._id;
   const submitId = hide ? formId : studentId;

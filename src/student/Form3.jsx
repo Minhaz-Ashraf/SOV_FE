@@ -17,6 +17,7 @@ import { check } from "../assets";
 import socketServiceInstance from "../services/socket";
 import { editStudentAdmin } from "../features/adminApi";
 import { getStudentById } from "../features/adminSlice";
+import { useLocation } from "react-router-dom";
 
 const Form3 = ({
   customClass,
@@ -26,9 +27,11 @@ const Form3 = ({
   updateData,
 }) => {
   const role = localStorage.getItem("role");
+  const location = useLocation();
   const { getStudentDataById } = useSelector((state) => state.admin);
   const { prefCountryOption } = useSelector((state) => state.general);
   const { courses } = useSelector((state) => state.general);
+  const IdToAddStudent = location?.state?.id?.id;
   const { instituteOption } = useSelector((state) => state.general);
   const studentInfoData = useSelector((state) => state.student.studentInfoData);
   const studentData = useSelector((state) => state.student.studentInformation);
@@ -36,7 +39,7 @@ const Form3 = ({
   const dispatch = useDispatch();
   const formId = studentInformation?.data?.studentInformation?._id;
   const preference = role === "0" ? getStudentDataById?.studentInformation?.preferences : studentInformation?.data?.studentInformation?.preferences;
-  const studentId = localStorage.getItem("form") || studentFormId
+  const studentId = localStorage.getItem("form") || studentFormId || IdToAddStudent
   const [isPopUp, setIsPopUp] = useState(false);
   const editForm = hide === true ? "edit" : null;
   const submitId = hide ? formId : studentId;
