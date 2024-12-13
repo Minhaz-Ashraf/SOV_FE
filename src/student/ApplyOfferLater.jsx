@@ -323,22 +323,21 @@ const ApplyOfferLater = () => {
     PopUpOpen();
   };
 
-
   const handleFileUpload = (files, uploadType) => {
     if (!files || files.length === 0 || !uploadType) return;
-  
+
     const fileOrUrl = files[0];
-  
+
     if (fileOrUrl instanceof File) {
       // Handle File objects
       const blobUrl = URL.createObjectURL(fileOrUrl);
-  
+
       // Save file locally to be uploaded later
       setNewFiles((prevState) => [
         ...prevState,
         { file: fileOrUrl, uploadType },
       ]);
-  
+
       // Update only educationDetails with the blob URL
       setOfferLater((prevState) => ({
         ...prevState,
@@ -358,7 +357,7 @@ const ApplyOfferLater = () => {
           },
         }),
       }));
-  
+
       toast.info(`${fileOrUrl.name} will be uploaded upon saving.`);
     } else if (typeof fileOrUrl === "string") {
       // Handle URL strings
@@ -380,11 +379,10 @@ const ApplyOfferLater = () => {
           },
         }),
       }));
-  
+
       // toast.info("Document URL has been set.");
     }
   };
-  
 
   const deleteFile = async (fileUrl, uploadType) => {
     if (!fileUrl) return;
@@ -412,41 +410,44 @@ const ApplyOfferLater = () => {
 
   const handleSubmit = async () => {
     const validationErrors = validateFields();
-  
+
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       toast.error("Please fill required fields");
       console.log("Form has errors", validationErrors);
       return; // Stop the submission process if there are validation errors
     }
-  
+
     try {
       setIsSubmitting(true);
-  
+
       // Prepare updated education details
       const updatedEducationDetails = { ...offerLater.educationDetails };
-  
+
       // Upload new files
       await Promise.all(
         newFiles.map(async ({ file, uploadType }) => {
           const uniqueFileName = `${uuidv4()}-${file.name}`;
-          const storageRef = ref(storage, `uploads/offerLetter/${uniqueFileName}`);
-  
+          const storageRef = ref(
+            storage,
+            `uploads/offerLetter/${uniqueFileName}`
+          );
+
           try {
             const snapshot = await uploadBytes(storageRef, file);
             const downloadURL = await getDownloadURL(snapshot.ref);
-  
+
             // Update education details with uploaded file URL
             updatedEducationDetails[uploadType] = downloadURL;
-  
+
             // Upload document metadata
             const uploadData = {
               viewUrl: downloadURL,
               documentName: file.name,
-              userId,
+              userId: studentId,
             };
             await uploadDocument(uploadData);
-  
+
             // toast.success(`${file.name} uploaded successfully.`);
           } catch (error) {
             // toast.error(`Error uploading ${file.name}. Please try again.`);
@@ -454,7 +455,7 @@ const ApplyOfferLater = () => {
           }
         })
       );
-  
+
       // Upload existing certificates if any
       if (Array.isArray(offerLater.certificate?.urls)) {
         await Promise.all(
@@ -463,25 +464,24 @@ const ApplyOfferLater = () => {
               const response = await fetch(certUrl);
               const blob = await response.blob();
               const uniqueFileName = `${uuidv4()}-${certUrl.split("/").pop()}`;
-              const storageRef = ref(storage, `uploads/offerLetter/${uniqueFileName}`);
-  
+              const storageRef = ref(
+                storage,
+                `uploads/offerLetter/${uniqueFileName}`
+              );
+
               const snapshot = await uploadBytes(storageRef, blob);
               const downloadURL = await getDownloadURL(snapshot.ref);
-  
+            
+
               // Add to education details certificate URLs
               if (!updatedEducationDetails.certificate?.url) {
                 updatedEducationDetails.certificate = { url: [] };
               }
               updatedEducationDetails.certificate.url.push(downloadURL);
-  
+
               // Upload document metadata
-              const uploadData = {
-                viewUrl: downloadURL,
-                documentName: uniqueFileName,
-                userId,
-              };
-              await uploadDocument(uploadData);
-  
+          
+
               // toast.success(`${uniqueFileName} uploaded successfully.`);
             } catch (error) {
               // toast.error(`Error uploading certificate. Please try again.`);
@@ -490,7 +490,7 @@ const ApplyOfferLater = () => {
           })
         );
       }
-  
+
       // Convert TOEFL, PTE, IELTS scores
       const convertToNumber = (scoreData) =>
         scoreData
@@ -502,7 +502,7 @@ const ApplyOfferLater = () => {
               overallBand: Number(scoreData.overallBand || 0),
             }
           : null;
-  
+
       const updatedOfferLater = {
         ...offerLater,
         educationDetails: updatedEducationDetails,
@@ -511,30 +511,37 @@ const ApplyOfferLater = () => {
         },
         studentInformationId: studentId,
       };
-  
+
       // Add scores if present
-      if (offerLater.TOEFL && Object.values(offerLater.TOEFL).some((val) => val)) {
+      if (
+        offerLater.TOEFL &&
+        Object.values(offerLater.TOEFL).some((val) => val)
+      ) {
         updatedOfferLater.toefl = convertToNumber(offerLater.TOEFL);
       }
       if (offerLater.PTE && Object.values(offerLater.PTE).some((val) => val)) {
         updatedOfferLater.ptes = convertToNumber(offerLater.PTE);
       }
-      if (offerLater.IELTS && Object.values(offerLater.IELTS).some((val) => val)) {
+      if (
+        offerLater.IELTS &&
+        Object.values(offerLater.IELTS).some((val) => val)
+      ) {
         updatedOfferLater.ieltsScore = convertToNumber(offerLater.IELTS);
       }
-  
+
       // Remove temporary TOEFL, PTE, IELTS from the final submission
       delete updatedOfferLater.TOEFL;
       delete updatedOfferLater.PTE;
       delete updatedOfferLater.IELTS;
-  
+
       // Submit the form data
+
       const response = await newOfferLetter(updatedOfferLater);
-  
+   
       // Handle successful submission
       confirmPopUpOpen();
       toast.success(response.message || "Data added successfully.");
-  
+
       // Clear temporary states
       setNewFiles([]);
       setIsSubmitting(false);
@@ -544,7 +551,6 @@ const ApplyOfferLater = () => {
       setIsSubmitting(false);
     }
   };
-  
 
   useEffect(() => {
     if (StudentDataToGet?.studentInformation) {
@@ -899,8 +905,10 @@ const ApplyOfferLater = () => {
                   <ul>
                     {offerLater.certificate?.urls
                       .filter(
-          (url) => typeof url === "string" && (url.startsWith("http") || url.startsWith("blob:")) // Include blob URLs
-        )
+                        (url) =>
+                          typeof url === "string" &&
+                          (url.startsWith("http") || url.startsWith("blob:")) // Include blob URLs
+                      )
                       .map((url, index) => (
                         <li key={index} className="flex items-center mt-2">
                           <a
@@ -945,12 +953,12 @@ const ApplyOfferLater = () => {
         // handleDeleteFile={(fileUrl) => deleteFile(fileUrl, isFileType)}
         errors={errors}
         studentId={
-            role === "2"
-              ? studentId
-              : role === "3"
-              ? studentInfoData?.data?.studentInformation?.studentId
-              : null
-          }
+          role === "2"
+            ? studentId
+            : role === "3"
+            ? studentInfoData?.data?.studentInformation?.studentId
+            : null
+        }
         onSubmit={() => {
           console.log("Form Submitted");
         }}

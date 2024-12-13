@@ -56,7 +56,7 @@ const WithdrwalChoosePop = ({ isOpenOption, closeOption, handleWithdraw, setSele
                   <input
                     type="radio"
                     name="withdrawalOption"
-                    value="courseFeeandGic"
+                    value="courseFeeAndGic"
                     onChange={handleOptionChange}
                   />
                     <label>

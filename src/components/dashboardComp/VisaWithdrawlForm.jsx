@@ -80,13 +80,13 @@ const VisaWithdrawlForm = ({ choosedOption, studId }) => {
     if (!bankData.city) newErrors.city = "City is required";
     if (!bankData.postalCode)
       newErrors.postalCode = "Zip/Postal Code is required";
-    if (!bankData.swiftBicCode)
-      newErrors.swiftBicCode = "Swift/BIC Code is required";
+    // if (!bankData.swiftBicCode)
+    //   newErrors.swiftBicCode = "Swift/BIC Code is required";
     if (!bankData.bankAccountName)
       newErrors.bankAccountName = "Bank Account Name is required";
     if (!bankData.bankAccountNumber)
       newErrors.bankAccountNumber = "Bank Account Number is required";
-    if (!bankData.iban) newErrors.iban = "IBAN is required";
+    // if (!bankData.iban) newErrors.iban = "IBAN is required";
     if (!bankData.panCard) newErrors.panCard = "Pan Card is required";
     if (!bankData.adharCard) newErrors.adharCard = "Aadhar Card is required";
 

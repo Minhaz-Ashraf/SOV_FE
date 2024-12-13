@@ -4,11 +4,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { withdrawalDataGet } from "../../features/generalSlice";
 import { IoDocumentText } from "react-icons/io5";
 import { FaRegEye } from "react-icons/fa";
+import { useLocation } from "react-router-dom";
 
 const WithDrawalData = ({ userId, agentData }) => {
   const dispatch = useDispatch();
   const { withdrawalData } = useSelector((state) => state.general);
-
+ const location = useLocation()
   console.log(withdrawalData);
   useEffect(() => {
     dispatch(withdrawalDataGet(userId));
@@ -16,10 +17,10 @@ const WithDrawalData = ({ userId, agentData }) => {
   return (
     // <div>WithDrawalData</div>
     <>
-      <div className="bg-white rounded-md py-4 px-6  mt-10 font-poppins">
+      <div className={`bg-white rounded-md py-4 px-6  mt-10 font-poppins ${location.pathname === "/student/visa-update" ? "md:mx-20 md:ml-[22%] sm:mx-9 sm:ml-[28%]  mt-36 ":null}  `}>
       <p className="text-[15px] text-body mt-3 mb-5 font-medium">
           {`Student requested for the ${
-            withdrawalData?.appliedFor === "courseFeeandGic"
+            withdrawalData?.appliedFor === "courseFeeAndGic"
               ? "Course Fee and GIC"
               : withdrawalData?.appliedFor === "courseFee"
               ? "Course "
@@ -94,7 +95,7 @@ const WithDrawalData = ({ userId, agentData }) => {
         </div>
       </div>
 
-      <div className="bg-white rounded-md py-4 px-6  mt-10 font-poppins">
+      <div className={`bg-white rounded-md py-4 px-6 mt-9  font-poppins ${location.pathname === "/student/visa-update" ? "md:mx-20 md:ml-[22%] sm:mx-9 sm:ml-[28%]   ":null}  `}>
         <div className="flex flex-row text-sidebar items-center justify-between border-b border-greyish">
           <span className="flex flex-row gap-4 items-center pb-3">
             <span className="text-[24px]">
@@ -139,7 +140,7 @@ const WithDrawalData = ({ userId, agentData }) => {
 
       {withdrawalData?.parentBankDetails && (
         <>
-          <div className="bg-white rounded-md py-4 px-6  mt-10 font-poppins">
+        <div className={`bg-white rounded-md py-4 px-6 mt-9  font-poppins ${location.pathname === "/student/visa-update" ? "md:mx-20 md:ml-[22%] sm:mx-9 sm:ml-[28%]  ":null}  `}>
             <div className="flex flex-row text-sidebar items-center justify-between border-b border-greyish">
               <span className="flex flex-row gap-4 items-center pb-3">
                 <span className="text-[24px]">
@@ -208,7 +209,7 @@ const WithDrawalData = ({ userId, agentData }) => {
             </div>
           </div>
 
-          <div className="bg-white rounded-md py-4 px-6  mt-10 font-poppins">
+          <div className={`bg-white rounded-md py-4 px-6 mt-9 md:mb-20 font-poppins ${location.pathname === "/student/visa-update" ? "md:mx-20 md:ml-[22%] sm:mx-9 sm:ml-[28%]   ":null}  `}>
             <div className="flex flex-row text-sidebar items-center justify-between border-b border-greyish">
               <span className="flex flex-row gap-4 items-center pb-3">
                 <span className="text-[24px]">
