@@ -2,8 +2,10 @@ import { io, Socket } from "socket.io-client";
 const role = localStorage.getItem("role");
 import {store} from "../features/store";
 import { addAllNotifications, addNewNotification, markNotificationAsRead, updateNotificationCount } from "../features/notificationSlice";
+import { Navigate, useNavigate } from "react-router-dom";
 
 class SocketService {
+
   constructor() {
     this.socket = null;
   }
@@ -12,7 +14,7 @@ class SocketService {
       console.log("Socket is already connected");
       return;
     }
-
+     
     const query = encryptData;
 
     console.log("Connecting to socket...", hostName, encryptData);
@@ -26,6 +28,7 @@ class SocketService {
 
     // Handle connection success
     this.socket.on("connect", () => {
+      
       if (role === "0") {
         this.socket.emit("GET_NOTIFICATIONS_FOR_ADMIN", { page: 1, limit: 10 });
       } else {
@@ -53,6 +56,20 @@ class SocketService {
       console.log("GLOBAL_NOTIFICATION_STUDENT_ALERT:", data);
       store.dispatch(addNewNotification(data))
       this.socket.emit("GET_UNREAD_COUNT", "emitForUser");
+    });
+    this.socket.on("DELETE_AUTH_TOKEN", (data) => {
+
+      console.log("mak");
+      // const navigate= useNavigate()
+
+      localStorage.removeItem('role')
+      localStorage.removeItem('student')
+      localStorage.removeItem('form')
+      localStorage.removeItem('userAuthToken')
+
+      // navigate("/login")
+
+
     });
 
     this.socket.on("GLOBAL_NOTIFICATION_AGENT_ALERT", (data) => {
@@ -88,7 +105,9 @@ class SocketService {
       console.log("Socket disconnected:", reason);
       this.socket = null;
     });
+
   }
+
 
   disconnectSocket() {
     if (this.socket) {

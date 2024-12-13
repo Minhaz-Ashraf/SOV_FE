@@ -146,7 +146,14 @@ const CourseFeeEdit = () => {
           appId={appId}
           updatedData={handleProfileUpdate}
           profileViewPath={profileView}
-          userId={applicationDataById?.studentInformationId}
+          userId={
+            role === "2"
+              ? applicationDataById?.studentInformationId
+              : role === "3"
+              ? studentInfoData?.data?.studentInformation?._id
+              : null
+          }
+        
         />
       </div>
       <div
@@ -160,7 +167,14 @@ const CourseFeeEdit = () => {
           appId={appId}
           updatedData={handleProfileUpdate}
           profileViewPath={profileView}
-          userId={applicationDataById?.studentInformationId}
+          userId={
+            role === "2"
+              ? applicationDataById?.studentInformationId
+              : role === "3"
+              ? studentInfoData?.data?.studentInformation?._id
+              : null
+          }
+      
         />
       </div>
       <div
@@ -174,7 +188,13 @@ const CourseFeeEdit = () => {
           appId={appId}
           updatedData={handleProfileUpdate}
           profileViewPath={profileView}
-          userId={applicationDataById?.studentInformationId}
+          userId={
+            role === "2"
+              ? applicationDataById?.studentInformationId
+              : role === "3"
+              ? studentInfoData?.data?.studentInformation?._id
+              : null
+          }
         />
       </div>
     </>

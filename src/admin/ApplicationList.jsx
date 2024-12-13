@@ -28,6 +28,7 @@ const ApplicationList = () => {
   // const {} = useSelector((state) => state.admin);
   const { getApplicationOverview } = useSelector((state) => state.admin);
   // const { updateState, tabType } = useSelector((state) => state.admin);
+  const [downloading, setDownloading] = useState(false);
   const [search, setSearch] = useState("");
   const [perPage, setPerPage] = useState(10);
   const [isTypeFilter, setIsFilterType] = useState("");
@@ -97,14 +98,19 @@ const ApplicationList = () => {
   // console.log(getApplicationOverview)
   const downloadAll = async () => {
     try {
+      setDownloading(true)
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       await downloadFile({
         url: "/admin/total-application-download",
         filename: "Application.csv",
       });
-      toast.info("Downloading will start in few seconds");
+      // toast.info("Downloading will start in few seconds");
     } catch (error) {
       console.log(error);
       toast.error(error.message || "Error downloading");
+    }finally{
+      setDownloading(false)
+      
     }
   };
   return (
@@ -161,7 +167,8 @@ const ApplicationList = () => {
           onClick={downloadAll}
           className="bg-primary ml-5 sm:ml-[27%] text-white px-4 rounded-md py-2 cursor-pointer"
         >
-          Download
+                    {downloading ? "Downloading...." : "Download"}
+
         </span>
       </span>
       {loading ? (

@@ -17,67 +17,78 @@ const WithDrawalData = ({ userId, agentData }) => {
     // <div>WithDrawalData</div>
     <>
       <div className="bg-white rounded-md py-4 px-6  mt-10 font-poppins">
+      <p className="text-[15px] text-body mt-3 mb-5 font-medium">
+          {`Student requested for the ${
+            withdrawalData?.appliedFor === "courseFeeandGic"
+              ? "Course Fee and GIC"
+              : withdrawalData?.appliedFor === "courseFee"
+              ? "Course "
+              : withdrawalData?.appliedFor === "gic"
+              ? "GIC"
+              : null
+          } Fee amount withdrawal.`}
+        </p>
         <div className="flex flex-row text-sidebar items-center justify-between border-b border-greyish">
           <span className="flex flex-row gap-4 items-center pb-3">
             <span className="text-[24px]">
               <RiBankLine />
             </span>
-            <span className="font-semibold text-[22px]">Bank Details</span>
+            <span className="font-semibold text-[22px]">Student Bank Details</span>
           </span>
         </div>
-
+      
         <div className="flex flex-row w-full justify-between mt-8">
           <span className="w-1/2 flex flex-col text-[15px]">
             <span className="font-light">Bank Name </span>
             <span className="font-medium">
-              {withdrawalData?.bankDetails?.bankName || "NA"}
+              {withdrawalData?.studentBankDetails?.bankName || "NA"}
             </span>
 
             <span className="font-light mt-4">Country</span>
             <span className="font-medium">
-              {withdrawalData?.bankDetails?.country || "NA"}
+              {withdrawalData?.studentBankDetails?.country || "NA"}
             </span>
             <span className="font-light mt-4">Address</span>
             <span className="font-medium">
-              {withdrawalData?.bankDetails?.address || "NA"}
+              {withdrawalData?.studentBankDetails?.address || "NA"}
             </span>
             <span className="font-light mt-4">Postal/Zip Code</span>
             <span className="font-medium">
-              {withdrawalData?.bankDetails?.postalCode || "NA"}
+              {withdrawalData?.studentBankDetails?.postalCode || "NA"}
             </span>
             {/* <span className="font-light mt-4">Sort Code/BSB Number</span>
             <span className="font-medium">
-              {withdrawalData?.bankDetails?.sortCode || "NA"}
+              {withdrawalData?.studentBankDetails?.sortCode || "NA"}
             </span> */}
             <span className="font-light mt-4">Bank Account Number</span>
             <span className="font-medium">
-              {withdrawalData?.bankDetails?.bankAccountNumber || "NA"}
+              {withdrawalData?.studentBankDetails?.bankAccountNumber || "NA"}
             </span>
             {/* <span className="font-light mt-4">Intermediary Swift Code </span>
             <span className="font-medium">
-              {withdrawalData?.bankDetails?.intermediarySwiftCode || "NA"}
+              {withdrawalData?.studentBankDetails?.intermediarySwiftCode || "NA"}
             </span> */}
           </span>
           <span className="w-1/2 flex flex-col text-[15px]">
             <span className="font-light mt-4">City</span>
             <span className="font-medium">
-              {withdrawalData?.bankDetails?.city || "NA"}
+              {withdrawalData?.studentBankDetails?.city || "NA"}
             </span>
             <span className="font-light mt-4">Province/State</span>
             <span className="font-medium">
-              {withdrawalData?.bankDetails?.province || "NA"}
+              {withdrawalData?.studentBankDetails?.province || "NA"}
             </span>
             <span className="font-light mt-4">Swift/BIC Code</span>
             <span className="font-medium">
-              {withdrawalData?.bankDetails?.swiftBicCode || "NA"}
+              {withdrawalData?.studentBankDetails?.swiftBicCode || "NA"}
             </span>
             <span className="font-light mt-4">Bank Account Name</span>
             <span className="font-medium">
-              {withdrawalData?.bankDetails?.bankAccountName || "NA"}
+              {withdrawalData?.studentBankDetails?.bankAccountName || "NA"}
             </span>
             <span className="font-light mt-4">IBAN</span>
             <span className="font-medium">
-              {withdrawalData?.bankDetails?.iban || "NA"}
+              {withdrawalData?.studentBankDetails?.iban || "NA"}
             </span>
           </span>
         </div>
@@ -90,7 +101,7 @@ const WithDrawalData = ({ userId, agentData }) => {
               <IoDocumentText />
             </span>
             <span className="font-semibold font-poppins text-[22px]">
-              Documents
+           Student Documents
             </span>
           </span>
         </div>
@@ -204,7 +215,7 @@ const WithDrawalData = ({ userId, agentData }) => {
                   <IoDocumentText />
                 </span>
                 <span className="font-semibold font-poppins text-[22px]">
-                  Documents
+                 Parent Documents
                 </span>
               </span>
             </div>

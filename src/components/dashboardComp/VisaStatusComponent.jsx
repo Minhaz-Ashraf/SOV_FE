@@ -232,12 +232,12 @@ const VisaStatusComponent = ({ studentId }) => {
         <WithDrawalData userId={visaStatus?.userId} />
       ) : showWithdrawForm ? (
         <div className={`${role === "3" ? "mt-20 ml-64" : ""} `}>
-          <VisaWithdrawlForm choosedOption={selectedOption} />
+          <VisaWithdrawlForm choosedOption={selectedOption} studId={studId} />
         </div>
       ) : visaStatus?.visa?.status === "underreview" ? (
         <div
           className={`bg-white flex flex-col rounded-md justify-center items-center md:mx-52 py-9 font-poppins px-14 mb-20 ${
-            role === "3" ? "mt-40 ml-[28%]" : ""
+              role === "3" ? "mt-60 mx-44 ml-96 " : ""
           } `}
         >
           <img
@@ -250,18 +250,19 @@ const VisaStatusComponent = ({ studentId }) => {
             loading="lazy"
           />
           <p className="text-sidebar text-[22px] font-semibold mt-3 text-center">
-            Your Visa lodgement Application has been submitted and it is
-            forwarded for further procedure.
+            {role === "0" ||role === "1" ? null : "Your"} Visa lodgement Application is under review.
+         
           </p>
           <p className="text-sidebar text-[16px] text-center font-light mt-3">
-            We’ll notify you with updates. Please ensure all required documents
-            are submitted and check your email for further requests.
+          { role === "0" || role === "1" ? null :
+            "We’ll notify you with updates. Please ensure all required documents are submitted and check your email for further requests."
+            }
           </p>
         </div>
       ) : visaStatus?.visa?.status === "approved" ? (
         <div
           className={`bg-white flex flex-col rounded-md justify-center items-center md:mx-52 py-9 font-poppins px-14 mb-20 ${
-            role === "3" ? "mt-40 ml-[28%]" : ""
+              role === "3" ? "mt-60 mx-44 ml-96 " : ""
           } `}
         >
           <img
@@ -311,8 +312,8 @@ const VisaStatusComponent = ({ studentId }) => {
         </div>
       ) : visaStatus?.visa?.status === "rejected" ? (
         <div
-          className={`bg-white flex flex-col rounded-md justify-center items-center md:mx-52 py-9 font-poppins px-14 mb-20 ${
-            role === "3" ? "mt-40 ml-[28%]" : ""
+          className={`bg-white flex flex-col rounded-md justify-center items-center  py-9 font-poppins px-14 mb-20 ${
+            role === "3" ? "mt-60 mx-44 ml-96 " : ""
           } `}
         >
           {role === "2" || role === "3" ? (
@@ -345,7 +346,7 @@ const VisaStatusComponent = ({ studentId }) => {
           {role === "0" && (
             <div
               className={`bg-white flex flex-col rounded-md justify-center items-center md:mx-52 py-9 font-poppins px-14 mb-20 ${
-                role === "3" ? "mt-40 ml-[28%]" : ""
+                  role === "3" ? "mt-60 mx-44 ml-96 " : ""
               } `}
             >
               <p className="text-sidebar text-[22px] font-semibold mt-3 text-center">
@@ -376,7 +377,7 @@ const VisaStatusComponent = ({ studentId }) => {
           {role !== "0" && (
             <div
               className={`bg-white flex flex-col rounded-md justify-center items-center md:mx-52 py-9 font-poppins px-14 mb-20 ${
-                role === "3" ? "mt-40 ml-[28%]" : ""
+                  role === "3" ? "mt-60 mx-44 ml-96 " : ""
               } `}
             >
               <img
@@ -416,7 +417,7 @@ const VisaStatusComponent = ({ studentId }) => {
         <>
           <div
             className={`bg-white flex flex-col rounded-md justify-center items-center md:mx-52 py-9 font-poppins px-14 mb-20 ${
-              role === "3" ? "mt-40 ml-[28%]" : ""
+                role === "3" ? "mt-60 mx-44 ml-96 " : ""
             } `}
           >
             <span className="bg-[#F4FBF8] px-6 py-6">
@@ -437,7 +438,7 @@ const VisaStatusComponent = ({ studentId }) => {
                 </p>
               </span>
             </span>
-            {role !== "0"  &&
+            {/* {role !== "0"  &&
             <>
             <p className="text-sidebar text-[22px] font-semibold mt-3 text-center">
               Visa lodgement Application Rejected
@@ -445,7 +446,7 @@ const VisaStatusComponent = ({ studentId }) => {
             <p className="text-sidebar text-[16px] text-center font-light mt-3">
               Visa Application has been rejected from embassy for this student.
               and User requested for withdraw the amount.
-            </p> </>}
+            </p> </>} */}
             <span
               onClick={handleWithdrawalData}
               className="text-primary flex flex-row items-center font-semibold gap-2 text-[16px] rounded-md px-6 py-2  cursor-pointer mt-4"
@@ -471,7 +472,7 @@ const VisaStatusComponent = ({ studentId }) => {
         <>
           <div
             className={`bg-white flex flex-col rounded-md justify-center items-center md:mx-52 py-9 font-poppins px-14 mb-20 ${
-              role === "3" ? "mt-40 ml-[28%]" : ""
+                role === "3" ? "mt-60 mx-44 ml-96 " : ""
             } `}
           >
             <span className="bg-[#F4FBF8] px-6 py-6">
@@ -486,10 +487,11 @@ const VisaStatusComponent = ({ studentId }) => {
                   loading="lazy"
                 />
                 <p className="text-sidebar text-[22px] font-normal mt-3">
-                  <span className="font-semibold">Congratulations!</span>Your
-                  Visa Application has been accepted
+                  <span className="font-semibold">Congratulations!</span> {role === "0" || role === "1" ? "Visa Application has been accepted from embassy for this student." : "Your Visa Application has been accepted"}
                 </p>
               </span>
+              {role === "0" || role === "1" ? <p className="text-sidebar mt-3 text-[16px] font-light text-center">Student has uploaded the PPR and Visa Stamp. Review it! </p> :
+              <>
               <p className="text-sidebar text-[16px] text-start font-light mt-3">
                 Thank you for completing the PPR submission and receiving your
                 visa stamp! <br /> With your visa now in hand, you are one step
@@ -501,7 +503,7 @@ const VisaStatusComponent = ({ studentId }) => {
                   Wishing you all the best as you begin this incredible chapter
                   of your life.
                 </span>
-              </p>{" "}
+              </p></>}
             </span>
 
             <span className="flex flex-row items-center justify-between w-full mt-6">
@@ -551,7 +553,7 @@ const VisaStatusComponent = ({ studentId }) => {
       ) : visaStatus?.visa?.status === "rejectedbyembassy" ? (
         <div
           className={`bg-white flex flex-col rounded-md justify-center items-center md:mx-52 py-9 font-poppins px-14 mb-20 ${
-            role === "3" ? "mt-40 ml-[28%]" : ""
+              role === "3" ? "mt-60 mx-44 ml-96 " : ""
           } `}
         >
           {role !== "0" ? (
@@ -577,15 +579,19 @@ const VisaStatusComponent = ({ studentId }) => {
               </span>{" "}
             </>
           ) : (
+            <>
             <p className="text-sidebar text-[22px] font-semibold mt-3 text-center">
-              Visa lodgement Application has been Rejected for this student
+              Visa Application Rejected
             </p>
+            <p className="text-sidebar text-[17px] font-normal mt-3 text-center">
+            Visa Application has been rejected from embassy for this student.
+            </p></>
           )}
         </div>
       ) : visaStatus?.visa?.status === "approvedbyembassy" ? (
         <div
           className={`bg-white flex flex-col rounded-md justify-center items-center md:mx-52 py-9 font-poppins px-6 mb-20 ${
-            role === "3" ? "mt-40 ml-[28%]" : ""
+              role === "3" ? "mt-60 mx-44 ml-96 " : ""
           } `}
         >
           {role === "3" || role === "2" ? (
@@ -613,7 +619,8 @@ const VisaStatusComponent = ({ studentId }) => {
                 </p>
               </span>
 
-              <VisaCompleteUpload appId={visaStatus?._id} />
+              <VisaCompleteUpload
+               appId={visaStatus?._id} studId={studId} />
             </>
           ) : (
             <>
@@ -642,7 +649,7 @@ const VisaStatusComponent = ({ studentId }) => {
       ) : (
         <div
           className={`bg-white flex flex-col rounded-md justify-center items-center md:mx-52 py-9 font-poppins px-14 mb-20 ${
-            role === "3" ? "mt-40 ml-[28%]" : ""
+              role === "3" ? "mt-60 mx-44 ml-96 " : ""
           } `}
         >
           <img

@@ -37,7 +37,7 @@ const Form2 = ({
     role === "0"
       ? getStudentDataById?.studentInformation?.mailingAddress
       : studentInformation?.data?.studentInformation?.mailingAddress;
-  const studentId = studentFormId || localStorage.getItem("form");
+  const studentId = studentFormId || localStorage.getItem("form") || localStorage.getItem('student')
   const dispatch = useDispatch();
 
   const formId = studentInformation?.data?.studentInformation?._id;
@@ -167,12 +167,12 @@ const Form2 = ({
       }
       toast.success(res?.message || "Data submitted successfully");
     
-      if (res?.statusCode === 200) {
+      // if (res?.statusCode === 200) {
         {
           hide === true
             ? updateData()
             : navigate(`/student-form/3`, { state: "passPage" });
-        }
+        // }
 
         window.scrollTo(0, 0);
       }

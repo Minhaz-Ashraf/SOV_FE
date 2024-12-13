@@ -81,6 +81,8 @@ const Sidebar = () => {
       otherPath: "/student/application",
       otherPathTwo: "/offerletter-apply",
       otherPathThree: "/offerLetter/edit",
+      otherPathFive: "/visa-apply",
+      otherPathSix: "/visa/edit",
     },
     {
       pathPage: "/student/visa-update",
@@ -101,10 +103,14 @@ const Sidebar = () => {
           <div
             key={index}
             className={`cursor-pointer py-4 hover:bg-[#FBD5D5] hover:text-primary hover:border-l-4 hover:font-medium ${
-              path === item.pathPage ||
+                path === item.pathPage ||
               path === item?.otherPath ||
               path === item?.otherPathTwo ||
-              path === item?.otherPathThree
+              path === item?.otherPathThree ||
+              path === item?.otherPathFour ||
+             path === item?.otherPathFive ||
+             path === item?.otherPathSix
+
                 ? "bg-[#FBD5D5] text-primary border-l-4 border-primary font-medium"
                 : "text-sidebar"
             }`}

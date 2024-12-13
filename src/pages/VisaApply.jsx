@@ -50,7 +50,7 @@ const initialStudentDocument = {
   medical: "",
   pcc: "",
   pal: "",
-  certificate: "",
+  certificate: [],
 };
 
 const VisaApply = () => {
@@ -66,7 +66,7 @@ const VisaApply = () => {
   const studentId =
     role === "3"
       ? studentUserId?.data?.studentInformation?._id
-      : location?.state?.id || location?.state.state;
+      : location?.state?.id || location?.state?.state;
   const { countryOption, studentData } = useSelector((state) => state.general);
   const { studentInfoData } = useSelector((state) => state.student);
   const StudentDataToGet = role === "2" ? studentData : studentInfoData?.data;
@@ -322,8 +322,10 @@ const VisaApply = () => {
         pal: visaLetter.studentDocument.pal,
         loa: visaLetter.studentDocument.loa,
         certificate: Array.isArray(visaLetter.studentDocument.certificate)
-          ? visaLetter.studentDocument.certificate
-          : [visaLetter.studentDocument.certificate],
+    ? visaLetter.studentDocument.certificate // Already an array
+    : visaLetter.studentDocument.certificate
+    ? [visaLetter.studentDocument.certificate] // Convert string/other value to array
+    : [],
       };
 
       for (const { file, fileType, blobUrl } of newFiles) {
@@ -335,6 +337,7 @@ const VisaApply = () => {
 
           // Replace the blob URL with the Firebase URL for the specific field
           updatedStudentDocument[fileType] = downloadURL;
+          
           const uploadData = {
             viewUrl: downloadURL,
             documentName: file.name,
@@ -679,7 +682,14 @@ const VisaApply = () => {
         onSubmit={() => console.log("Form Submitted")}
         resetDoc={resetDoc}
         setResetDoc={setResetDoc}
-        studentId={studentId}
+        studentId={
+            role === "2"
+              ? studentId
+              : role === "3"
+              ? studentInfoData?.data?.studentInformation?._id
+              : null
+          }
+    
       />
 
       <PopUp

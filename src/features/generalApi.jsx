@@ -413,7 +413,8 @@ export const getAllTicket = async (
   perPage,
   isPriorityType,
   isStatusType,
-  search
+  search,
+  dateObj
 ) => {
   try {
     const response = await apiurl.get(`/ticket/my-tickets`, {
@@ -423,7 +424,9 @@ export const getAllTicket = async (
         priorityStatus: isPriorityType,
         status: isStatusType,
         search: search,
+        date: dateObj
       },
+
     });
 
     return response.data;

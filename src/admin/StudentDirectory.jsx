@@ -22,12 +22,13 @@ const StudentDirectory = () => {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [downloading, setDownloading] = useState(false);
   const [perPage, setPerPage] = useState(10);
   const agentId = location?.state?.id;
-  const path =
-    location.pathname === "/admin/agent-student"
-      ? `/studentInformation/agent-student-admin`
-      : "/admin/student-directory";
+    const path =
+      location.pathname === "/admin/agent-student"
+        ? `/studentInformation/agent-student-admin`
+        : "/admin/student-directory";
   // Select data from Redux
   // console.log(location);
   const { getAllStudentData } = useSelector((state) => state.admin);
@@ -92,21 +93,29 @@ const StudentDirectory = () => {
         email: personalInfo?.email || "NA",
         phone: personalInfo?.phone?.phone || "NA",
         data: data || "NA",
+        studentId: data?.studentId?.toString() || "NA",
+
       };
     }) || [];
 
   const downloadAll = async () => {
     try {
+      setDownloading(true)
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       await downloadFile({
         url: "/admin/total-student-download",
         filename: "Student.csv",
       });
-      toast.info("Downloading will start in few seconds");
+      // toast.info("Downloading will start in few seconds");
     } catch (error) {
       console.log(error);
       toast.error(error.message || "Error downloading");
+    }finally{
+      setDownloading(false)
+      
     }
   };
+  // console.log(getAllStudentData?.data?.data)
   return (
     <>
       <Header customLink="/agent/shortlist" />
@@ -154,7 +163,7 @@ const StudentDirectory = () => {
             onClick={downloadAll}
             className="bg-primary ml-5 text-white px-4 rounded-md py-2 cursor-pointer"
           >
-            Download
+          {downloading ? "Downloading...." : "Download"}
           </span>
         </span>
       </div>

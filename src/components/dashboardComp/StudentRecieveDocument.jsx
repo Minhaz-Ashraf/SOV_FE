@@ -63,7 +63,7 @@ const StudentRecieveDocument = ({ studentId }) => {
   const TABLE_ROWS = recieveDocs?.documents?.map((data, index) => ({
     sno:(currentPage - 1) * perPage + index + 1,
     docName: extractFileName(data.document[0]) || "NA",
-    docType: "Visa",
+    docType: data?.documentType,
     date: formatDate(data.createdAt) || "NA",
     url: data.document[0] || "NA",
   }));
@@ -103,7 +103,7 @@ const StudentRecieveDocument = ({ studentId }) => {
                   <CustomInput
                     className="h-11 w-80 rounded-md text-body placeholder:px-3 pl-7 border border-[#E8E8E8] outline-none"
                     type="text"
-                    placeHodler="Search by application ID"
+                    placeHodler="Search by Document Name"
                     name="search"
                     value={search}
                     onChange={handleSearchChange}
@@ -141,7 +141,7 @@ const StudentRecieveDocument = ({ studentId }) => {
         )}
       </div>
 
-      <div className="mt-16 mb-10 ml-20">
+      <div className="mt-16 mb-10 ">
         <Pagination
           currentPage={currentPage}
           hasNextPage={currentPage * perPage < totalUsersCount}

@@ -119,16 +119,15 @@ const VisaEdit = () => {
                 big deal if it's not - you can always change it.
               </p>
             </span>
-            {(applicationDataById?.visa?.status === "rejected" &&
-              role !== "0"
-               && (
+            {applicationDataById?.visa?.status === "rejected" &&
+              role !== "0" && (
                 <span
                   onClick={resSubmit}
                   className="px-6 py-2 bg-primary rounded-md text-white cursor-pointer"
                 >
                   Re-Submit
                 </span>
-              ))}
+              )}
           </span>
         )}
       </div>
@@ -156,7 +155,13 @@ const VisaEdit = () => {
           appId={appId}
           updatedData={handleProfileUpdate}
           profileViewPath={profileView}
-          userId={applicationDataById?.studentInformationId}
+          userId={
+            role === "2"
+              ? applicationDataById?.studentInformationId
+              : role === "3"
+              ? studentInfoData?.data?.studentInformation?._id
+              : null
+          }
         />
       </div>
     </>

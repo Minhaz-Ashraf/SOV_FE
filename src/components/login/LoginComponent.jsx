@@ -148,9 +148,9 @@ const LoginComponent = () => {
           }
           let redirectPath = "";
 
-          if(studentInfoData.data.pageStatus?.status === "requestedForReaproval") {
+          if(studentInfoData.data.studentInformation.pageStatus?.status === "requestedForReaproval") {
             redirectPath = `/student/account-deleted`;
-          } else if(studentInfoData.data.deleted === true) {
+          } else if(studentInfoData.data.studentInformation.deleted === true) {
             redirectPath = `/student/account-deleted`;
           } else if (
             studentInfoData?.data?.studentInformation?.pageCount === 3 &&

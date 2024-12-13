@@ -98,7 +98,7 @@ const courseFeeApplication = () => {
     personalDetails: { ...initialPersonalInfo },
     studentDocument: { ...initialStudentDocument },
     parentDocument: { ...initialParentDocument },
-    siblingDocument: { ...initialSiblingDocument },
+    siblingsDocument: { ...initialSiblingDocument },
     offerLetterAnsPassport: { ...initialofferLetterAnsPassport },
   });
   const [errors, setErrors] = useState({});
@@ -203,8 +203,8 @@ const courseFeeApplication = () => {
     }
 
     if (selectedOption === "sibling") {
-      Object.keys(courseFee.siblingDocument).forEach((docType) => {
-        if (!courseFee.siblingDocument[docType]) {
+      Object.keys(courseFee.siblingsDocument).forEach((docType) => {
+        if (!courseFee.siblingsDocument[docType]) {
           errors[docType] = `${docType.replace(
             /([A-Z])/g,
             " $1"
@@ -241,32 +241,50 @@ const courseFeeApplication = () => {
   };
   const handleFileUpload = (files) => {
     if (!files || files.length === 0) return;
-
+  
     const fileOrUrl = files[0];
-
-    if (fileOrUrl instanceof File) {
+  
+    if (typeof fileOrUrl === "string" && fileOrUrl.startsWith("http")) {
+      // Handle Firebase URL case
+      setCourseFee((prevState) => {
+        const updatedState = { ...prevState };
+        if (isFileType in updatedState.studentDocument) {
+          updatedState.studentDocument[isFileType] = fileOrUrl;
+        } else if (isFileType in updatedState.parentDocument) {
+          updatedState.parentDocument[isFileType] = fileOrUrl;
+        } else if (isFileType in updatedState.siblingsDocument) {
+          updatedState.siblingsDocument[isFileType] = fileOrUrl;
+        } else if (isFileType in updatedState.offerLetterAnsPassport) {
+          updatedState.offerLetterAnsPassport[isFileType] = fileOrUrl;
+        }
+        return updatedState;
+      });
+    } else if (fileOrUrl instanceof File) {
+      // Handle File case
       const blobUrl = URL.createObjectURL(fileOrUrl);
       setNewFiles((prevFiles) => [
         ...prevFiles.filter((f) => f.fileType !== isFileType),
         { file: fileOrUrl, fileType: isFileType, blobUrl },
       ]);
-
+  
       setCourseFee((prevState) => {
         const updatedState = { ...prevState };
         if (isFileType in updatedState.studentDocument) {
           updatedState.studentDocument[isFileType] = blobUrl;
         } else if (isFileType in updatedState.parentDocument) {
           updatedState.parentDocument[isFileType] = blobUrl;
-        } else if (isFileType in updatedState.siblingDocument) {
-          updatedState.siblingDocument[isFileType] = blobUrl;
+        } else if (isFileType in updatedState.siblingsDocument) {
+          updatedState.siblingsDocument[isFileType] = blobUrl;
         } else if (isFileType in updatedState.offerLetterAnsPassport) {
           updatedState.offerLetterAnsPassport[isFileType] = blobUrl;
         }
         return updatedState;
       });
+    } else {
+      console.warn("Unsupported file type or URL format.");
     }
   };
-
+  
   const deleteFile = (fileUrl, fileType) => {
     if (!fileUrl) return;
 
@@ -278,8 +296,8 @@ const courseFeeApplication = () => {
         updatedState.studentDocument[fileType] = "";
       } else if (fileType in updatedState.parentDocument) {
         updatedState.parentDocument[fileType] = "";
-      } else if (fileType in updatedState.siblingDocument) {
-        updatedState.siblingDocument[fileType] = "";
+      } else if (fileType in updatedState.siblingsDocument) {
+        updatedState.siblingsDocument[fileType] = "";
       } else if (fileType in updatedState.offerLetterAnsPassport) {
         updatedState.offerLetterAnsPassport[fileType] = "";
       }
@@ -314,8 +332,8 @@ const courseFeeApplication = () => {
             updatedState.studentDocument[fileType] = downloadURL;
           } else if (fileType in updatedState.parentDocument) {
             updatedState.parentDocument[fileType] = downloadURL;
-          } else if (fileType in updatedState.siblingDocument) {
-            updatedState.siblingDocument[fileType] = downloadURL;
+          } else if (fileType in updatedState.siblingsDocument) {
+            updatedState.siblingsDocument[fileType] = downloadURL;
           } else if (fileType in updatedState.offerLetterAnsPassport) {
             updatedState.offerLetterAnsPassport[fileType] = downloadURL;
           }
@@ -327,9 +345,9 @@ const courseFeeApplication = () => {
           userId: studentId,
         };
         await uploadDocument(uploadData);
-        toast.success(`${file.name} uploaded successfully!`);
+        // toast.success(`${file.name} uploaded successfully!`);
       } catch (error) {
-        toast.error(`Error uploading ${file.name}. Please try again.`);
+        // toast.error(`Error uploading ${file.name}. Please try again.`);
       }
     }
 
@@ -730,7 +748,7 @@ const courseFeeApplication = () => {
                 <h3 className="font-semibold text-lg">
                   Sibling Document Upload
                 </h3>
-                {Object.keys(courseFee.siblingDocument).map((docType) => (
+                {Object.keys(courseFee.siblingsDocument).map((docType) => (
                   <div
                     key={docType}
                     className="flex flex-col items-center border-2 border-dashed border-body rounded-md py-9 mt-4"
@@ -742,10 +760,10 @@ const courseFeeApplication = () => {
                       <FiUpload className="mr-2 text-primary text-[29px]" />
                     </button>
                     <p className="mt-2">{docType.replace(/([A-Z])/g, " $1")}</p>
-                    {courseFee.siblingDocument[docType] && (
+                    {courseFee.siblingsDocument[docType] && (
                       <div className="mt-2 flex items-center">
                         <a
-                          href={courseFee.siblingDocument[docType]}
+                          href={courseFee.siblingsDocument[docType]}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-primary"
@@ -755,7 +773,7 @@ const courseFeeApplication = () => {
                         <button
                           onClick={() =>
                             deleteFile(
-                              courseFee.siblingDocument[docType],
+                              courseFee.siblingsDocument[docType],
                               docType
                             )
                           }
@@ -882,7 +900,13 @@ const courseFeeApplication = () => {
         onSubmit={() => {
           console.log("Form Submitted");
         }}
-        studentId={studentId}
+        studentId={
+            role === "2"
+              ? studentId
+              : role === "3"
+              ? studentInfoData?.data?.studentInformation?._id
+              : null
+          }
       />
 
       <PopUp

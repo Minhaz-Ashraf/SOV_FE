@@ -53,7 +53,7 @@ const HelpNSupport = () => {
   const dispatch = useDispatch();
   const [isPriorityType, setIsPriorityType] = useState("");
   const [isStatusType, setIsStatusType] = useState("");
-
+  const [dateObj, setDateObj] = useState(null); 
   const [applicationIds, setApplicationIds] = useState([]);
   const [isPopUp, setIsPopUp] = useState(false);
   const handlePayloadInput = (e) => {
@@ -90,19 +90,21 @@ const HelpNSupport = () => {
     setPage(1);
   };
   const handleDateChange = (e) => {
-    setDate(e.target.value);
-    setPage(1);
+    const dateValue = e.target.value; 
+    setDate(dateValue); 
+    setDateObj(dateValue ? new Date(dateValue) : null); 
+    setPage(1); 
   };
   const handlePageChange = (pageNumber) => {
     setPage(pageNumber);
   };
-
+  console.log(dateObj, isDate)
   useEffect(() => {
     // dispatch(studentById(studentId));
     dispatch(
-      allTicket({ page, perPage, isPriorityType, isStatusType, search })
+      allTicket({ page, perPage, isPriorityType, isStatusType, search, isDate })
     );
-  }, [dispatch, page, perPage, isPriorityType, isStatusType, search]);
+  }, [dispatch, page, perPage, isPriorityType, isStatusType, search, isDate]);
 
   // Generate options for per page dropdown
   const perPageOptions = [];
@@ -227,7 +229,7 @@ const HelpNSupport = () => {
             <span className="flex flex-row justify-between w-full items-center">
               <span className="flex flex-row items-center ">
                 {" "}
-                <span className="text-body">Show</span>
+                {/* <span className="text-body">Show</span>
                 <select
                   className="ml-3 border px-2 py-1 w-10 h-11 rounded outline-none"
                   value={perPage}
@@ -239,7 +241,7 @@ const HelpNSupport = () => {
                     </option>
                   ))}
                 </select>
-                <span className="px-3 text-body">entries</span>
+                <span className="px-3 text-body">entries</span> */}
                 <select
                   className="ml-3 border px-2 py-1 w-24 h-11 rounded outline-none"
                   value={isStatusType}
@@ -267,7 +269,7 @@ const HelpNSupport = () => {
                 <CustomInput
                   type="date"
                   placeHodler="Date"
-                  className="ml-3 border px-2 py-1 w-20 h-11 rounded outline-none"
+                  className="ml-3 border px-2 py-1 w-36 h-11 rounded outline-none"
                   value={isDate}
                   onChange={handleDateChange}
                 />

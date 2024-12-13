@@ -62,7 +62,8 @@ const AgentSidebar = () => {
       otherPathThree: "/offerLetter-apply",
       otherPathFour: "/course-fee",
       otherPathFive: "/visa-apply",
-      otherPathFive: "/visa/edit",
+      otherPathSix: "/visa/edit",
+      otherPathSeven: "/course-fee/edit"
 
 
 
@@ -86,7 +87,10 @@ const AgentSidebar = () => {
               path === item?.otherPathTwo ||
               path === item?.otherPathThree ||
               path === item?.otherPathFour ||
-                path === item?.otherPathFive
+             path === item?.otherPathFive ||
+             path === item?.otherPathSix ||
+             path === item?.otherPathSeven
+
                 ? "bg-[#FBD5D5] text-primary border-l-4 border-primary font-medium"
                 : "text-sidebar"
             }`}
@@ -145,7 +149,7 @@ const AgentSidebar = () => {
             <Link to="/settings/change-email">
               <li
                 className={`text-sidebar py-2 mb-2 cursor-pointer md:px-14 sm:pl-14 md:ml-0  hover:bg-[#f5ebeb] hover:text-primary ${
-                  path === "/settings/change-email" &&
+                  path === "/settings/change-email" || path === "/settings/otp-confirm" &&
                   "bg-[#FBD5D5] border-l-4 border-primary text-primary"
                 }`}
               >

@@ -3,16 +3,20 @@ import { Navigate } from "react-router-dom";
 import Loader from "../components/Loader";
 import { useSelector } from "react-redux";
 
-const ProtectedAgent = ({ children }) => {
+const protectedAgent = ({ children }) => {
+  const { getAdminProfile } = useSelector((state) => state.admin);
   const roleType = localStorage.getItem("role");
-  const { agentData } = useSelector((state) => state.agent);
+  const authToken = localStorage.getItem("userAuthToken");
 
   const [loading, setLoading] = useState(true);
-  
+
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 500);
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 500);
+
     return () => clearTimeout(timer);
-  }, [loading]);
+  }, []);
 
   if (loading) {
     return (
@@ -22,11 +26,19 @@ const ProtectedAgent = ({ children }) => {
     );
   }
 
-  if (roleType !== "3" && agentData?.pageStatus?.status !== "completed") {
+  // Log the current values to help with debugging
+
+
+  // Check the conditions for navigation
+  const isRoleNotZero = roleType !== "2";
+
+  if (isRoleNotZero && !authToken ) {
+    console.log('Navigating to login due to missing profile data');
     return <Navigate to="/login" replace={true} />;
   }
 
+  // If everything is fine, render the children
   return children;
 };
 
-export default ProtectedAgent;
+export default protectedAgent;

@@ -115,6 +115,30 @@ const Dashboard = () => {
     filterData.institutes ||
     filterData.search
   );
+
+  
+  const statusFive =
+  studentInfoData?.data?.flags?.visaApproved === "approved" ||
+  studentInfoData?.data?.flags?.visaApproved === "approvedbyembassy" ||
+studentInfoData?.data?.flags?.visaApproved === "withdrawalrequest" ||
+studentInfoData?.data?.flags?.visaApproved === "withdrawalcomplete" ||
+studentInfoData?.data?.flags?.visaApproved === "rejectedbyembassy"
+  ? "done"
+  : studentInfoData?.data?.flags?.visaApproved === "reject"
+  ? "pending"
+  : "current";
+
+const statusSix =
+
+  studentInfoData?.data?.flags?.visaApproved === "approvedbyembassy" ||
+  studentInfoData?.data?.flags?.visaApproved === "visagranted"
+    ? "done"
+    : 
+      studentInfoData?.data?.flags?.visaApproved === "rejectedbyembassy" ||
+      studentInfoData?.data?.flags?.visaApproved === "withdrawalrequest" ||
+      studentInfoData?.data?.flags?.visaApproved === "withdrawalcomplete"
+    ? "pending"
+    : "current";
   return (
     <>
       <Header customLink="/student/shortlist" />
@@ -130,22 +154,17 @@ const Dashboard = () => {
                 : "pending"
             }
             statusTwo={studentInfoData?.data?.flags ? "done" : "current"}
-            statusFive={
-              studentInfoData?.data?.flags?.visaApproved === "approved" ||
-              studentInfoData?.data?.flags?.visaApproved === "approvedbyembassy"
-                ? "done"
-                : "current"
-            }
+            statusFive={statusFive}
+
             statusFour={
               studentInfoData?.data?.flags?.courseFeeApproved
                 ? "done"
                 : "current"
             }
-            statusSix={
-              studentInfoData?.data?.flags?.visaApproved === "approvedbyembassy"
-                ? "done"
-                : "current"
-            }
+            statusSix={statusSix}
+
+
+
           />
           <div>
             <span className="flex md:flex-row sm:flex-col items-center  ">

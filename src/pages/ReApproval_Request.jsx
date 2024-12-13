@@ -3,20 +3,26 @@ import ImageComponent from "../components/reusable/Input";
 import { reaproval } from "../assets";
 import { toast } from "react-toastify";
 import { reApprovalRequest } from "../features/generalApi";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import socketServiceInstance from "../services/socket";
 import { Link } from "react-router-dom";
+import { agentInformation } from "../features/agentSlice";
+import { studentInfo } from "../features/studentSlice";
 
 const ReApproval_Request = () => {
+  const dispatch = useDispatch();
   const role = localStorage.getItem("role");
+  const studentId = localStorage.getItem("student")
   const { agentData } = useSelector((state) => state.agent);
   const { studentInfoData } = useSelector((state) => state.student);
+ 
   const id =
     role === "2"
       ? agentData?._id
       : role === "3"
       ? studentInfoData?.data?.studentInformation?._id
       : null;
+
   const reApprovalReq = async () => {
     try {
       const payload = {
@@ -30,6 +36,12 @@ const ReApproval_Request = () => {
           : null,
         payload
       );
+      if (role === "2") {
+        dispatch(agentInformation());
+      }
+      if (role==="3"){
+        dispatch(studentInfo(studentId))
+      }
       toast.success(res?.message || "Requested for reapproval");
       if (role === "2" && res?.statusCode === 200) {
         if (socketServiceInstance.isConnected()) {
@@ -91,20 +103,21 @@ const ReApproval_Request = () => {
           to regain access.
         </p>
         <span className="flex flex-col items-center justify-center">
-          {studentInfoData?.data?.studentInformation?.pageStatus?.status !==
+          {studentInfoData?.data?.studentInformation?.pageStatus?.status ===
             "requestedForReapproval" ||
-          agentData?.pageStatus?.status !== "requestedForReapproval" ? (
+          agentData?.pageStatus?.status === "requestedForReapproval" ? (
+            <p className="text-[16px] text-sidebar mt-6">
+              You have requested for the re-approval . please wait for the admin
+              approval.
+            </p>
+           
+          ) : (
             <span
               onClick={reApprovalReq}
               className="bg-primary rounded-md text-white px-6 py-2 mt-6 cursor-pointer "
             >
               Request Reapproval
             </span>
-          ) : (
-            <p className="text-[16px] text-sidebar mt-6">
-              You have requested for the re-approval . please wait for the admin
-              approval.
-            </p>
           )}
 
           <a

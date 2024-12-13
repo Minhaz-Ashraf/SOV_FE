@@ -18,12 +18,12 @@ const DeleteAccount = () => {
   const role = localStorage.getItem("role");
   const userId =
     role === "3"
-      ? studentInfoData?.data?.studentInformation?._id
+      ? studentInfoData?.data?.studentInformation?.studentId
       : agentData?.agentId;
   const path =
     role === "2"
       ? `/company/delete-agent/${userId}`
-      : role === "2"
+      : role === "3"
       ? `/studentinformation/student-information/${userId}`
       : null;
   const [isOpenPop, setIsOpenPop] = useState(false);

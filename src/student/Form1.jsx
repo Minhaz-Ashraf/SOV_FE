@@ -240,7 +240,7 @@ const Form1 = ({
 
   const deleteFile = async (fileUrl, uploadType) => {
     if (!fileUrl) return;
-    await deleteDocument(fileUrl);
+    // await deleteDocument(fileUrl);
 
     const isFirebaseUrl = fileUrl.startsWith("http");
 

@@ -264,6 +264,8 @@ const CourseFeeFamilyDocUpdate = ({
         motherAadharCard: courseFee.parentDocument.motherAadharCard || "",
         fatherPanCard: courseFee.parentDocument.fatherPanCard || "",
         motherPanCard: courseFee.parentDocument.motherPanCard || "",
+        siblingAadharCard: courseFee.siblingDocument.siblingAadharCard || "",
+        siblingPanCard: courseFee.siblingDocument.siblingPanCard || ""
       };
 
       // Check if both father and mother Aadhar and PAN cards are available
@@ -276,7 +278,7 @@ const CourseFeeFamilyDocUpdate = ({
       // Conditionally add sibling data to the payload
       if (!areParentsAvailable) {
         payload.siblingAdharCard =
-          courseFee.siblingDocument.siblingAdharCard || "";
+          courseFee.siblingDocument.siblingAadharCard || "";
         payload.siblingPanCard = courseFee.siblingDocument.siblingPanCard || "";
       }
 
@@ -450,7 +452,74 @@ const CourseFeeFamilyDocUpdate = ({
               </span>
             </span>
           </span>
+
+
+          
         </div>
+
+{applicationDataById?.courseFeeApplication?.siblingsDocument  &&  
+        <div className="flex flex-row items-center w-full justify-between">
+        <span className="w-1/2 flex flex-col text-[15px]">
+            <span className="flex flex-col">
+              <span className="font-light mt-4">Sibling Aadhar Card</span>
+              <span className="font-medium">
+                {applicationDataById?.courseFeeApplication?.siblingsDocument
+                  ?.siblingAadharCard ? (
+                  <a
+                    className="flex items-center gap-3 text-primary font-medium"
+                    href={
+                      applicationDataById?.courseFeeApplication?.siblingsDocument
+                        ?.siblingAadharCard
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Uploaded
+                    <span>
+                      <FaRegEye />
+                    </span>
+                  </a>
+                ) : (
+                  "NA"
+                )}
+              </span>
+           
+        
+            </span>
+          </span>
+          <span className="w-1/2 flex flex-col text-[15px]">
+            <span className="flex flex-col">
+              <span className="font-light mt-4">Sibling Pan Card</span>
+              <span className="font-medium">
+                {applicationDataById?.courseFeeApplication?.siblingsDocument
+                  ?.siblingPanCard ? (
+                  <a
+                    className="flex items-center gap-3 text-primary font-medium"
+                    href={
+                      applicationDataById?.courseFeeApplication?.siblingsDocument
+                        ?.siblingPanCard
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Uploaded
+                    <span>
+                      <FaRegEye />
+                    </span>
+                  </a>
+                ) : (
+                  "NA"
+                )}
+              </span>
+           
+            </span>
+          </span>
+
+          
+
+          
+        </div>
+}
         <div
           className={`transition-all duration-500 ease-in-out transform ${
             isOne

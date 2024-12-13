@@ -98,7 +98,7 @@ const StudentsList = () => {
         <div className="flex items-center justify-between  md:mr-7 sm:mr-5 md:ml-[19.5%] sm:ml-[27%] mt-6">
           <span className="flex flex-row items-center">
             {" "}
-            <span className="text-body">Show</span>
+            {/* <span className="text-body">Show</span>
             <select
               className="ml-3 border px-2 py-1 w-10 rounded outline-none"
               value={perPage}
@@ -110,7 +110,7 @@ const StudentsList = () => {
                 </option>
               ))}
             </select>
-            <span className="px-3 text-body">entries</span>
+            <span className="px-3 text-body">entries</span> */}
             <span className="flex flex-row items-center md:ml-9">
               <CustomInput
                 className="h-11 md:w-96 sm:w-48 rounded-md text-body placeholder:px-3 pl-7 border border-[#E8E8E8] outline-none"

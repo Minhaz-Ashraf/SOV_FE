@@ -29,13 +29,17 @@ const TicketSupport = () => {
   const [isPriorityType, setIsPriorityType] = useState("");
   const [loading, setLoading] = useState(true);
   const { updateTicketTab } = useSelector((state) => state.admin);
-  const [dateObj, setDateObj] = useState(null); 
-  const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "pending");
+  const [dateObj, setDateObj] = useState(null);
+  const [downloading, setDownloading] = useState(false);
+
+  const [activeTab, setActiveTab] = useState(
+    searchParams.get("tab") || "pending"
+  );
   const handleDateChange = (e) => {
-    const dateValue = e.target.value; 
-    setDate(dateValue); 
-    setDateObj(dateValue ? new Date(dateValue) : null); 
-    setPage(1); 
+    const dateValue = e.target.value;
+    setDate(dateValue);
+    setDateObj(dateValue ? new Date(dateValue) : null);
+    setPage(1);
   };
   const handlePerPageChange = (e) => {
     setPerPage(parseInt(e.target.value));
@@ -45,7 +49,7 @@ const TicketSupport = () => {
     setIsPriorityType(e.target.value);
     setPage(1);
   };
-// console.log(isDate)
+  // console.log(isDate)
 
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
@@ -63,56 +67,78 @@ const TicketSupport = () => {
   useEffect(() => {
     // setLoading(true);
     dispatch(
-      getAllTickets({ page, perPage, isPriorityType, search, updateTicketTab, dateObj })
+      getAllTickets({
+        page,
+        perPage,
+        isPriorityType,
+        search,
+        updateTicketTab,
+        dateObj,
+      })
     );
     // setLoading(false);
-  }, [dispatch, page, perPage, isPriorityType, search, updateTicketTab, dateObj]);
+  }, [
+    dispatch,
+    page,
+    perPage,
+    isPriorityType,
+    search,
+    updateTicketTab,
+    dateObj,
+  ]);
 
   const tabs = [
     {
       name: "pending",
       label: "Pending",
       component: pendingTicket,
-      props: { data: ticketAll, isLoading: loading, currentPage: currentPage, setPage:setPage },
+      props: {
+        data: ticketAll,
+        isLoading: loading,
+        currentPage: currentPage,
+        setPage: setPage,
+      },
     },
     {
       name: "resolved",
       label: "Resolved",
       component: ResolvedTickets,
-      props: { data: ticketAll,  currentPage: currentPage ,setPage:setPage },
+      props: { data: ticketAll, currentPage: currentPage, setPage: setPage },
     },
   ];
 
-// console.log(ticketAll?.tickets?.length)
+  // console.log(ticketAll?.tickets?.length)
 
-useEffect(() => {
-  const timer = setTimeout(() => {
-    setLoading(false);
-  }, 2000);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
 
-  return () => clearTimeout(timer);
-}, []);
+    return () => clearTimeout(timer);
+  }, []);
 
-
-
-  const downloadAll = async()=>{
-    try{
-      const res =await  downloadFile({
+  const downloadAll = async () => {
+    try {
+      setDownloading(true);
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const res = await downloadFile({
         url: "/ticket/download-all",
         filename: "Tickets.csv",
-      }) ;
-      toast.info("Downloading will start in few seconds") 
-    }catch(error){
-      console.log(error) 
-      toast.error(error.message||"Error downloading") 
-    } 
-  }
+      });
+      // toast.info("Downloading will start in few seconds");
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message || "Error downloading");
+    } finally {
+      setDownloading(false);
+    }
+  };
   useEffect(() => {
     if (location.pathname !== "/admin/ticket") {
       setActiveTab("pending");
-      setSearchParams({ tab: "pending" }); 
+      setSearchParams({ tab: "pending" });
     } else {
-      setActiveTab(searchParams.get("tab") || "pending"); 
+      setActiveTab(searchParams.get("tab") || "pending");
     }
   }, [location.pathname, searchParams]);
 
@@ -195,8 +221,11 @@ useEffect(() => {
               </span>
             </span>
           </span>
-          <span onClick={downloadAll} className="bg-primary px-6  rounded-md text-white cursor-pointer py-2">
-            Download
+          <span
+            onClick={downloadAll}
+            className="bg-primary px-6  rounded-md text-white cursor-pointer py-2"
+          >
+            {downloading ? "Downloading...." : "Download"}
           </span>
         </span>
       </div>
@@ -206,22 +235,26 @@ useEffect(() => {
         </div>
       ) : (
         <>
-        <div className="sm:ml-14 md:ml-0">
-        <TabBar tabs={tabs} activeTab={activeTab} onTabChange={handleTabChange} setActiveTab={setActiveTab} />
-        </div>
+          <div className="sm:ml-14 md:ml-0">
+            <TabBar
+              tabs={tabs}
+              activeTab={activeTab}
+              onTabChange={handleTabChange}
+              setActiveTab={setActiveTab}
+            />
+          </div>
 
-        <div className="mt-12 mb-10 ml-52">
-        <Pagination
-          currentPage={currentPage}
-          hasNextPage={currentPage * perPage < totalUsersCount}
-          hasPreviousPage={currentPage > 1}
-          onPageChange={handlePageChange}
-          totalPagesCount={totalPagesCount}
-        />
-      </div>
-      </>
+          <div className="mt-12 mb-10 ml-52">
+            <Pagination
+              currentPage={currentPage}
+              hasNextPage={currentPage * perPage < totalUsersCount}
+              hasPreviousPage={currentPage > 1}
+              onPageChange={handlePageChange}
+              totalPagesCount={totalPagesCount}
+            />
+          </div>
+        </>
       )}
-     
     </>
   );
 };

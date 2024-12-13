@@ -15,7 +15,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { agentInformation, allStudentCount } from "../features/agentSlice";
 import { totalAgentStudent } from "../features/adminApi";
-import { donoughtFilter, userType } from "../constant/data";
+import { appType, donoughtFilter, userType } from "../constant/data";
 
 const AgentDashboard = () => {
   const totalStudentCount = useSelector((state) => state.agent.studentCount);
@@ -370,12 +370,12 @@ const AgentDashboard = () => {
                   Application Type:{" "}
                 </label>
                 <select
-                  className="ml-3 border px-2 py-1 w-24 h-11 rounded outline-none"
+                  className="ml-3 border px-2 py-1 w-28 h-11 rounded outline-none"
                   value={isUserType}
                   onChange={handleUserChange}
                 >
                   <option value="">All</option>
-                  {userType.map((option) => (
+                  {appType.map((option) => (
                     <option key={option.option} value={option.option}>
                       {option.label}
                     </option>

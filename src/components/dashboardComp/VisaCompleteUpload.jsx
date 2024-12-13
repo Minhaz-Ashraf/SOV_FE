@@ -12,13 +12,14 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { updateDocs } from "../../features/generalApi";
 import { v4 as uuidv4 } from "uuid";
 import { chngeApplicationStatus } from "../../features/adminApi";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { visaStatusData } from "../../features/generalSlice";
 
-const VisaCompleteUpload = ({appId}) => {
+const VisaCompleteUpload = ({appId, studId}) => {
   const { agentData } = useSelector((state) => state.agent);
   const { studentInfoData } = useSelector((state) => state.student);
   const { visaStatus } = useSelector((state) => state.general);
-
+   const dispatch = useDispatch()
   const [visaComplete, setVisaComplete] = useState({
     ppr: "",
     visaStamp: "",
@@ -66,32 +67,45 @@ const VisaCompleteUpload = ({appId}) => {
 
   const deleteFile = async (fileUrl, uploadType) => {
     if (!fileUrl) return;
-
+  
     const storageRef = ref(storage, fileUrl);
-
+  
     try {
       await deleteObject(storageRef);
       toast.success("File deleted successfully!");
+      setresetVisaStamp(true)
+      setresetPpr(true)
 
+  
       // Update the state based on the upload type
-      if (uploadType === "adharCard") {
-        setVisaComplete((prevData) => ({
-          ...prevData,
-          adharCard: "", // Reset URL
-        }));
-      } else if (uploadType === "panCard") {
-        setVisaComplete((prevData) => ({
-          ...prevData,
-          panCard: "", // Reset URL
-        }));
-      }
+      setVisaComplete((prevData) => {
+        const updatedData = { ...prevData };
+  
+        // Clear the appropriate field based on upload type
+        if (uploadType === "ppr") {
+          updatedData.ppr = ""; // Clear ppr
+        } else if (uploadType === "visaStamp") {
+          updatedData.visaStamp = ""; // Clear visaStamp
+        }
+  
+        // If you need to filter out specific files from an array, do it here
+        // Assuming you have an array for certificates or similar:
+        if (uploadType === "certificate") {
+          updatedData.certificate = updatedData.certificate.filter(cert => cert !== fileUrl);
+        }
+        setresetVisaStamp(true)
+        setresetPpr(true)
 
+        return updatedData;
+      });
+  
       console.log("Updated visaComplete after delete:", visaComplete);
     } catch (error) {
       console.error("Error deleting file:", error);
       toast.error("Error deleting file. Please try again.");
     }
   };
+  
   const validateFields = () => {
     const newErrors = {};
 
@@ -116,6 +130,8 @@ const handleSubmit = async()=>{
     try{
     const res = await updateDocs(appId, visaComplete);
     await chngeApplicationStatus(visaStatus?._id, "visagranted", "visa");
+    dispatch(visaStatusData(studId));
+
     toast.success(res.message || "Document Submitted Successfully")
     }catch(error){
         console.log(error)

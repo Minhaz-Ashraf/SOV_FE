@@ -12,8 +12,8 @@ import TabBar from "../components/dashboardComp/TabBar";
 const Documents = () => {
   const role = localStorage.getItem("role");
   const location = useLocation();
-  const studentId = localStorage.getItem("student");
   const { studentInfoData } = useSelector((state) => state.student);
+  const studentId = studentInfoData?.data?.studentInformation?._id
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState(
     searchParams.get("tab") || "myDocument"
@@ -50,7 +50,7 @@ const Documents = () => {
     },
     {
       name: "recieveDocument",
-      label: "Recieve Document",
+      label: "Recieved Document",
       component: StudentRecieveDocument,
       props: {
         data: studentData?.studentInformation,

@@ -22,12 +22,15 @@ const AdminDashCard = ({
             <p className="text-body text-[15px]">Total</p>
             <p className="text-body text-[15px] font-semibold">{totalCount}</p>
           </span>
+          <hr className="mt-1" />
           <span className="flex flex-row justify-between w-full mt-3">
             <p className="text-body text-[15px]">Under Review</p>
             <p className=" text-[15px] font-semibold text-[#E59500]">
               {pendingCount}
             </p>
           </span>
+          <hr className="mt-1"/>
+
           <span className="flex flex-row justify-between w-full mt-3">
             <p className="text-body text-[15px]">{text}</p>
             <p className="text-[#459F49] text-[15px] font-semibold">

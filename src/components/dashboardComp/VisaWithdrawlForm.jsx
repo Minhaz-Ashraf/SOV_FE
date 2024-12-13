@@ -16,15 +16,18 @@ import { toast } from "react-toastify";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { v4 as uuidv4 } from "uuid";
 import { chngeApplicationStatus } from "../../features/adminApi";
+import { visaStatusData } from "../../features/generalSlice";
 
-const VisaWithdrawlForm = ({ choosedOption }) => {
+const VisaWithdrawlForm = ({ choosedOption, studId }) => {
+  const dispatch = useDispatch();
+
   const { countryOption } = useSelector((state) => state.general);
   const { studentInfoData } = useSelector((state) => state.student);
   const { agentData } = useSelector((state) => state.agent);
   const { studentData } = useSelector((state) => state.general);
 
   const { visaStatus } = useSelector((state) => state.general);
-   
+
   const role = localStorage.getItem("role");
   const [bankData, setBankData] = useState({
     bankName: "",
@@ -58,8 +61,9 @@ const VisaWithdrawlForm = ({ choosedOption }) => {
   });
   const [resetAdharCard, setResetAdharCard] = useState(false);
   const [resetPanCard, setResetPanCard] = useState(false);
+  const [resetPAdharCard, setResetPAdharCard] = useState(false);
+  const [resetPPanCard, setResetPPanCard] = useState(false);
   const [errors, setErrors] = useState({});
-  const dispatch = useDispatch();
 
   useEffect(() => {
     //   dispatch(agentInformation());
@@ -85,9 +89,6 @@ const VisaWithdrawlForm = ({ choosedOption }) => {
     if (!bankData.iban) newErrors.iban = "IBAN is required";
     if (!bankData.panCard) newErrors.panCard = "Pan Card is required";
     if (!bankData.adharCard) newErrors.adharCard = "Aadhar Card is required";
-
-
-    
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -129,17 +130,17 @@ const VisaWithdrawlForm = ({ choosedOption }) => {
       } else if (uploadType === "panCard") {
         setBankData((prevData) => ({
           ...prevData,
-          panCard: downloadURL, 
+          panCard: downloadURL,
         }));
-      }else if (uploadType === "parentPanCard") {
+      } else if (uploadType === "parentPanCard") {
         setParentData((prevData) => ({
           ...prevData,
-          parentPanCard: downloadURL, 
+          parentPanCard: downloadURL,
         }));
-      }else if (uploadType === "parentAadharCard") {
+      } else if (uploadType === "parentAadharCard") {
         setParentData((prevData) => ({
           ...prevData,
-          parentAadharCard: downloadURL, 
+          parentAadharCard: downloadURL,
         }));
       }
 
@@ -165,26 +166,29 @@ const VisaWithdrawlForm = ({ choosedOption }) => {
       if (uploadType === "adharCard") {
         setBankData((prevData) => ({
           ...prevData,
-          adharCard: "", 
+          adharCard: "",
         }));
       } else if (uploadType === "panCard") {
         setBankData((prevData) => ({
           ...prevData,
-          panCard: "", 
+          panCard: "",
         }));
       }
       if (uploadType === "parentAadharCard") {
-        setBankData((prevData) => ({
+        setParentData((prevData) => ({
           ...prevData,
-          parentAadharCard: "", 
+          parentAadharCard: "",
         }));
       } else if (uploadType === "parentPanCard") {
-        setBankData((prevData) => ({
+        setParentData((prevData) => ({
           ...prevData,
-          parentPanCard: "", 
+          parentPanCard: "",
         }));
       }
-
+        setResetAdharCard(true)
+        setResetPanCard(true)
+        setResetPAdharCard(true)
+        setResetPPanCard(true)
       console.log("Updated bankData after delete:", bankData);
     } catch (error) {
       console.error("Error deleting file:", error);
@@ -207,7 +211,7 @@ const VisaWithdrawlForm = ({ choosedOption }) => {
       const hasParentBankDetails = Object.values(parentData).some(
         (value) => value.trim() !== ""
       );
-  
+
       const filteredBankData = {
         studentBankDetails: {
           bankName: bankData.bankName,
@@ -240,13 +244,20 @@ const VisaWithdrawlForm = ({ choosedOption }) => {
         documentUpload: {
           aadharCard: bankData.adharCard,
           panCard: bankData.panCard,
+          parentAadharCard: parentData.parentAadharCard,
+          parentPanCard: parentData.parentPanCard
         },
         appliedFor: choosedOption,
         studentInformationId: visaStatus?.studentInformationId,
       };
       // Make the API call with the structured data
       const res = await withdrawVisa(filteredBankData);
-      await chngeApplicationStatus(visaStatus?._id, "withdrawalrequest", "visa");
+      await chngeApplicationStatus(
+        visaStatus?._id,
+        "withdrawalrequest",
+        "visa"
+      );
+      dispatch(visaStatusData(studId));
 
       // Show success message
       toast.success(res?.message || "Data added successfully");
@@ -288,9 +299,9 @@ const VisaWithdrawlForm = ({ choosedOption }) => {
             }  has requested for withdrawal `,
             path: "/student/visa-update",
             pathData: {
-              studentId:  studentInfoData?.data?.studentInformation?._id,
+              studentId: studentInfoData?.data?.studentInformation?._id,
             },
-        
+
             recieverId: "",
           };
           socketServiceInstance.socket.emit(
@@ -309,396 +320,418 @@ const VisaWithdrawlForm = ({ choosedOption }) => {
 
   return (
     <>
-    <div className="bg-white px-9 py-9 rounded-md">
-<div className="text-sidebar text-[22px] font-bold ml-6">Bank Details </div>
+      <div className="bg-white px-9 py-5 rounded-md">
+        <p className="text-[15px] text-body ml-6 mb-5 font-medium">
+          {`Student requested for the ${
+            choosedOption === "courseFeeandGic"
+              ? "Course Fee and GIC"
+              : choosedOption === "courseFee"
+              ? "Course "
+              : choosedOption === "gic"
+              ? "GIC"
+              : null
+          } Fee amount withdrawal.`}
+        </p>
+        <div className="text-sidebar text-[22px] font-bold ml-6">
+        Student  Bank Details{" "}
+        </div>
 
-      <div className="flex items-center justify-between gap-6 w-full px-6   rounded-md ">
-        <span className="w-[50%]">
+        <div className="flex items-center justify-between gap-6 w-full px-6   rounded-md ">
+          <span className="w-[50%]">
+            <Register
+              name="bankName"
+              type="text"
+              label="Bank Name"
+              handleInput={handleInput}
+              value={bankData.bankName}
+              errors={errors.bankName}
+            />
+            <CountrySelect
+              notImp={true}
+              name="country"
+              label="Country"
+              customClass="bg-input"
+              options={countryOption}
+              value={bankData.country}
+              handleChange={(e) =>
+                handleInput({
+                  target: { name: "country", value: e.target.value },
+                })
+              }
+              errors={errors.country}
+            />
+          </span>
+          <span className="w-[50%]">
+            <Register
+              name="branchName"
+              type="text"
+              label="Branch Name"
+              handleInput={handleInput}
+              value={bankData.branchName}
+              errors={errors.branchName}
+            />
+            <Register
+              name="provinceState"
+              type="text"
+              label="Province/State"
+              handleInput={handleInput}
+              value={bankData.provinceState}
+              errors={errors.provinceState}
+            />
+          </span>
+        </div>
+        <div className="px-6">
           <Register
-            name="bankName"
+            name="address"
             type="text"
-            label="Bank Name"
+            label="Address"
             handleInput={handleInput}
-            value={bankData.bankName}
-            errors={errors.bankName}
+            value={bankData.address}
+            errors={errors.address}
+            className=" py-2 "
           />
-          <CountrySelect
-            notImp={true}
-            name="country"
-            label="Country"
-            customClass="bg-input"
-            options={countryOption}
-            value={bankData.country}
-            handleChange={(e) =>
-              handleInput({
-                target: { name: "country", value: e.target.value },
-              })
+        </div>
+        <div className="flex items-center justify-between gap-6 w-full px-6 ">
+          <span className="w-[50%]">
+            <Register
+              name="city"
+              type="text"
+              label="City"
+              handleInput={handleInput}
+              value={bankData.city}
+              errors={errors.city}
+            />
+
+            <Register
+              name="bankAccountName"
+              type="text"
+              label="Bank Account Name"
+              handleInput={handleInput}
+              value={bankData.bankAccountName}
+              errors={errors.bankAccountName}
+            />
+            <Register
+              name="iban"
+              type="text"
+              label="IBAN"
+              handleInput={handleInput}
+              value={bankData.iban}
+              errors={errors.iban}
+            />
+          </span>
+          <span className="w-[50%]">
+            <Register
+              name="postalCode"
+              type="number"
+              label="Zip/Postal Code"
+              handleInput={handleInput}
+              value={bankData.postalCode}
+              errors={errors.postalCode}
+            />
+
+            <Register
+              name="bankAccountNumber"
+              type="text"
+              label="Bank Account Number"
+              handleInput={handleInput}
+              value={bankData.bankAccountNumber}
+              errors={errors.bankAccountNumber}
+            />
+            <Register
+              name="swiftBicCode"
+              type="text"
+              label="Swift/BIC Code"
+              handleInput={handleInput}
+              value={bankData.swiftBicCode}
+              errors={errors.swiftBicCode}
+            />
+          </span>
+        </div>
+
+        <div className=" rounded-xl px-8 py-4 pb-12 -mt-4 mb-7">
+          <FileUpload
+            label="Upload Aadhar Card"
+            acceptedFormats={{
+              "application/pdf": [".pdf"],
+              "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+                [".docx"],
+              "application/msword": [".doc"],
+            }}
+            reset={resetAdharCard}
+            setReset={setResetAdharCard}
+            onFilesUploaded={(files) => handleFileUpload(files, "adharCard")}
+            customClass="border-dashed"
+            value={bankData.adharCard}
+          />
+          {errors.adharCard && (
+            <p className="text-red-500 mt-1 text-sm">{errors.adharCard}</p>
+          )}
+          {bankData.adharCard && (
+            <div className="mt-4">
+              <p className="text-secondary font-semibold">Uploaded Document:</p>
+              <div className="flex items-center mt-2">
+                <a
+                  href={bankData.adharCard}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary rounded-sm px-6 py-2 border border-greyish"
+                >
+                  Uploaded Aadhar Card
+                </a>
+                <button
+                  onClick={() => deleteFile(bankData.adharCard, "adharCard")}
+                  className="ml-4 text-red-500 text-[21px]"
+                >
+                  <RiDeleteBin6Line />
+                </button>
+              </div>
+            </div>
+          )}
+
+          <FileUpload
+            label="Upload Pan Card"
+            acceptedFormats={{
+              "application/pdf": [".pdf"],
+              "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+                [".docx"],
+              "application/msword": [".doc"],
+            }}
+            reset={resetPanCard}
+            setReset={setResetPanCard}
+            onFilesUploaded={(files) => handleFileUpload(files, "panCard")}
+            customClass="border-dashed"
+            value={bankData.panCard}
+          />
+          {errors.panCard && (
+            <p className="text-red-500 mt-1 text-sm">{errors.panCard}</p>
+          )}
+          {bankData.panCard && (
+            <div className="mt-4">
+              <p className="text-secondary font-semibold">Uploaded Document:</p>
+              <div className="flex items-center mt-2">
+                <a
+                  href={bankData.panCard}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary rounded-sm px-6 py-2 border border-greyish "
+                >
+                  Uploaded Pan Card
+                </a>
+                <button
+                  onClick={() => deleteFile(bankData.panCard, "panCard")}
+                  className="ml-4 text-red-500 text-[21px]"
+                >
+                  <RiDeleteBin6Line />
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="text-sidebar text-[22px] font-bold ml-6">
+          Parent Bank Details{" "}
+        </div>
+
+        <div className="flex items-center justify-between gap-6 w-full px-6   rounded-md ">
+          <span className="w-[50%]">
+            <Register
+              name="bankName"
+              type="text"
+              label="Bank Name"
+              handleInput={handleParentInput}
+              value={parentData.bankName}
+              // errors={errors.bankName}
+            />
+            <CountrySelect
+              notImp={true}
+              name="country"
+              label="Country"
+              customClass="bg-input"
+              options={countryOption}
+              value={parentData.country}
+              handleChange={(e) =>
+                handleParentInput({
+                  target: { name: "country", value: e.target.value },
+                })
+              }
+              // errors={errors.country}
+            />
+          </span>
+          <span className="w-[50%]">
+            <Register
+              name="branchName"
+              type="text"
+              label="Branch Name"
+              handleInput={handleParentInput}
+              value={parentData.branchName}
+              // errors={errors.branchName}
+            />
+            <Register
+              name="provinceState"
+              type="text"
+              label="Province/State"
+              handleInput={handleParentInput}
+              value={parentData.provinceState}
+              // errors={errors.provinceState}
+            />
+          </span>
+        </div>
+        <div className="px-6">
+          <Register
+            name="address"
+            type="text"
+            label="Address"
+            handleInput={handleParentInput}
+            value={parentData.address}
+            // errors={errors.address}
+            className=" py-2 "
+          />
+        </div>
+        <div className="flex items-center justify-between gap-6 w-full px-6 ">
+          <span className="w-[50%]">
+            <Register
+              name="city"
+              type="text"
+              label="City"
+              handleInput={handleParentInput}
+              value={parentData.city}
+              // errors={errors.city}
+            />
+
+            <Register
+              name="bankAccountName"
+              type="text"
+              label="Bank Account Name"
+              handleInput={handleParentInput}
+              value={parentData.bankAccountName}
+              // errors={errors.bankAccountName}
+            />
+            <Register
+              name="iban"
+              type="text"
+              label="IBAN"
+              handleInput={handleParentInput}
+              value={parentData.iban}
+              // errors={errors.iban}
+            />
+          </span>
+          <span className="w-[50%]">
+            <Register
+              name="postalCode"
+              type="number"
+              label="Zip/Postal Code"
+              handleInput={handleParentInput}
+              value={parentData.postalCode}
+              // errors={errors.postalCode}
+            />
+
+            <Register
+              name="bankAccountNumber"
+              type="text"
+              label="Bank Account Number"
+              handleInput={handleParentInput}
+              value={parentData.bankAccountNumber}
+              // errors={errors.bankAccountNumber}
+            />
+            <Register
+              name="swiftBicCode"
+              type="text"
+              label="Swift/BIC Code"
+              handleInput={handleParentInput}
+              value={parentData.swiftBicCode}
+              // errors={errors.swiftBicCode}
+            />
+          </span>
+        </div>
+
+        <div className=" rounded-xl px-8 py-4 pb-12 -mt-4 mb-7">
+          <FileUpload
+            label="Upload Aadhar Card"
+            acceptedFormats={{
+              "application/pdf": [".pdf"],
+              "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+                [".docx"],
+              "application/msword": [".doc"],
+            }}
+            reset={resetPAdharCard}
+            setReset={setResetPAdharCard}
+            onFilesUploaded={(files) =>
+              handleFileUpload(files, "parentAadharCard")
             }
-            errors={errors.country}
+            customClass="border-dashed"
+            value={parentData.parentAadharCard}
           />
-        </span>
-        <span className="w-[50%]">
-          <Register
-            name="branchName"
-            type="text"
-            label="Branch Name"
-            handleInput={handleInput}
-            value={bankData.branchName}
-            errors={errors.branchName}
-          />
-          <Register
-            name="provinceState"
-            type="text"
-            label="Province/State"
-            handleInput={handleInput}
-            value={bankData.provinceState}
-            errors={errors.provinceState}
-          />
-        </span>
-      </div>
-      <div className="px-6">
-        <Register
-          name="address"
-          type="text"
-          label="Address"
-          handleInput={handleInput}
-          value={bankData.address}
-          errors={errors.address}
-          className=" py-2 "
-        />
-      </div>
-      <div className="flex items-center justify-between gap-6 w-full px-6 ">
-        <span className="w-[50%]">
-          <Register
-            name="city"
-            type="text"
-            label="City"
-            handleInput={handleInput}
-            value={bankData.city}
-            errors={errors.city}
-          />
-
-          <Register
-            name="bankAccountName"
-            type="text"
-            label="Bank Account Name"
-            handleInput={handleInput}
-            value={bankData.bankAccountName}
-            errors={errors.bankAccountName}
-          />
-          <Register
-            name="iban"
-            type="text"
-            label="IBAN"
-            handleInput={handleInput}
-            value={bankData.iban}
-            errors={errors.iban}
-          />
-        </span>
-        <span className="w-[50%]">
-          <Register
-            name="postalCode"
-            type="number"
-            label="Zip/Postal Code"
-            handleInput={handleInput}
-            value={bankData.postalCode}
-            errors={errors.postalCode}
-          />
-
-          <Register
-            name="bankAccountNumber"
-            type="text"
-            label="Bank Account Number"
-            handleInput={handleInput}
-            value={bankData.bankAccountNumber}
-            errors={errors.bankAccountNumber}
-          />
-          <Register
-            name="swiftBicCode"
-            type="text"
-            label="Swift/BIC Code"
-            handleInput={handleInput}
-            value={bankData.swiftBicCode}
-            errors={errors.swiftBicCode}
-          />
-        </span>
-      </div>
-
-      <div className=" rounded-xl px-8 py-4 pb-12 -mt-4 mb-7">
-        <FileUpload
-          label="Upload Aadhar Card"
-          acceptedFormats={{
-            "application/pdf": [".pdf"],
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-              [".docx"],
-            "application/msword": [".doc"],
-          }}
-          reset={resetAdharCard}
-          setReset={setResetAdharCard}
-          onFilesUploaded={(files) => handleFileUpload(files, "adharCard")}
-          customClass="border-dashed"
-          value={bankData.adharCard}
-        />
-        {errors.adharCard && (
-          <p className="text-red-500 mt-1 text-sm">{errors.adharCard}</p>
-        )}
-        {bankData.adharCard && (
-          <div className="mt-4">
-            <p className="text-secondary font-semibold">Uploaded Document:</p>
-            <div className="flex items-center mt-2">
-              <a
-                href={bankData.adharCard}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary rounded-sm px-6 py-2 border border-greyish"
-              >
-                Uploaded Aadhar Card
-              </a>
-              <button
-                onClick={() => deleteFile(bankData.adharCard, "adharCard")}
-                className="ml-4 text-red-500 text-[21px]"
-              >
-                <RiDeleteBin6Line />
-              </button>
+          {errors.parentAadharCard && (
+            <p className="text-red-500 mt-1 text-sm">{errors.parentAadharCard}</p>
+          )}
+          {parentData.parentAadharCard && (
+            <div className="mt-4">
+              <p className="text-secondary font-semibold">Uploaded Document:</p>
+              <div className="flex items-center mt-2">
+                <a
+                  href={parentData.parentAadharCard}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary rounded-sm px-6 py-2 border border-greyish"
+                >
+                  Uploaded Aadhar Card
+                </a>
+                <button
+                  onClick={() =>
+                    deleteFile(parentData.parentAadharCard, "parentAadharCard")
+                  }
+                  className="ml-4 text-red-500 text-[21px]"
+                >
+                  <RiDeleteBin6Line />
+                </button>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        <FileUpload
-          label="Upload Pan Card"
-          acceptedFormats={{
-            "application/pdf": [".pdf"],
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-              [".docx"],
-            "application/msword": [".doc"],
-          }}
-          reset={resetPanCard}
-          setReset={setResetPanCard}
-          onFilesUploaded={(files) => handleFileUpload(files, "panCard")}
-          customClass="border-dashed"
-          value={bankData.panCard}
-        />
-        {errors.panCard && (
-          <p className="text-red-500 mt-1 text-sm">{errors.panCard}</p>
-        )}
-        {bankData.panCard && (
-          <div className="mt-4">
-            <p className="text-secondary font-semibold">Uploaded Document:</p>
-            <div className="flex items-center mt-2">
-              <a
-                href={bankData.panCard}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary rounded-sm px-6 py-2 border border-greyish "
-              >
-                Uploaded Pan Card
-              </a>
-              <button
-                onClick={() => deleteFile(bankData.panCard, "panCard")}
-                className="ml-4 text-red-500 text-[21px]"
-              >
-                <RiDeleteBin6Line />
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-
-<div className="text-sidebar text-[22px] font-bold ml-6">Parent Bank Details </div>
-
-
-      <div className="flex items-center justify-between gap-6 w-full px-6   rounded-md ">
-        <span className="w-[50%]">
-          <Register
-            name="bankName"
-            type="text"
-            label="Bank Name"
-            handleInput={handleParentInput}
-            value={parentData.bankName}
-            // errors={errors.bankName}
-          />
-          <CountrySelect
-            notImp={true}
-            name="country"
-            label="Country"
-            customClass="bg-input"
-            options={countryOption}
-            value={parentData.country}
-            handleChange={(e) =>
-              handleParentInput({
-                target: { name: "country", value: e.target.value },
-              })
+          <FileUpload
+            label="Upload Pan Card"
+            acceptedFormats={{
+              "application/pdf": [".pdf"],
+              "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+                [".docx"],
+              "application/msword": [".doc"],
+            }}
+            reset={resetPPanCard}
+            setReset={setResetPPanCard}
+            onFilesUploaded={(files) =>
+              handleFileUpload(files, "parentPanCard")
             }
-            // errors={errors.country}
+            customClass="border-dashed"
+            value={parentData.parentPanCard}
           />
-        </span>
-        <span className="w-[50%]">
-          <Register
-            name="branchName"
-            type="text"
-            label="Branch Name"
-            handleInput={handleParentInput}
-            value={parentData.branchName}
-            // errors={errors.branchName}
-          />
-          <Register
-            name="provinceState"
-            type="text"
-            label="Province/State"
-            handleInput={handleParentInput}
-            value={parentData.provinceState}
-            // errors={errors.provinceState}
-          />
-        </span>
-      </div>
-      <div className="px-6">
-        <Register
-          name="address"
-          type="text"
-          label="Address"
-          handleInput={handleParentInput}
-          value={parentData.address}
-          // errors={errors.address}
-          className=" py-2 "
-        />
-      </div>
-      <div className="flex items-center justify-between gap-6 w-full px-6 ">
-        <span className="w-[50%]">
-          <Register
-            name="city"
-            type="text"
-            label="City"
-            handleInput={handleParentInput}
-            value={parentData.city}
-            // errors={errors.city}
-          />
-
-          <Register
-            name="bankAccountName"
-            type="text"
-            label="Bank Account Name"
-            handleInput={handleParentInput}
-            value={parentData.bankAccountName}
-            // errors={errors.bankAccountName}
-          />
-          <Register
-            name="iban"
-            type="text"
-            label="IBAN"
-            handleInput={handleParentInput}
-            value={parentData.iban}
-            // errors={errors.iban}
-          />
-        </span>
-        <span className="w-[50%]">
-          <Register
-            name="postalCode"
-            type="number"
-            label="Zip/Postal Code"
-            handleInput={handleParentInput}
-            value={parentData.postalCode}
-            // errors={errors.postalCode}
-          />
-
-          <Register
-            name="bankAccountNumber"
-            type="text"
-            label="Bank Account Number"
-            handleInput={handleParentInput}
-            value={parentData.bankAccountNumber}
-            // errors={errors.bankAccountNumber}
-          />
-          <Register
-            name="swiftBicCode"
-            type="text"
-            label="Swift/BIC Code"
-            handleInput={handleParentInput}
-            value={parentData.swiftBicCode}
-            // errors={errors.swiftBicCode}
-          />
-        </span>
-      </div>
-
-      <div className=" rounded-xl px-8 py-4 pb-12 -mt-4 mb-7">
-        <FileUpload
-          label="Upload Aadhar Card"
-          acceptedFormats={{
-            "application/pdf": [".pdf"],
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-              [".docx"],
-            "application/msword": [".doc"],
-          }}
-          reset={resetAdharCard}
-          setReset={setResetAdharCard}
-          onFilesUploaded={(files) => handleFileUpload(files, "parentAdharCard")}
-          customClass="border-dashed"
-          value={parentData.adharCard}
-        />
-        {errors.adharCard && (
-          <p className="text-red-500 mt-1 text-sm">{errors.adharCard}</p>
-        )}
-        {parentData.adharCard && (
-          <div className="mt-4">
-            <p className="text-secondary font-semibold">Uploaded Document:</p>
-            <div className="flex items-center mt-2">
-              <a
-                href={parentData.adharCard}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary rounded-sm px-6 py-2 border border-greyish"
-              >
-                Uploaded Aadhar Card
-              </a>
-              <button
-                onClick={() => deleteFile(parentData.adharCard, "parentAdharCard")}
-                className="ml-4 text-red-500 text-[21px]"
-              >
-                <RiDeleteBin6Line />
-              </button>
+          {errors.parentPanCard && (
+            <p className="text-red-500 mt-1 text-sm">{errors.parentPanCard}</p>
+          )}
+          {parentData.parentPanCard && (
+            <div className="mt-4">
+              <p className="text-secondary font-semibold">Uploaded Document:</p>
+              <div className="flex items-center mt-2">
+                <a
+                  href={parentData.parentPanCard}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary rounded-sm px-6 py-2 border border-greyish "
+                >
+                  Uploaded Pan Card
+                </a>
+                <button
+                  onClick={() =>
+                    deleteFile(parentData.parentPanCard, "parentPanCard")
+                  }
+                  className="ml-4 text-red-500 text-[21px]"
+                >
+                  <RiDeleteBin6Line />
+                </button>
+              </div>
             </div>
-          </div>
-        )}
-
-        <FileUpload
-          label="Upload Pan Card"
-          acceptedFormats={{
-            "application/pdf": [".pdf"],
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-              [".docx"],
-            "application/msword": [".doc"],
-          }}
-          reset={resetPanCard}
-          setReset={setResetPanCard}
-          onFilesUploaded={(files) => handleFileUpload(files, "parentPanCard")}
-          customClass="border-dashed"
-          value={parentData.panCard}
-        />
-        {errors.panCard && (
-          <p className="text-red-500 mt-1 text-sm">{errors.panCard}</p>
-        )}
-        {parentData.panCard && (
-          <div className="mt-4">
-            <p className="text-secondary font-semibold">Uploaded Document:</p>
-            <div className="flex items-center mt-2">
-              <a
-                href={parentData.panCard}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary rounded-sm px-6 py-2 border border-greyish "
-              >
-                Uploaded Pan Card
-              </a>
-              <button
-                onClick={() => deleteFile(parentData.panCard, "parentPanCard")}
-                className="ml-4 text-red-500 text-[21px]"
-              >
-                <RiDeleteBin6Line />
-              </button>
-            </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
-</div>
       <span className="flex justify-end mt-9 mb-20 mr-6">
         <span
           onClick={handleSubmit}

@@ -13,7 +13,7 @@ export const getStudentData = createAsyncThunk(
   }
 );
 export const studentInfo = createAsyncThunk(
-  "students/studentInfo",
+"students/studentInfo",
   async (id, { rejectWithValue }) => {
     try {
       const response = await getStudentInfo(id);

@@ -5,6 +5,7 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import YesNoPopUp from "../reusable/YesNoPopUp";
 import { toast } from "react-toastify";
 import { BiPencil } from "react-icons/bi";
+import ApplicationChoosePop from "./ApplicationChoosePop";
 
 const StudentCards = ({
   name,
@@ -25,6 +26,16 @@ const StudentCards = ({
   const [isFuncOpen, setIsFuncOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isHoveredSecond, setIsHoveredSecond] = useState(false);
+  const [isOpenOpt, setIsOpenOpt] = useState(false);
+
+
+  const closeOpt = () => {
+    setIsOpenOpt(false); 
+  };
+
+  const handleOpenOpt = () => {
+    setIsOpenOpt(true); 
+  };
 
   const closeFunc = () => {
     setIsFuncOpen(false);
@@ -137,13 +148,12 @@ const StudentCards = ({
             >
               See Details
             </Link>
-            <Link
-              to="/offerLetter-apply"
-              state={defaultId}
+            <span
+              onClick={handleOpenOpt}
               className="text-primary border w-1/2 border-primary text-center text-[14px] rounded-sm cursor-pointer px-6 py-1"
             >
               Apply Now
-            </Link>
+            </span>
           </span>
         ) : (
           <span className="flex flex-row items-center mt-4 gap-4 w-full">
@@ -169,6 +179,11 @@ const StudentCards = ({
           deleteStudentData(defaultId.id);
         }}
         questionText="Are you sure to delete the student ?"
+      />
+       <ApplicationChoosePop
+        isOpenOpt={isOpenOpt}
+        closeOpt={closeOpt}
+        state={defaultId}
       />
     </>
   );

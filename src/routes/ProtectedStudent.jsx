@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
-import { useSelector } from "react-redux";
 import Loader from "../components/Loader";
+import { useSelector } from "react-redux";
 
 const ProtectedStudent = ({ children }) => {
+  const { getAdminProfile } = useSelector((state) => state.admin);
   const roleType = localStorage.getItem("role");
-  const { studentInfoData } = useSelector((state) => state.student);
+  const authToken = localStorage.getItem("userAuthToken");
+
   const [loading, setLoading] = useState(true);
-  
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
@@ -23,14 +25,18 @@ const ProtectedStudent = ({ children }) => {
       </div>
     );
   }
-  if (
-    roleType !== "3" &&
-    studentInfoData?.data?.studentInformation?.pageStatus?.status !==
-      "completed"
-  ) {
+
+
+
+  // Check the conditions for navigation
+  const isRoleNotZero = roleType !== "3";
+
+  if (isRoleNotZero && !authToken ) {
+    console.log('Navigating to login due to missing profile data');
     return <Navigate to="/login" replace={true} />;
   }
 
+  // If everything is fine, render the children
   return children;
 };
 

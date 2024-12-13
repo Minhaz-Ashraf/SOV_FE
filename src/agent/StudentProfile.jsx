@@ -35,11 +35,11 @@ const StudentProfile = () => {
 
   const location = useLocation();
   const dispatch = useDispatch();
-  console.log(location)
+  console.log(location);
   const studentId =
-  role === "3"
-    ? id || location.state.notifyId
-    : location?.state?.id || location?.state?.notifyId;
+    role === "3"
+      ? id || location.state.notifyId
+      : location?.state?.id || location?.state?.notifyId;
 
   const profileView = location.state?.isprofileView;
   const [isLoading, setIsLoading] = useState(true);
@@ -55,7 +55,6 @@ const StudentProfile = () => {
   }, [dispatch, profileUpdated, studentId]);
 
   const handleProfileUpdate = () => {
-    console.log("changed");
     setProfileUpdated((prev) => !prev);
   };
 
@@ -69,7 +68,7 @@ const StudentProfile = () => {
         profileView: profileView,
         updateData: handleProfileUpdate,
         studentId: studentId,
-        adminPath: location.state?.adminState
+        adminPath: location.state?.adminState,
       },
     },
 
@@ -82,7 +81,7 @@ const StudentProfile = () => {
         profileView: profileView,
         updateData: handleProfileUpdate,
         studentId: studentId,
-        adminPath: location.state?.adminState
+        adminPath: location.state?.adminState,
       },
     },
     {
@@ -94,7 +93,7 @@ const StudentProfile = () => {
         profileView: profileView,
         updateData: handleProfileUpdate,
         studentId: studentId,
-        adminPath: location.state?.adminState
+        adminPath: location.state?.adminState,
       },
     },
     {
@@ -107,7 +106,7 @@ const StudentProfile = () => {
         updateData: handleProfileUpdate,
         stId: studentId,
         adminPath: location.state?.adminState,
-        adminAccess: location?.state?.id
+        adminAccess: location?.state?.id,
       },
     },
     {
@@ -120,14 +119,13 @@ const StudentProfile = () => {
         updateData: handleProfileUpdate,
         studentId: studentId,
         adminPath: location.state?.adminState,
-        adminAccess: location?.state?.id
+        adminAccess: location?.state?.id,
       },
     },
   ];
-  console.log(location)
-  const tabs = role === "3" 
-  ? allTabs.filter(tab => tab.name === "profile") 
-  : allTabs;
+  console.log(location);
+  const tabs =
+    role === "3" ? allTabs.filter((tab) => tab.name === "profile") : allTabs;
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
@@ -136,6 +134,28 @@ const StudentProfile = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  const statusFive =
+    studentData?.flags?.visaApproved === "approved" ||
+    studentData?.flags?.visaApproved === "approvedbyembassy" ||
+  studentData?.flags?.visaApproved === "withdrawalrequest" ||
+  studentData?.flags?.visaApproved === "withdrawalcomplete" ||
+  studentData?.flags?.visaApproved === "rejectedbyembassy"
+    ? "done"
+    : studentData?.flags?.visaApproved === "reject"
+    ? "pending"
+    : "current";
+
+  const statusSix =
+  
+    studentData?.flags?.visaApproved === "approvedbyembassy" ||
+    studentData?.flags?.visaApproved === "visagranted"
+      ? "done"
+      : 
+        studentData?.flags?.visaApproved === "rejectedbyembassy" ||
+        studentData?.flags?.visaApproved === "withdrawalrequest" ||
+        studentData?.flags?.visaApproved === "withdrawalcomplete"
+      ? "pending"
+      : "current";
   return (
     <>
       {profileView === "/admin/approvals" ||
@@ -182,20 +202,15 @@ const StudentProfile = () => {
                   statusTwo={
                     studentData?.flags?.offerLetterApproved ? "done" : "current"
                   }
-                  statusFive={
-                    studentData?.flags?.visaApproved === "approved" ||
-                    studentData?.flags?.visaApproved === "approvedbyembassy"
-                      ? "done"
-                      : "current"
-                  }
+                  statusFive={statusFive}
                   statusFour={
-                    studentData?.flags?.courseFeeApproved ? "done" : "current"
-                  }
-                  statusSix={
-                    studentData?.flags?.visaApproved === "approvedbyembassy"
+                    studentData?.flags?.courseFeeApproved === "approved"
                       ? "done"
+                      : studentData?.flags?.courseFeeApproved === "rejected"
+                      ? "pending"
                       : "current"
                   }
+                  statusSix={statusSix}
                 />
                 {/* {console.log(studentData?.flags) } */}
               </div>
@@ -250,9 +265,7 @@ const StudentProfile = () => {
             </span>
 
             <div className="sm:ml-[9%] md:ml-0 ">
-              <TabBarTwo
-                tabs={tabs}
-              />
+              <TabBarTwo tabs={tabs} />
             </div>
           </div>
         </>

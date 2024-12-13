@@ -162,7 +162,7 @@ export function CustomTableTwo({
 }) {
   const location = useLocation();
   const dispatch = useDispatch();
-  const nullval = null
+  const nullval = null;
   const [uploadingState, setUploadingState] = useState({});
   const { getStudentDataById } = useSelector((state) => state.admin);
 
@@ -186,12 +186,14 @@ export function CustomTableTwo({
       const uploadData = {
         document: [downloadURL],
         documentName: file.name,
-        DocumentType: type,
+        documentType: type,
         studentId: studentId,
         applicationId: rowId,
       };
       await uploadApplications(uploadData); // Update with your API call
-      dispatch(studentApplications({ nullval, nullval, studentId, nullval, nullval }));
+      dispatch(
+        studentApplications({ nullval, nullval, studentId, nullval, nullval })
+      );
 
       if (getStudentDataById.studentInformation.agentId) {
         if (socketServiceInstance.isConnected()) {
@@ -268,11 +270,11 @@ export function CustomTableTwo({
       await deleteObject(storageRef);
 
       await deleteApplication({ fileUrl: fileUrl });
-      dispatch(studentApplications({ nullval, nullval, studentId, nullval, nullval }));
-     
+      dispatch(
+        studentApplications({ nullval, nullval, studentId, nullval, nullval })
+      );
+
       toast.success("File deleted successfully!");
-
-
     } catch (error) {
       toast.error("Error deleting file. Please try again.");
     }
@@ -447,7 +449,10 @@ export function CustomTableTwo({
                         <button
                           className="px-4 py-1 text-primary text-[20px] rounded-md"
                           onClick={() =>
-                            handleFileDelete(row?.type?.documents[0],   row?.studentId)
+                            handleFileDelete(
+                              row?.type?.documents[0],
+                              row?.studentId
+                            )
                           }
                         >
                           <RiDeleteBin6Line />
@@ -489,13 +494,14 @@ export function CustomTableTwo({
                               e,
                               row?.studentId,
                               row?.type?.offerLetter
-                                ? "offerLetter"
+                                ? "offerletter"
                                 : row?.type?.visa
                                 ? "visa"
                                 : row?.type?.courseFeeApplication
-                                ? "courseFee"
+                                ? "coursefeeApplication"
                                 : "NA",
-                              row?.appId
+                              row?.appId,
+                            
                             )
                           }
                         />
@@ -777,7 +783,11 @@ export function CustomTableFour({
                   <Typography
                     variant="small"
                     color="blue-gray"
-                    className="font-normal"
+                    className={`font-medium ${
+                      row?.priority === "Urgent"
+                        ? "text-red-500"
+                        : "text-green-500"
+                    } `}
                   >
                     {row?.priority}
                   </Typography>
@@ -1286,7 +1296,7 @@ export function CustomTableSeven({
                     </a>
                   </Typography>
                 </td>
-                {tableType === "upload" ||
+                {tableType === "upload" &&
                   (role !== "0" && (
                     <td className="">
                       <Typography
@@ -1330,8 +1340,11 @@ export function CustomTableEight({
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [isId, setIsId] = useState();
-  const handleOpen = (id) => {
+  const [isStudentId, setIsStudentId] = useState();
+
+  const handleOpen = (id, studentId) => {
     setIsId(id);
+    setIsStudentId(studentId);
     setIsOpen(true);
   };
   const closePopUp = () => {
@@ -1340,20 +1353,25 @@ export function CustomTableEight({
   const handleRemove = async (id) => {
     try {
       const path =
+      location.pathname === "/admin/agent-student"
+        ? `/studentInformation/agent-student-admin`
+        : "/admin/student-directory";
+      const pathData =
         location.pathname === `/admin/agent-directory`
           ? `/admin/delete-agent/${id}`
           : `/admin/delete-student/${id}`;
 
-      const res = await removeAgentorStudent(path);
+      const res = await removeAgentorStudent(pathData);
       // navigate("/removed-user")
       location.pathname === `/admin/agent-directory`
         ? dispatch(getAllAgentList({}))
-        : dispatch(getAllStudentList({}));
+        : dispatch(getAllStudentList({path}));
 
       toast.success(res.message || "Removed successfully");
       if (socketServiceInstance.isConnected()) {
         //from agent to admin
-        const data = { userId: id, reason: "Removed by admin" };
+        const data = { userId: isStudentId, reason: "Removed by admin" };
+        console.log("fired", data);
 
         socketServiceInstance.socket.emit("DELETE_AUTH_TOKEN", data);
       } else {
@@ -1387,6 +1405,7 @@ export function CustomTableEight({
               ))}
             </tr>
           </thead>
+          {console.log(tableRows)}
           <tbody>
             {tableRows.map((row, index) => (
               <tr key={index} className="even:bg-blue-gray-50/50">
@@ -1400,6 +1419,8 @@ export function CustomTableEight({
                     {row.sno}
                   </Typography>
                 </td>
+          {console.log(row)}
+
                 <td className="p-4">
                   <Typography
                     variant="small"
@@ -1458,7 +1479,7 @@ export function CustomTableEight({
                     </Link>
                   </Typography>
                 </td>
-                {console.log(row)}
+                {console.log(row?.studentId)}
 
                 {row.viewList && (
                   <td className="p-4">
@@ -1482,7 +1503,7 @@ export function CustomTableEight({
                     </Typography>
                   </td>
                 )}
-                {/* {console.log(row.data._id)} */}
+                {console.log(row, "check")}
                 <td className="">
                   <Typography
                     as="a"
@@ -1491,7 +1512,7 @@ export function CustomTableEight({
                     className="font-medium"
                   >
                     <span
-                      onClick={() => handleOpen(row.data?._id || row.data?.id)}
+                      onClick={() => handleOpen(row.data?._id || row.data?.id, row?.data?.studentId)}
                       className="flex flex-row items-center gap-2"
                     >
                       <span className="font-body border rounded-md border-primary cursor-pointer px-6 py-1">

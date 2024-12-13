@@ -22,8 +22,8 @@ const TicketResolvePop = ({ isOpen, closePopUp, isticketId, handleStatus }) => {
   }, [isticketId]);
 
   useEffect(()=>{
-   setIsSolution(ticketById?.resolvedText || "")
-   setResolvedText(ticketById?.solutionText || "")
+   setIsSolution(ticketById?.solutionText || "")
+   setResolvedText(ticketById?.resolvedText|| "")
   },[ticketById]) 
   return (
     <>

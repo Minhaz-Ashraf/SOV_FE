@@ -15,7 +15,7 @@ const StudentEdit = ({
   studentId,
   adminPath,
 }) => {
-  console.log(data, "check")
+  // console.log(data, "check")
 
   const [isEditing, setIsEditing] = useState(false);
   const [isResidenceProfile, setIsResidenceProfile] = useState(false);

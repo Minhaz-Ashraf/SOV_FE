@@ -26,9 +26,6 @@ const ProtectedAdmin = ({ children }) => {
     );
   }
 
-  // Log the current values to help with debugging
-  console.log('roleType:', roleType);
-  console.log('Admin Profile:', getAdminProfile);
 
   // Check the conditions for navigation
   const isRoleNotZero = roleType !== "0";

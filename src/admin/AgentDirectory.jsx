@@ -17,7 +17,9 @@ import Loader from "../components/Loader";
 const AgentDirectory = () => {
   const dispatch = useDispatch();
   const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(1)
+  const [downloading, setDownloading] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [perPage, setPerPage] = useState(10);
 
@@ -76,14 +78,19 @@ const AgentDirectory = () => {
 
   const downloadAll = async () => {
     try {
+      setDownloading(true)
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       const res = await downloadFile({
         url: "/admin/total-agent-download",
         filename: "Agent.csv",
       });
-      toast.info("Downloading will start in few seconds");
+      // toast.info("Downloading will start in few seconds");
     } catch (error) {
       console.log(error);
       toast.error(error.message || "Error downloading");
+    }finally{
+      setDownloading(false)
+
     }
   };
   return (
@@ -134,7 +141,7 @@ const AgentDirectory = () => {
             onClick={downloadAll}
             className="bg-primary ml-5 text-white px-4 rounded-md py-2 cursor-pointer"
           >
-            Download
+            {downloading ? "Downloading...." : "Download"}
           </span>
         </span>
       </div>

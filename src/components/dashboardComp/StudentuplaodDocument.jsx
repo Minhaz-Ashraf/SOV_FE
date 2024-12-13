@@ -206,7 +206,7 @@ console.log(studentId)
         )}
       </div>
 
-      <div className="mt-16 mb-10 ml-20">
+      <div className="mt-16 mb-10 ">
         <Pagination
           currentPage={currentPage}
           hasNextPage={currentPage * perPage < totalUsersCount}

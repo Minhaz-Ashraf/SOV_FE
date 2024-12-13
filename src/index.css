@@ -153,3 +153,9 @@ input[type="radio"] {
 .slide-out-right {
   animation: slideOutRight 0.3s ease-in-out forwards;
 }
+
+.swal-subtitle {
+  font-size: 14px;
+  color: #98090B;
+  margin-top: 10px;
+}

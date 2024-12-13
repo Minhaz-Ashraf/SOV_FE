@@ -85,9 +85,9 @@ export const studentById = createAsyncThunk(
 );
 export const allTicket = createAsyncThunk(
   "general/allTicket",
-  async ({page, perPage, isPriorityType, isStatusType, search}, { rejectWithValue }) => {
+  async ({page, perPage, isPriorityType, isStatusType, search, isDate}, { rejectWithValue }) => {
     try {
-      const res = await getAllTicket(page, perPage, isPriorityType, isStatusType, search);
+      const res = await getAllTicket(page, perPage, isPriorityType, isStatusType, search, isDate);
       // console.log(res);
       return res.data;
     } catch (error) {
