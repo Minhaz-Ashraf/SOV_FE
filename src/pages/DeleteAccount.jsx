@@ -18,7 +18,7 @@ const DeleteAccount = () => {
   const role = localStorage.getItem("role");
   const userId =
     role === "3"
-      ? studentInfoData?.data?.studentInformation?.studentId
+      ? studentInfoData?.data?.studentInformation?._id
       : agentData?.agentId;
   const path =
     role === "2"

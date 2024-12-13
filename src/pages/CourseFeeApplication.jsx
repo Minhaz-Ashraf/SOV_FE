@@ -241,9 +241,9 @@ const courseFeeApplication = () => {
   };
   const handleFileUpload = (files) => {
     if (!files || files.length === 0) return;
-  
+
     const fileOrUrl = files[0];
-  
+
     if (typeof fileOrUrl === "string" && fileOrUrl.startsWith("http")) {
       // Handle Firebase URL case
       setCourseFee((prevState) => {
@@ -266,7 +266,7 @@ const courseFeeApplication = () => {
         ...prevFiles.filter((f) => f.fileType !== isFileType),
         { file: fileOrUrl, fileType: isFileType, blobUrl },
       ]);
-  
+
       setCourseFee((prevState) => {
         const updatedState = { ...prevState };
         if (isFileType in updatedState.studentDocument) {
@@ -284,7 +284,7 @@ const courseFeeApplication = () => {
       console.warn("Unsupported file type or URL format.");
     }
   };
-  
+
   const deleteFile = (fileUrl, fileType) => {
     if (!fileUrl) return;
 
@@ -493,7 +493,10 @@ const courseFeeApplication = () => {
               Apply Course Fee Application
             </p>
           </span>
-          <p className="text-sidebar ml-9 text-[15px]">Check your details and make sure everything looks good. <br /> It's no big deal if it's not - you can always change it.</p>
+          <p className="text-sidebar ml-9 text-[15px]">
+            Check your details and make sure everything looks good. <br /> It's
+            no big deal if it's not - you can always change it.
+          </p>
         </div>
         <div className="ml-[30%] mr-[15%]">
           <div className="bg-white rounded-xl px-8 py-4 pb-12 mt-8 ">
@@ -714,7 +717,12 @@ const courseFeeApplication = () => {
                     >
                       <FiUpload className="mr-2 text-primary text-[29px]" />
                     </button>
-                    <p className="mt-2">{docType.replace(/([A-Z])/g, " $1")}</p>
+                    <p className="mt-2">
+                      {docType
+                        .replace(/([A-Z])/g, " $1")
+                        .trim()
+                        .replace(/^./, (str) => str.toUpperCase())}
+                    </p>
                     {courseFee.parentDocument[docType] && (
                       <div className="mt-2 flex items-center">
                         <a
@@ -759,7 +767,12 @@ const courseFeeApplication = () => {
                     >
                       <FiUpload className="mr-2 text-primary text-[29px]" />
                     </button>
-                    <p className="mt-2">{docType.replace(/([A-Z])/g, " $1")}</p>
+                    <p className="mt-2">
+                      {docType
+                        .replace(/([A-Z])/g, " $1")
+                        .trim()
+                        .replace(/^./, (str) => str.toUpperCase())}
+                    </p>
                     {courseFee.siblingsDocument[docType] && (
                       <div className="mt-2 flex items-center">
                         <a
@@ -901,12 +914,12 @@ const courseFeeApplication = () => {
           console.log("Form Submitted");
         }}
         studentId={
-            role === "2"
-              ? studentId
-              : role === "3"
-              ? studentInfoData?.data?.studentInformation?._id
-              : null
-          }
+          role === "2"
+            ? studentId
+            : role === "3"
+            ? studentInfoData?.data?.studentInformation?._id
+            : null
+        }
       />
 
       <PopUp

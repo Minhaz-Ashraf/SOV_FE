@@ -50,7 +50,7 @@ const initialStudentDocument = {
   medical: "",
   pcc: "",
   pal: "",
-  certificate: [],
+  certificate: "",
 };
 
 const VisaApply = () => {
@@ -81,7 +81,7 @@ const VisaApply = () => {
   const [errors, setErrors] = useState({});
   const [isFileType, setFileType] = useState();
   const { preferredCountry: countryName, state: studentFullId } =
-    location.state;
+    location?.state;
 
   useEffect(() => {
     if (studentId) dispatch(studentById(studentId));
@@ -281,34 +281,25 @@ const VisaApply = () => {
 
     // toast.info("File marked for deletion.");
   };
-
   const handleSubmit = async () => {
     const validationErrors = validateFields();
-
+  
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       toast.error("Please fill all required fields");
-
       return;
     }
-
+  
     try {
       setIsSubmitting(true);
-
-      // Handle file deletions
-      // for (const { fileUrl } of deletedFiles) {
-      // const storageRef = ref(storage, fileUrl);
-      //     try {
-      //       await deleteObject(storageRef);
-      // await deleteDocument(fileUrl);
-
-      //       // toast.success(`File ${fileUrl} deleted successfully.`);
-      //     } catch (error) {
-      //       // toast.error(`Error deleting file: ${fileUrl}`);
-      //     }
-      // }
-
-      // Handle new file uploads
+  
+      // Initialize `certificate` as an array of strings
+      const certificateArray = Array.isArray(visaLetter.studentDocument.certificate)
+        ? visaLetter.studentDocument.certificate
+        : visaLetter.studentDocument.certificate
+        ? [visaLetter.studentDocument.certificate] // Convert string to array
+        : [];
+  
       const updatedStudentDocument = {
         country: countryName,
         studentInformationId: studentId,
@@ -321,41 +312,49 @@ const VisaApply = () => {
         pcc: visaLetter.studentDocument.pcc,
         pal: visaLetter.studentDocument.pal,
         loa: visaLetter.studentDocument.loa,
-        certificate: Array.isArray(visaLetter.studentDocument.certificate)
-    ? visaLetter.studentDocument.certificate // Already an array
-    : visaLetter.studentDocument.certificate
-    ? [visaLetter.studentDocument.certificate] // Convert string/other value to array
-    : [],
+        certificate: certificateArray, // Ensure it's always an array
       };
-
+  
+      // Handle new file uploads
       for (const { file, fileType, blobUrl } of newFiles) {
         const uniqueFileName = `${uuidv4()}-${file.name}`;
         const storageRef = ref(storage, `uploads/visa/${uniqueFileName}`);
         try {
           const snapshot = await uploadBytes(storageRef, file);
           const downloadURL = await getDownloadURL(snapshot.ref);
-
-          // Replace the blob URL with the Firebase URL for the specific field
-          updatedStudentDocument[fileType] = downloadURL;
-          
+  
+          if (fileType === "certificate") {
+            // Add the new URL to the certificate array
+            updatedStudentDocument.certificate = [
+              ...updatedStudentDocument.certificate,
+              downloadURL,
+            ];
+          } else {
+            // Replace the blob URL with the Firebase URL for non-certificate fields
+            updatedStudentDocument[fileType] = downloadURL;
+          }
+  
           const uploadData = {
             viewUrl: downloadURL,
             documentName: file.name,
             userId: studentId,
           };
           await uploadDocument(uploadData);
+  
+          // Update state for dynamic updates
           setVisaLetter((prevState) => ({
             ...prevState,
             studentDocument: {
               ...prevState.studentDocument,
-              [fileType]:
-                prevState.studentDocument[fileType] === blobUrl
-                  ? downloadURL
-                  : prevState.studentDocument[fileType],
+              [fileType]: fileType === "certificate"
+                ? [...(prevState.studentDocument.certificate || []), downloadURL]
+                : prevState.studentDocument[fileType] === blobUrl
+                ? downloadURL
+                : prevState.studentDocument[fileType],
             },
           }));
         } catch (error) {
-          console.log(error);
+          console.error("Error uploading file:", error);
           toast.error(`Error uploading ${file.name}.`);
         }
       }
@@ -513,7 +512,7 @@ const VisaApply = () => {
   return (
     <>
       <Header
-        icon={location.pathname === "/student/shortlist" ? <FaStar /> : null}
+        icon={location?.pathname === "/student/shortlist" ? <FaStar /> : null}
       />
       <div>
         <span className="fixed overflow-y-scroll scrollbar-hide  bg-white ">
