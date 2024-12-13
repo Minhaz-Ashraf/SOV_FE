@@ -154,7 +154,7 @@ const statusSix =
                 : "pending"
             }
             statusTwo={
-              studentInfoData?.data?.flags?.offerLetterApproved === "approved" ? "done" :   studentData?.flags?.offerLetterApproved === "approved" ? "pending"  : "current"
+              studentInfoData?.data?.flags?.offerLetterApproved === "approved" ? "done" :   studentInfoData?.data?.flags?.offerLetterApproved === "approved" ? "pending"  : "current"
                   }
             statusFive={statusFive}
 
