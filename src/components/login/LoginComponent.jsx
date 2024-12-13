@@ -109,14 +109,15 @@ const LoginComponent = () => {
               agentInfo.pageStatus.status === "rejected") ||
             agentInfo.pageStatus.status === "rejected"
           ) {
-            redirectPath = "/agent-form/1";
-          } else if (
-            (agentInfo.pageCount === 6 &&
-              agentInfo.pageStatus.status === "requestedForReaproval") ||
-            agentInfo.pageStatus.status === "requestedForReaproval"
-          ) {
-            redirectPath = "/agent/account-deleted";
-          } else if (
+            redirectPath = "/agent-form/1";}
+          // } else if (
+          //   (agentInfo.pageCount === 6 &&
+          //     agentInfo.pageStatus.status === "requestedForReaproval") ||
+          //   agentInfo.pageStatus.status === "requestedForReaproval"
+          // ) {
+          //   redirectPath = "/agent/account-deleted";
+          // } 
+          else if (
             agentInfo.pageCount !== 6 &&
             agentInfo.pageStatus?.status === "registering"
           ) {
@@ -179,13 +180,13 @@ const LoginComponent = () => {
           ) {
             redirectPath = `/student-form/1`;
           }
-          if (
-            studentInfoData?.data?.studentInformation?.pageCount === 3 &&
-            studentInfoData?.data?.studentInformation?.pageStatus?.status ===
-              "requestedForReaproval"
-          ) {
-            redirectPath = `/student/account-deleted`;
-          }
+          // if (
+          //   studentInfoData?.data?.studentInformation?.pageCount === 3 &&
+          //   studentInfoData?.data?.studentInformation?.pageStatus?.status ===
+          //     "requestedForReaproval"
+          // ) {
+          //   redirectPath = `/student/account-deleted`;
+          // }
           if (redirectPath) {
             navigate(redirectPath, { state: "passPage" });
           }
