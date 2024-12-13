@@ -202,6 +202,7 @@ console.log(studentId)
             icon={<FaRegEye />}
             tableType="upload"
             customLinkState={TABLE_ROWS?.map((data) => data.appId)}
+            studentId={studentId}
           />
         )}
       </div>

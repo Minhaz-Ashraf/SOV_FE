@@ -36,6 +36,7 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { extractFileName, extractFileNames } from "../constant/commonfunction";
 import { FaRegEye } from "react-icons/fa";
 import { studentApplications } from "../features/agentSlice";
+import DocDeletePop from "./DocDeletePop";
 
 export function CustomTable({
   tableHead = [],
@@ -500,8 +501,7 @@ export function CustomTableTwo({
                                 : row?.type?.courseFeeApplication
                                 ? "coursefeeApplication"
                                 : "NA",
-                              row?.appId,
-                            
+                              row?.appId
                             )
                           }
                         />
@@ -1189,9 +1189,28 @@ export function CustomTableSeven({
   actionTwo,
   tableType,
   icon,
+  studentId
 }) {
   const dispatch = useDispatch();
   const role = localStorage.getItem("role");
+    const [isOpenPop, setIsOpenPop] = useState(false);
+    const [isDocId, setIsDocId] = useState(false);
+    const [isUrl, setIsUrl] = useState(false);
+    const path =
+    role === "0"
+      ? `/document/all-admin/${studentId}`
+      : role === "2" || role === "3"
+      ? `/document/all/${studentId}`
+      : null;
+    const openDeletePopup = (docId, url) => {
+      setIsUrl(url)
+      setIsDocId(docId)
+      setIsOpenPop(true);
+    };
+  
+    const closePop = () => {
+      setIsOpenPop(false);
+    };
   const handleRemoveFile = async (id, fileUrl) => {
     try {
       if (!fileUrl) {
@@ -1201,7 +1220,7 @@ export function CustomTableSeven({
       const fileRef = ref(storage, fileUrl);
       await deleteObject(fileRef);
       const res = await removeDocument(id);
-      dispatch(getDocumentAll());
+      dispatch(getDocumentAll({path}));
 
       toast.success(res.message || "Document removed successfully");
     } catch (error) {
@@ -1280,7 +1299,6 @@ export function CustomTableSeven({
                 <td className="p-4">
                   <Typography
                     as="a"
-                    href="#"
                     variant="small"
                     color="blue-gray"
                     className="font-medium"
@@ -1296,32 +1314,38 @@ export function CustomTableSeven({
                     </a>
                   </Typography>
                 </td>
-                {tableType === "upload" &&
-                  (role !== "0" && (
-                    <td className="">
-                      <Typography
-                        as="a"
-                        href="#"
-                        variant="small"
-                        color="blue-gray"
-                        className="font-medium"
+                {tableType === "upload" && role !== "0" && (
+                  <td className="">
+                    <Typography
+                      as="a"
+                      variant="small"
+                      color="blue-gray"
+                      className="font-medium"
+                    >
+                      <span
+                        
+                        onClick={() => openDeletePopup(row.docId, row.url)}
+                        className="flex flex-row items-center gap-2"
                       >
-                        <span
-                          onClick={() => handleRemoveFile(row.docId, row.url)}
-                          className="flex flex-row items-center gap-2"
-                        >
-                          <span className="font-body border rounded-md border-primary cursor-pointer px-6 py-1">
-                            {actionTwo}
-                          </span>
+                        <span className="font-body border rounded-md border-primary cursor-pointer px-6 py-1">
+                          {actionTwo}
                         </span>
-                      </Typography>
-                    </td>
-                  ))}
+                      </span>
+                    </Typography>
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>
         </table>
       </Card>
+      <DocDeletePop
+        closePop={closePop}
+        isOpenPop={isOpenPop}
+        handleFunc={handleRemoveFile}
+        isUrl={isUrl}
+        isDocId={isDocId}
+      />
     </>
   );
 }
@@ -1353,9 +1377,9 @@ export function CustomTableEight({
   const handleRemove = async (id) => {
     try {
       const path =
-      location.pathname === "/admin/agent-student"
-        ? `/studentInformation/agent-student-admin`
-        : "/admin/student-directory";
+        location.pathname === "/admin/agent-student"
+          ? `/studentInformation/agent-student-admin`
+          : "/admin/student-directory";
       const pathData =
         location.pathname === `/admin/agent-directory`
           ? `/admin/delete-agent/${id}`
@@ -1365,7 +1389,7 @@ export function CustomTableEight({
       // navigate("/removed-user")
       location.pathname === `/admin/agent-directory`
         ? dispatch(getAllAgentList({}))
-        : dispatch(getAllStudentList({path}));
+        : dispatch(getAllStudentList({ path }));
 
       toast.success(res.message || "Removed successfully");
       if (socketServiceInstance.isConnected()) {
@@ -1419,7 +1443,7 @@ export function CustomTableEight({
                     {row.sno}
                   </Typography>
                 </td>
-          {console.log(row)}
+                {console.log(row)}
 
                 <td className="p-4">
                   <Typography
@@ -1512,7 +1536,12 @@ export function CustomTableEight({
                     className="font-medium"
                   >
                     <span
-                      onClick={() => handleOpen(row.data?._id || row.data?.id, row?.data?.studentId)}
+                      onClick={() =>
+                        handleOpen(
+                          row.data?._id || row.data?.id,
+                          row?.data?.studentId
+                        )
+                      }
                       className="flex flex-row items-center gap-2"
                     >
                       <span className="font-body border rounded-md border-primary cursor-pointer px-6 py-1">
