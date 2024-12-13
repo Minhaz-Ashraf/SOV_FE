@@ -141,7 +141,7 @@ const AllApplication = () => {
               <span className="flex flex-row items-center mb-3">
                 <span className="flex flex-row justify-between w-full items-center">
                   <span className="flex flex-row items-center ">
-                    <span className="text-body">Show</span>
+                    {/* <span className="text-body">Show</span>
                     <select
                       className="ml-3 border px-2 py-1 w-10 h-11 rounded outline-none"
                       value={perPage}
@@ -153,7 +153,7 @@ const AllApplication = () => {
                         </option>
                       ))}
                     </select>
-                    <span className="md:px-3 sm:px-1 text-body">entries</span>
+                    <span className="md:px-3 sm:px-1 text-body">entries</span> */}
                     <select
                       className="ml-3 border px-2 py-1 md:w-40 sm:w-24 h-11 rounded outline-none"
                       value={isType}
