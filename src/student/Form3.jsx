@@ -7,7 +7,7 @@ import {
   InstituteComponent,
   SelectComponent,
 } from "../components/reusable/Input";
-import { studentPreference } from "../features/studentApi";
+import { studentAddress, studentPreference } from "../features/studentApi";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { getInstituteOption } from "../features/generalSlice";
@@ -126,7 +126,7 @@ const Form3 = ({
         if (role === "0") {
           await editStudentAdmin(`/studentInformation/preference-admin/${studentId}`, preferenceData, editForm);
         } else {
-          res = await studentAddress(preferenceData, studentId, editForm);
+          res = await studentPreference(preferenceData, studentId, editForm);
         }
         if(role === "0"){
           dispatch(getStudentById(studentId));
