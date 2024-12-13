@@ -46,12 +46,21 @@ const CourseFeeFamilyDocUpdate = ({
   const [newFiles, setNewFiles] = useState([]);
   const [deletedFiles, setDeletedFiles] = useState([]);
   const [isOne, setIsOne] = useState(false);
-  const [selectedOption, setSelectedOption] = useState("parent");
   const [courseFee, setCourseFee] = useState({
     parentDocument: { ...initialParentDocument },
     siblingDocument: { ...initialSiblingDocument },
   });
+  const [selectedOption, setSelectedOption] = useState(
+    courseFee?.parentDocument?.fatherAadharCard ||
+      courseFee?.parentDocument?.motherAadharCard
+      ? "parent"
+      : "sibling"
+  );
 
+  console.log(
+    applicationDataById?.courseFeeApplication?.siblingsDocument
+      ?.siblingAadharCard
+  );
   useEffect(() => {
     dispatch(allApplication());
   }, [dispatch]);
@@ -108,18 +117,35 @@ const CourseFeeFamilyDocUpdate = ({
 
   useEffect(() => {
     if (applicationDataById) {
-      setCourseFee({
+      setCourseFee((prevState) => ({
+        ...prevState,
         parentDocument: {
-          aadharCard:
+          fatherAadharCard:
             applicationDataById?.courseFeeApplication?.parentDocument
-              ?.aadharCard || "",
-          panCard:
+              ?.fatherAadharCard || "",
+          fatherPanCard:
             applicationDataById?.courseFeeApplication?.parentDocument
-              ?.panCard || "",
+              ?.fatherPanCard || "",
+          motherAadharCard:
+            applicationDataById?.courseFeeApplication?.parentDocument
+              ?.motherAadharCard || "",
+          motherPanCard:
+            applicationDataById?.courseFeeApplication?.parentDocument
+              ?.motherPanCard || "",
         },
-      });
+        studentDocument: {
+          // Use siblingDocument here instead of studentDocument
+          siblingAadharCard:
+            applicationDataById?.courseFeeApplication?.siblingsDocument
+              ?.siblingAadharCard || "",
+          siblingPanCard:
+            applicationDataById?.courseFeeApplication?.siblingsDocument
+              ?.siblingAadharCard || "",
+            },
+          }));
     }
   }, [applicationDataById]);
+
   const handleFileUpload = (files) => {
     if (!files || files.length === 0) {
       return;
@@ -159,37 +185,62 @@ const CourseFeeFamilyDocUpdate = ({
 
   const deleteFile = async (fileUrl, fileType) => {
     if (!fileUrl) return;
-
+  
     const fileUrls = Array.isArray(fileUrl) ? fileUrl : [fileUrl];
-
+  
+    // Mark the file for deletion
     fileUrls.forEach((url) => {
       if (typeof url === "string" && url.startsWith("http")) {
-        setDeletedFiles((prevFiles) => [
-          ...prevFiles.filter((f) => f.fileType !== fileType),
-          { fileUrl: url, fileType },
-        ]);
+        // Debugging statement to track deleted files
+        console.log(`Marking for deletion: ${url}, type: ${fileType}`);
+        setDeletedFiles((prevFiles) => {
+          // Debugging statement to show previous state
+          console.log("Previous deleted files:", prevFiles);
+          const updatedFiles = [
+            ...prevFiles.filter((f) => f.fileType !== fileType),
+            { fileUrl: url, fileType },
+          ];
+          // Debugging statement to show updated state
+          console.log("Updated deleted files:", updatedFiles);
+          return updatedFiles;
+        });
       }
     });
-
-    // Remove the file locally
+  
+    // Remove the file locally from courseFee state
     setCourseFee((prevState) => {
       const updatedState = { ...prevState };
-      if (fileType in updatedState.parentDocument) {
+  
+      // Debugging statement to show previous courseFee state
+      console.log("Previous courseFee state:", prevState);
+  
+      // Clear the file field in the parentDocument or siblingDocument based on fileType
+      if (updatedState.parentDocument[fileType] !== undefined) {
         updatedState.parentDocument[fileType] = ""; // Clear the field
-      } else if (fileType in updatedState.siblingDocument) {
+      } else if (updatedState.siblingDocument[fileType] !== undefined) {
         updatedState.siblingDocument[fileType] = ""; // Clear the field
       }
+  
+      // Debugging statement to show updated courseFee state
+      console.log("Updated courseFee state:", updatedState);
       return updatedState;
     });
-
+  
     // Remove blob URL from newFiles
-    setNewFiles((prevFiles) =>
-      prevFiles.filter((file) => file.fileType !== fileType)
-    );
-
+    setNewFiles((prevFiles) => {
+      const updatedNewFiles = prevFiles.filter((file) => file.fileType !== fileType);
+      
+      // Debugging statement to show newFiles before and after filtering
+      console.log("New files before filtering:", prevFiles);
+      console.log("New files after filtering:", updatedNewFiles);
+  
+      return updatedNewFiles;
+    });
+  
+    // Optionally, you can uncomment the toast notification for user feedback
     // toast.info("File marked for deletion.");
   };
-
+  
   const handleSubmit = async () => {
     const validationErrors = validateFields();
 
@@ -354,163 +405,191 @@ const CourseFeeFamilyDocUpdate = ({
                 </span>
               )}
         </div>
-        {applicationDataById?.courseFeeApplication?.parentDocument && (
-          <div className="flex flex-row w-full justify-between mt-6">
-            <span className="w-1/2 flex flex-col text-[15px]">
-              <span className="flex flex-col">
-                <span className="font-light">Father Aadhar Card</span>
-                <span className="font-medium">
-                  {applicationDataById?.courseFeeApplication?.parentDocument
-                    ?.fatherAadharCard ? (
-                    <a
-                      className="flex items-center gap-3 text-primary font-medium"
-                      href={
-                        applicationDataById?.courseFeeApplication
-                          ?.parentDocument?.fatherAadharCard
-                      }
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Uploaded
-                      <span>
-                        <FaRegEye />
-                      </span>
-                    </a>
-                  ) : (
-                    "NA"
-                  )}
-                </span>
-                <span className="font-light mt-6">Mother Aadhar Card</span>
-                <span className="font-medium">
-                  {applicationDataById?.courseFeeApplication?.parentDocument
-                    ?.motherAadharCard ? (
-                    <a
-                      className="flex items-center gap-3 text-primary font-medium"
-                      href={
-                        applicationDataById?.courseFeeApplication
-                          ?.parentDocument?.motherAadharCard
-                      }
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Uploaded
-                      <span>
-                        <FaRegEye />
-                      </span>
-                    </a>
-                  ) : (
-                    "NA"
-                  )}
-                </span>
-              </span>
+        {console.log(applicationDataById?.courseFeeApplication?.parentDocument)}
+        <div className="flex flex-row w-full justify-between mt-6">
+          <span className="w-1/2 flex flex-col text-[15px]">
+            <span className="flex flex-col">
+              {applicationDataById?.courseFeeApplication?.parentDocument
+                ?.fatherAadharCard && (
+                <>
+                  <span className="font-light">Father Aadhar Card</span>
+                  <span className="font-medium">
+                    {applicationDataById?.courseFeeApplication?.parentDocument
+                      ?.fatherAadharCard ? (
+                      <a
+                        className="flex items-center gap-3 text-primary font-medium"
+                        href={
+                          applicationDataById?.courseFeeApplication
+                            ?.parentDocument?.fatherAadharCard
+                        }
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Uploaded
+                        <span>
+                          <FaRegEye />
+                        </span>
+                      </a>
+                    ) : (
+                      "NA"
+                    )}
+                  </span>
+                </>
+              )}
+              {applicationDataById?.courseFeeApplication?.parentDocument
+                ?.motherAadharCard && (
+                <>
+                  <span className="font-light mt-6">Mother Aadhar Card</span>
+                  <span className="font-medium">
+                    {applicationDataById?.courseFeeApplication?.parentDocument
+                      ?.motherAadharCard ? (
+                      <a
+                        className="flex items-center gap-3 text-primary font-medium"
+                        href={
+                          applicationDataById?.courseFeeApplication
+                            ?.parentDocument?.motherAadharCard
+                        }
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Uploaded
+                        <span>
+                          <FaRegEye />
+                        </span>
+                      </a>
+                    ) : (
+                      "NA"
+                    )}
+                  </span>
+                </>
+              )}
             </span>
-            <span className="w-1/2 flex flex-col text-[15px]">
-              <span className="flex flex-col">
-                <span className="font-light mt-4">Father Pan Card</span>
-                <span className="font-medium">
-                  {applicationDataById?.courseFeeApplication?.parentDocument
-                    ?.fatherPanCard ? (
-                    <a
-                      className="flex items-center gap-3 text-primary font-medium"
-                      href={
-                        applicationDataById?.courseFeeApplication
-                          ?.parentDocument?.fatherPanCard
-                      }
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Uploaded
-                      <span>
-                        <FaRegEye />
-                      </span>
-                    </a>
-                  ) : (
-                    "NA"
-                  )}
-                </span>
-                <span className="font-light mt-4">Mother Pan Card</span>
-                <span className="font-medium">
-                  {applicationDataById?.courseFeeApplication?.parentDocument
-                    ?.motherPanCard ? (
-                    <a
-                      className="flex items-center gap-3 text-primary font-medium"
-                      href={
-                        applicationDataById?.courseFeeApplication
-                          ?.parentDocument?.motherPanCard
-                      }
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Uploaded
-                      <span>
-                        <FaRegEye />
-                      </span>
-                    </a>
-                  ) : (
-                    "NA"
-                  )}
-                </span>
-              </span>
+          </span>
+          <span className="w-1/2 flex flex-col text-[15px]">
+            <span className="flex flex-col">
+              {applicationDataById?.courseFeeApplication?.parentDocument
+                ?.fatherPanCard && (
+                <>
+                  <span className="font-light mt-4">Father Pan Card</span>
+                  <span className="font-medium">
+                    {applicationDataById?.courseFeeApplication?.parentDocument
+                      ?.fatherPanCard ? (
+                      <a
+                        className="flex items-center gap-3 text-primary font-medium"
+                        href={
+                          applicationDataById?.courseFeeApplication
+                            ?.parentDocument?.fatherPanCard
+                        }
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Uploaded
+                        <span>
+                          <FaRegEye />
+                        </span>
+                      </a>
+                    ) : (
+                      "NA"
+                    )}
+                  </span>
+                </>
+              )}
+              {applicationDataById?.courseFeeApplication?.parentDocument
+                ?.motherPanCard && (
+                <>
+                  <span className="font-light mt-4">Mother Pan Card</span>
+                  <span className="font-medium">
+                    {applicationDataById?.courseFeeApplication?.parentDocument
+                      ?.motherPanCard ? (
+                      <a
+                        className="flex items-center gap-3 text-primary font-medium"
+                        href={
+                          applicationDataById?.courseFeeApplication
+                            ?.parentDocument?.motherPanCard
+                        }
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Uploaded
+                        <span>
+                          <FaRegEye />
+                        </span>
+                      </a>
+                    ) : (
+                      "NA"
+                    )}
+                  </span>
+                </>
+              )}
             </span>
-          </div>
-        )}
+          </span>
+        </div>
 
-        {applicationDataById?.courseFeeApplication?.siblingsDocument && (
-          <div className="flex flex-row items-center w-full justify-between">
-            <span className="w-1/2 flex flex-col text-[15px]">
-              <span className="flex flex-col">
-                <span className="font-light mt-4">Sibling Aadhar Card</span>
-                <span className="font-medium">
-                  {applicationDataById?.courseFeeApplication?.siblingsDocument
-                    ?.siblingAadharCard ? (
-                    <a
-                      className="flex items-center gap-3 text-primary font-medium"
-                      href={
-                        applicationDataById?.courseFeeApplication
-                          ?.siblingsDocument?.siblingAadharCard
-                      }
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Uploaded
-                      <span>
-                        <FaRegEye />
-                      </span>
-                    </a>
-                  ) : (
-                    "NA"
-                  )}
-                </span>
-              </span>
+        <div className="flex flex-row items-center w-full justify-between">
+          <span className="w-1/2 flex flex-col text-[15px]">
+            <span className="flex flex-col">
+              {applicationDataById?.courseFeeApplication?.siblingsDocument
+                ?.siblingAadharCard && (
+                <>
+                  <span className="font-light mt-4">Sibling Aadhar Card</span>
+                  <span className="font-medium">
+                    {applicationDataById?.courseFeeApplication?.siblingsDocument
+                      ?.siblingAadharCard ? (
+                      <a
+                        className="flex items-center gap-3 text-primary font-medium"
+                        href={
+                          applicationDataById?.courseFeeApplication
+                            ?.siblingsDocument?.siblingAadharCard
+                        }
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Uploaded
+                        <span>
+                          <FaRegEye />
+                        </span>
+                      </a>
+                    ) : (
+                      "NA"
+                    )}
+                  </span>
+                </>
+              )}
             </span>
-            <span className="w-1/2 flex flex-col text-[15px]">
-              <span className="flex flex-col">
-                <span className="font-light mt-4">Sibling Pan Card</span>
-                <span className="font-medium">
-                  {applicationDataById?.courseFeeApplication?.siblingsDocument
-                    ?.siblingPanCard ? (
-                    <a
-                      className="flex items-center gap-3 text-primary font-medium"
-                      href={
-                        applicationDataById?.courseFeeApplication
-                          ?.siblingsDocument?.siblingPanCard
-                      }
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Uploaded
-                      <span>
-                        <FaRegEye />
-                      </span>
-                    </a>
-                  ) : (
-                    "NA"
-                  )}
-                </span>
-              </span>
+          </span>
+          <span className="w-1/2 flex flex-col text-[15px]">
+            <span className="flex flex-col">
+              {applicationDataById?.courseFeeApplication?.siblingsDocument
+                ?.siblingPanCard && (
+                <>
+                  <span className="font-light mt-4">Sibling Pan Card</span>
+                  <span className="font-medium">
+                    {applicationDataById?.courseFeeApplication?.siblingsDocument
+                      ?.siblingPanCard ? (
+                      <a
+                        className="flex items-center gap-3 text-primary font-medium"
+                        href={
+                          applicationDataById?.courseFeeApplication
+                            ?.siblingsDocument?.siblingPanCard
+                        }
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Uploaded
+                        <span>
+                          <FaRegEye />
+                        </span>
+                      </a>
+                    ) : (
+                      "NA"
+                    )}
+                  </span>
+                </>
+              )}
             </span>
-          </div>
-        )}
+          </span>
+        </div>
+
         <div
           className={`transition-all duration-500 ease-in-out transform ${
             isOne
@@ -563,7 +642,9 @@ const CourseFeeFamilyDocUpdate = ({
                           <FiUpload className="mr-2 text-primary text-[29px]" />
                         </button>
                         <p className="mt-2">
-                          {docType.replace(/([A-Z])/g, " $1")}
+                          {docType
+                            .replace(/([A-Z])/g, " $1")
+                            .replace(/^./, (str) => str.toUpperCase())}
                         </p>
                         {courseFee.parentDocument[docType] && (
                           <div className="mt-2 flex items-center">
@@ -598,7 +679,7 @@ const CourseFeeFamilyDocUpdate = ({
                     <h3 className="font-semibold text-lg">
                       Sibling Document Upload
                     </h3>
-                    {Object.keys(courseFee.siblingDocument).map((docType) => (
+                    {Object.keys(courseFee.studentDocument).map((docType) => (
                       <div
                         key={docType}
                         className="flex flex-col items-center border-2 border-dashed border-body rounded-md py-9 mt-4"
@@ -610,12 +691,14 @@ const CourseFeeFamilyDocUpdate = ({
                           <FiUpload className="mr-2 text-primary text-[29px]" />
                         </button>
                         <p className="mt-2">
-                          {docType.replace(/([A-Z])/g, " $1")}
+                          {docType
+                            .replace(/([A-Z])/g, " $1")
+                            .replace(/^./, (str) => str.toUpperCase())}
                         </p>
-                        {courseFee?.siblingDocument[docType] && (
+                        {courseFee?.studentDocument[docType] && (
                           <div className="mt-2 flex items-center">
                             <a
-                              href={courseFee.siblingDocument[docType]}
+                              href={courseFee.studentDocument[docType]}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-primary"
@@ -625,7 +708,7 @@ const CourseFeeFamilyDocUpdate = ({
                             <button
                               onClick={() =>
                                 deleteFile(
-                                  courseFee.siblingDocument[docType],
+                                  courseFee.studentDocument[docType],
                                   docType
                                 )
                               }
