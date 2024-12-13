@@ -63,7 +63,7 @@ const StudentRecieveDocument = ({ studentId }) => {
   const TABLE_ROWS = recieveDocs?.documents?.map((data, index) => ({
     sno:(currentPage - 1) * perPage + index + 1,
     docName: extractFileName(data.document[0]) || "NA",
-    docType: data?.documentType === "courseFeeApplication" ? "Course Fee Application" : data?.documentType === "offerletter" ? "Offer Letter" : data?.documentType === "visa" ? "Visa" : null,
+    docType: data?.documentType === "coursefeeApplication" ? "Course Fee Application" : data?.documentType === "offerletter" ? "Offer Letter" : data?.documentType === "visa" ? "Visa" : null,
     date: formatDate(data.createdAt) || "NA",
     url: data.document[0] || "NA",
   }));
