@@ -239,7 +239,7 @@ const Pending = ({ data }) => {
               updateStatus={updateStatus}
               newStatus="completed"
               id={item?._id}
-              agentId={item?.agentId}
+              agentId={item?.agentId || item?._id}
               linkTwo="/agent-profile"
               linkOne="/student-profile"
               rejectStatus="rejected"
