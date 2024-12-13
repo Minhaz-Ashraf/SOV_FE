@@ -116,29 +116,26 @@ const Dashboard = () => {
     filterData.search
   );
 
-  
   const statusFive =
-  studentInfoData?.data?.flags?.visaApproved === "approved" ||
-  studentInfoData?.data?.flags?.visaApproved === "approvedbyembassy" ||
-studentInfoData?.data?.flags?.visaApproved === "withdrawalrequest" ||
-studentInfoData?.data?.flags?.visaApproved === "withdrawalcomplete" ||
-studentInfoData?.data?.flags?.visaApproved === "rejectedbyembassy"
-  ? "done"
-  : studentInfoData?.data?.flags?.visaApproved === "reject"
-  ? "pending"
-  : "current";
+    studentInfoData?.data?.flags?.visaApproved === "approved" ||
+    studentInfoData?.data?.flags?.visaApproved === "approvedbyembassy" ||
+    studentInfoData?.data?.flags?.visaApproved === "withdrawalrequest" ||
+    studentInfoData?.data?.flags?.visaApproved === "withdrawalcomplete" ||
+    studentInfoData?.data?.flags?.visaApproved === "rejectedbyembassy"
+      ? "done"
+      : studentInfoData?.data?.flags?.visaApproved === "reject"
+      ? "pending"
+      : "current";
 
-const statusSix =
-
-  studentInfoData?.data?.flags?.visaApproved === "approvedbyembassy" ||
-  studentInfoData?.data?.flags?.visaApproved === "visagranted"
-    ? "done"
-    : 
-      studentInfoData?.data?.flags?.visaApproved === "rejectedbyembassy" ||
-      studentInfoData?.data?.flags?.visaApproved === "withdrawalrequest" ||
-      studentInfoData?.data?.flags?.visaApproved === "withdrawalcomplete"
-    ? "pending"
-    : "current";
+  const statusSix =
+    studentInfoData?.data?.flags?.visaApproved === "approvedbyembassy" ||
+    studentInfoData?.data?.flags?.visaApproved === "visagranted"
+      ? "done"
+      : studentInfoData?.data?.flags?.visaApproved === "rejectedbyembassy" ||
+        studentInfoData?.data?.flags?.visaApproved === "withdrawalrequest" ||
+        studentInfoData?.data?.flags?.visaApproved === "withdrawalcomplete"
+      ? "pending"
+      : "current";
   return (
     <>
       <Header customLink="/student/shortlist" />
@@ -154,19 +151,22 @@ const statusSix =
                 : "pending"
             }
             statusTwo={
-              studentInfoData?.data?.flags?.offerLetterApproved === "approved" ? "done" :   studentInfoData?.data?.flags?.offerLetterApproved === "approved" ? "pending"  : "current"
-                  }
-            statusFive={statusFive}
-
-            statusFour={
-              studentInfoData?.data?.flags?.courseFeeApproved
+              studentInfoData?.data?.flags?.offerLetterApproved === "approved"
                 ? "done"
+                : studentInfoData?.data?.flags?.offerLetterApproved ===
+                  "rejected"
+                ? "pending"
+                : "current"
+            }
+            statusFive={statusFive}
+            statusFour={
+              studentInfoData?.data?.flags?.courseFeeApproved === "approved"
+                ? "done"
+                : studentInfoData?.data?.flags?.courseFeeApproved === "rejected"
+                ? "pending"
                 : "current"
             }
             statusSix={statusSix}
-
-
-
           />
           <div>
             <span className="flex md:flex-row sm:flex-col items-center  ">

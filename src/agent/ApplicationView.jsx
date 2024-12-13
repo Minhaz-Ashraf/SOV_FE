@@ -27,8 +27,8 @@ const ApplicationView = ({stId, adminPath, adminAccess}) => {
   const studentId = 
   location.pathname === "/student-profile" 
     ? stId || (adminPath && adminAccess) || location?.state?.notifyId
-    : location.state || location.state || location?.state?.notifyId;
-console.log(stId)
+    : location?.state?.notify === "notify" ? location?.state?.notifyId : location.state ||  location?.state?.notifyId
+// console.log(location)
   const [isLoading, setIsLoading] = useState(true);
   const [perPage, setPerPage] = useState(10);
   const totalUsersCount = studentApplicationData?.totalApplications || 0;
