@@ -203,9 +203,9 @@ const Pending = ({ data }) => {
                 
                 description={
                   application?.customUserId?.startsWith("AG-")
-                    ? `${application?.agentName} has filled ${application?.type} for his/her student ${application?.fullName}`
+                    ? `${application?.agentName} has filed ${application?.type === "courseFeeApplication"? "course fee application": application?.type === "offerLetter" ? "offer letter" : application?.type === "visa" ? "visa" : null } for his/her student ${application?.fullName}`
                     : application?.customUserId?.startsWith("ST-")
-                    ? `${application?.fullName} has filled ${application?.type}`
+                    ? `${application?.fullName} has filed ${application?.type === "courseFeeApplication"? "course fee application": application?.type === "offerLetter" ? "offer letter" : application?.type === "visa" ? "visa" : null }`
                     : "Unknown type"
                 }
                 userType={
