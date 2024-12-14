@@ -152,55 +152,66 @@ const VisaUploadEdit = ({ appId, updatedData, profileViewPath, userId }) => {
   };
   const handleSubmit = async () => {
     const validationErrors = validateFields();
-
+  
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-      toast.error("Form contains errors.");
+      toast.error("Please fill all required fields");
       return;
     }
-
+  
     try {
       setIsSubmitting(true);
-
-      // Handle file deletions
-      // for (const { fileUrl } of deletedFiles) {
-      // const storageRef = ref(storage, fileUrl);
-      //     try {
-      //       await deleteObject(storageRef);
-      // await deleteDocument(fileUrl);
-
-      //       // toast.success(`File ${fileUrl} deleted successfully.`);
-      //     } catch (error) {
-      //       // toast.error(`Error deleting file: ${fileUrl}`);
-      //     }
-      // }
-
-      // Handle new file uploads
-      const updatedStudentDocument = { ...visaLetter.studentDocument };
-
+  
+      // Prepare certificate array
+      const certificateArray = Array.isArray(visaLetter.studentDocument.certificate)
+        ? visaLetter.studentDocument.certificate
+        : visaLetter.studentDocument.certificate
+        ? [visaLetter.studentDocument.certificate] // Convert string to array
+        : [];
+  
+      // Initialize updatedStudentDocument with current data
+      const updatedStudentDocument = {
+        offerLetter: visaLetter.studentDocument.offerLetter,
+        gicLetter: visaLetter.studentDocument.gicLetter,
+        medical: visaLetter.studentDocument.medical,
+        pcc: visaLetter.studentDocument.pcc,
+        pal: visaLetter.studentDocument.pal,
+        loa: visaLetter.studentDocument.loa,
+        certificate: [...certificateArray], // Start with existing array
+      };
+  
       for (const { file, fileType, blobUrl } of newFiles) {
         const uniqueFileName = `${uuidv4()}-${file.name}`;
         const storageRef = ref(storage, `uploads/visa/${uniqueFileName}`);
         try {
           const snapshot = await uploadBytes(storageRef, file);
           const downloadURL = await getDownloadURL(snapshot.ref);
-
-          // Replace the blob URL with the Firebase URL for the specific field
-          updatedStudentDocument[fileType] = downloadURL;
+  
+          // Replace blobUrl for specific fields or append to certificate
+          if (fileType === "certificate") {
+            updatedStudentDocument.certificate.push(downloadURL);
+          } else if (visaLetter.studentDocument[fileType] === blobUrl) {
+            updatedStudentDocument[fileType] = downloadURL;
+          }
+  
+          // Upload metadata to backend
           const uploadData = {
             viewUrl: downloadURL,
             documentName: file.name,
             userId: userId,
           };
           await uploadDocument(uploadData);
+  
+          // Update local state
           setVisaLetter((prevState) => ({
             ...prevState,
             studentDocument: {
               ...prevState.studentDocument,
-              [fileType]:
-                prevState.studentDocument[fileType] === blobUrl
-                  ? downloadURL
-                  : prevState.studentDocument[fileType],
+              certificate: fileType === "certificate"
+                ? [...(prevState.studentDocument.certificate || []), downloadURL]
+                : prevState.studentDocument[fileType] === blobUrl
+                ? downloadURL
+                : prevState.studentDocument[fileType],
             },
           }));
         } catch (error) {
@@ -208,16 +219,15 @@ const VisaUploadEdit = ({ appId, updatedData, profileViewPath, userId }) => {
           toast.error(`Error uploading ${file.name}.`);
         }
       }
-
+  
       // Submit the updated data to the backend
-      const payload = { studentDocument: updatedStudentDocument };
       const res = await updateVisaDocument(appId, updatedStudentDocument);
-
+  
       toast.success(res.message || "Data added successfully.");
       updatedData();
       handleCancelOne();
       setIsSubmitting(false);
-
+  
       // Clear temporary states
       setNewFiles([]);
       setDeletedFiles([]);
@@ -226,7 +236,7 @@ const VisaUploadEdit = ({ appId, updatedData, profileViewPath, userId }) => {
       console.error("Error during submission:", error);
     }
   };
-
+  
   useEffect(() => {
     if (applicationDataById) {
       setVisaLetter((prevState) => ({

@@ -112,7 +112,7 @@ const VisaEdit = () => {
           <span className="flex items-center justify-between pr-7 md:pt-20 sm:pt-28 md:ml-[16.5%] sm:ml-[20%] ">
             <span>
               <p className="text-[28px] font-bold text-sidebar mt-6 ml-9">
-                Visa lodgement form
+                Visa lodgement form  ({applicationDataById?.visa?.country || "NA"})
               </p>
               <p className="mt-1 font-normal text-body mb-5 ml-9">
                 Check your details and make sure everything looks good. It's no
