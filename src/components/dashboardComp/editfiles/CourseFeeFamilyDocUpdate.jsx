@@ -141,8 +141,8 @@ const CourseFeeFamilyDocUpdate = ({
           siblingPanCard:
             applicationDataById?.courseFeeApplication?.siblingsDocument
               ?.siblingPanCard || "",
-            },
-          }));
+        },
+      }));
     }
   }, [applicationDataById]);
 
@@ -155,11 +155,11 @@ const CourseFeeFamilyDocUpdate = ({
       // Handle Firebase URL case
       setCourseFee((prevState) => {
         const updatedState = { ...prevState };
-       if (isFileType in updatedState.parentDocument) {
+        if (isFileType in updatedState.parentDocument) {
           updatedState.parentDocument[isFileType] = fileOrUrl;
         } else if (isFileType in updatedState.siblingDocument) {
           updatedState.siblingDocument[isFileType] = fileOrUrl;
-        } 
+        }
         return updatedState;
       });
     } else if (fileOrUrl instanceof File) {
@@ -172,20 +172,21 @@ const CourseFeeFamilyDocUpdate = ({
 
       setCourseFee((prevState) => {
         const updatedState = { ...prevState };
-      if (isFileType in updatedState.parentDocument) {
+        if (isFileType in updatedState.parentDocument) {
           updatedState.parentDocument[isFileType] = blobUrl;
         } else if (isFileType in updatedState.siblingDocument) {
           updatedState.siblingDocument[isFileType] = blobUrl;
-        } 
+        }
         return updatedState;
       });
     } else {
       console.warn("Unsupported file type or URL format.");
     }
   };
+  console.log(
+   courseFee
+  );
 
-
-  
   const deleteFile = (fileUrl, fileType) => {
     if (!fileUrl) return;
 
@@ -201,7 +202,7 @@ const CourseFeeFamilyDocUpdate = ({
       return updatedState;
     });
   };
-  
+
   const handleSubmit = async () => {
     const validationErrors = validateFields();
 
@@ -213,17 +214,6 @@ const CourseFeeFamilyDocUpdate = ({
 
     try {
       setIsSubmitting(true);
-      // Delete files marked for deletion
-      // for (const { fileUrl } of deletedFiles) {
-      //   const storageRef = ref(storage, fileUrl);
-      //   try {
-      //     //       await deleteObject(storageRef);
-      //     // await deleteDocument(fileUrl)
-      //     // toast.success(`File ${fileUrl} deleted successfully.`);
-      //   } catch (error) {
-      //     // toast.error(`Error deleting file: ${fileUrl}`);
-      //   }
-      // }
 
       const updatedCourseFee = { ...courseFee };
 
@@ -245,12 +235,14 @@ const CourseFeeFamilyDocUpdate = ({
             } else if (fileType in updatedCourseFee.siblingDocument) {
               updatedCourseFee.siblingDocument[fileType] = downloadURL;
             }
+
             const uploadData = {
               viewUrl: downloadURL,
               documentName: file.name,
               userId: userId,
             };
             await uploadDocument(uploadData);
+
             // Update state with Firebase URL
             setCourseFee((prevState) => {
               const newState = { ...prevState };
@@ -270,32 +262,28 @@ const CourseFeeFamilyDocUpdate = ({
         })
       );
 
-      // Submit the updated object
+      // Prepare filtered payload
+      const filteredParentDocument = Object.fromEntries(
+        Object.entries(updatedCourseFee.parentDocument).filter(
+          ([, value]) => value.trim() !== ""
+        )
+      );
+
+      const filteredSiblingDocument = Object.fromEntries(
+        Object.entries(updatedCourseFee.siblingDocument).filter(
+          ([, value]) => value.trim() !== ""
+        )
+      );
+
       const payload = {
-        fatherAadharCard: courseFee.parentDocument.fatherAadharCard || "",
-        motherAadharCard: courseFee.parentDocument.motherAadharCard || "",
-        fatherPanCard: courseFee.parentDocument.fatherPanCard || "",
-        motherPanCard: courseFee.parentDocument.motherPanCard || "",
-        siblingAadharCard: courseFee.siblingDocument.siblingAadharCard || "",
-        siblingPanCard: courseFee.siblingDocument.siblingPanCard || "",
+        ...filteredParentDocument,
+        ...(Object.keys(filteredSiblingDocument).length > 0 && {
+          siblingDocument: filteredSiblingDocument,
+        }),
       };
 
-      // Check if both father and mother Aadhar and PAN cards are available
-      const areParentsAvailable =
-        payload.fatherAadharCard &&
-        payload.motherAadharCard &&
-        payload.fatherPanCard &&
-        payload.motherPanCard;
-
-      // Conditionally add sibling data to the payload
-      if (!areParentsAvailable) {
-        payload.siblingAdharCard =
-          courseFee.siblingDocument.siblingAadharCard || "";
-        payload.siblingPanCard = courseFee.siblingDocument.siblingPanCard || "";
-      }
-
       // If you want to log the payload for debugging
-      // console.log("Payload:", payload);
+      console.log("Payload:", payload);
 
       const res = await updateCourseFeeFamilyDoc(appId, payload);
 
@@ -311,32 +299,33 @@ const CourseFeeFamilyDocUpdate = ({
       toast.error("Something went wrong.");
     }
   };
-  console.log(courseFee);
+
+  // console.log(courseFee);
   useEffect(() => {
-    if (applicationDataById) {
+    if (applicationDataById?.courseFeeApplication) {
       setCourseFee((prevState) => ({
         ...prevState,
         parentDocument: {
           fatherAadharCard:
-            applicationDataById?.courseFeeApplication?.parentDocument
+            applicationDataById.courseFeeApplication.parentDocument
               ?.fatherAadharCard || "",
           fatherPanCard:
-            applicationDataById?.courseFeeApplication?.parentDocument
+            applicationDataById.courseFeeApplication.parentDocument
               ?.fatherPanCard || "",
           motherAadharCard:
-            applicationDataById?.courseFeeApplication?.parentDocument
+            applicationDataById.courseFeeApplication.parentDocument
               ?.motherAadharCard || "",
           motherPanCard:
-            applicationDataById?.courseFeeApplication?.parentDocument
+            applicationDataById.courseFeeApplication.parentDocument
               ?.motherPanCard || "",
         },
         siblingDocument: {
-          siblingAdharCard:
-            applicationDataById?.courseFeeApplication?.siblingDocument
-              ?.aadharCard || "",
+          siblingAadharCard:
+            applicationDataById.courseFeeApplication.siblingsDocument
+              ?.siblingAadharCard || "",
           siblingPanCard:
-            applicationDataById?.courseFeeApplication?.siblingDocument
-              ?.panCard || "",
+            applicationDataById.courseFeeApplication.siblingsDocument
+              ?.siblingPanCard || "",
         },
       }));
     }
@@ -635,56 +624,56 @@ const CourseFeeFamilyDocUpdate = ({
                   </div>
                 )}
 
-               {selectedOption === "sibling" && (
-                           <div className="mt-6">
-                             <h3 className="font-semibold text-lg">
-                               Sibling Document Upload
-                             </h3>
-                             {Object.keys(courseFee.siblingDocument).map((docType) => (
-                               <div
-                                 key={docType}
-                                 className="flex flex-col items-center border-2 border-dashed border-body rounded-md py-9 mt-4"
-                               >
-                                 <button
-                                   onClick={() => handleFilePopupOpen(docType)}
-                                   className="text-black flex items-center"
-                                 >
-                                   <FiUpload className="mr-2 text-primary text-[29px]" />
-                                 </button>
-                                 <p className="mt-2">
-                                   {docType
-                                     .replace(/([A-Z])/g, " $1")
-                                     .trim()
-                                     .replace(/^./, (str) => str.toUpperCase())}
-                                 </p>
-                                 {courseFee.siblingDocument[docType] && (
-                                   <div className="mt-2 flex items-center">
-                                     <a
-                                       href={courseFee.siblingDocument[docType]}
-                                       target="_blank"
-                                       rel="noopener noreferrer"
-                                       className="text-primary"
-                                     >
-                                       View Uploaded Document
-                                     </a>
-                                     <button
-                                       onClick={() =>
-                                         deleteFile(
-                                           courseFee.siblingDocument[docType],
-                                           docType
-                                         )
-                                       }
-                                       className="ml-4 text-red-500"
-                                     >
-                                       <RiDeleteBin6Line />
-                                     </button>
-                                   </div>
-                                 )}
-                               </div>
-                             ))}
-                           </div>
-                         )}
-                       </div>
+                {selectedOption === "sibling" && (
+                  <div className="mt-6">
+                    <h3 className="font-semibold text-lg">
+                      Sibling Document Upload
+                    </h3>
+                    {Object.keys(courseFee.siblingDocument).map((docType) => (
+                      <div
+                        key={docType}
+                        className="flex flex-col items-center border-2 border-dashed border-body rounded-md py-9 mt-4"
+                      >
+                        <button
+                          onClick={() => handleFilePopupOpen(docType)}
+                          className="text-black flex items-center"
+                        >
+                          <FiUpload className="mr-2 text-primary text-[29px]" />
+                        </button>
+                        <p className="mt-2">
+                          {docType
+                            .replace(/([A-Z])/g, " $1")
+                            .trim()
+                            .replace(/^./, (str) => str.toUpperCase())}
+                        </p>
+                        {courseFee.siblingDocument[docType] && (
+                          <div className="mt-2 flex items-center">
+                            <a
+                              href={courseFee.siblingDocument[docType]}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-primary"
+                            >
+                              View Uploaded Document
+                            </a>
+                            <button
+                              onClick={() =>
+                                deleteFile(
+                                  courseFee.siblingDocument[docType],
+                                  docType
+                                )
+                              }
+                              className="ml-4 text-red-500"
+                            >
+                              <RiDeleteBin6Line />
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </>
           )}
         </div>

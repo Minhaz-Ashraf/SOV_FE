@@ -134,14 +134,22 @@ const VisaUploadEdit = ({ appId, updatedData, profileViewPath, userId }) => {
 
   const validateFields = () => {
     const errors = {};
+
     Object.keys(initialStudentDocument).forEach((docType) => {
+      if (
+        docType === "pal" &&
+        applicationDataById?.visa?.country !== "Germany"
+      ) {
+        return;
+      }
+
       if (!visaLetter.studentDocument[docType]) {
         errors[docType] = `${docType.replace(/([A-Z])/g, " $1")} is required.`;
       }
     });
+
     return errors;
   };
-
   const handleSubmit = async () => {
     const validationErrors = validateFields();
 

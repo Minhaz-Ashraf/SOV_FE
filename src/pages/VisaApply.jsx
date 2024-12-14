@@ -119,26 +119,24 @@ const VisaApply = () => {
   const validateFields = () => {
     const errors = {};
     const { personalDetails, studentDocument } = visaLetter;
-
+  
     // Personal Details Validation
     if (!personalDetails.fullName?.trim()) {
       errors.fullName = "Full name is required.";
     } else if (!/^[a-zA-Z\s]+$/.test(personalDetails.fullName)) {
       errors.fullName = "Full name can only contain alphabets and spaces.";
     }
-
+  
     if (!personalDetails.email) {
       errors.email = "Email is required.";
-    } else if (
-      !/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(personalDetails.email)
-    ) {
+    } else if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(personalDetails.email)) {
       errors.email = "Invalid email format.";
     }
-
+  
     if (!personalDetails.phoneNumber) {
       errors.phoneNumber = "Phone number is required.";
     }
-
+  
     // Address Validation
     if (!personalDetails.address.street?.trim()) {
       errors.street = "Street address is required.";
@@ -157,15 +155,22 @@ const VisaApply = () => {
     if (!personalDetails.address.country?.trim()) {
       errors.country = "Country is required.";
     }
-
+  
+    // Student Document Validation
     Object.keys(initialStudentDocument).forEach((docType) => {
-      if (!studentDocument[docType]) {
+      // Skip 'pal' validation unless the country is Germany
+      if (docType === "pal") {
+        if (countryName === "Germany" && !studentDocument[docType]) {
+          errors[docType] = `${docType.replace(/([A-Z])/g, " $1")} is required.`;
+        }
+      } else if (!studentDocument[docType]) {
         errors[docType] = `${docType.replace(/([A-Z])/g, " $1")} is required.`;
       }
     });
-
+  
     return errors;
   };
+  
   const handleFilePopupOpen = (fileType) => {
     setFileType(fileType);
     setIsPopUp(true);

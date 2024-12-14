@@ -849,11 +849,12 @@ export function CustomTableFive({
   icon,
 }) {
   const dispatch = useDispatch();
+  const { updateTicketTab } = useSelector((state) => state.admin);
 
   const [isOpen, setIsOpen] = useState(false);
   const ticketData = useSelector((state) => state.admin.ticketById);
   const test = null;
-  const status = "resolved";
+  
   console.log(ticketData);
   const [isticketId, setTicketId] = useState();
   const role = localStorage.getItem("role");
@@ -864,7 +865,7 @@ export function CustomTableFive({
   const closePopUp = () => {
     setIsOpen(false);
   };
-
+const updatedStatus = "pending"
   const ticketStatusChange = async (
     status,
     isSolution,
@@ -878,7 +879,7 @@ export function CustomTableFive({
         resolvedText,
         ticketId
       );
-      dispatch(getAllTickets({ test, test, test, test, status, test }));
+      dispatch(getAllTickets({ test, test, test, test,test, updateTicketTab, test }));
       toast.success(res?.message || "Status Updated Successfully");
       if (ticketData.createdById.startsWith("AG")) {
         if (socketServiceInstance.isConnected()) {

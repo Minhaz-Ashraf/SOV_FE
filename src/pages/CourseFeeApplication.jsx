@@ -39,6 +39,7 @@ import { greenTick } from "../assets";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import Sidebar from "../components/dashboardComp/Sidebar";
 import { v4 as uuidv4 } from "uuid";
+import socketServiceInstance from "../services/socket";
 
 const initialPersonalInfo = {
   fullName: "",
@@ -236,144 +237,158 @@ const courseFeeApplication = () => {
     }));
   };
 
-  const handleFilePopupOpen = (fileType) => {
-    seFileType(fileType);
-    PopUpOpen();
-  };
-  const handleFileUpload = (files) => {
-    if (!files || files.length === 0) return;
+    const handleFilePopupOpen = (fileType) => {
+      seFileType(fileType);
+      PopUpOpen();
+    };
+    const handleFileUpload = (files) => {
+      if (!files || files.length === 0) return;
 
-    const fileOrUrl = files[0];
+      const fileOrUrl = files[0];
 
-    if (typeof fileOrUrl === "string" && fileOrUrl.startsWith("http")) {
-      // Handle Firebase URL case
-      setCourseFee((prevState) => {
-        const updatedState = { ...prevState };
-        if (isFileType in updatedState.studentDocument) {
-          updatedState.studentDocument[isFileType] = fileOrUrl;
-        } else if (isFileType in updatedState.parentDocument) {
-          updatedState.parentDocument[isFileType] = fileOrUrl;
-        } else if (isFileType in updatedState.siblingsDocument) {
-          updatedState.siblingsDocument[isFileType] = fileOrUrl;
-        } else if (isFileType in updatedState.offerLetterAnsPassport) {
-          updatedState.offerLetterAnsPassport[isFileType] = fileOrUrl;
-        }
-        return updatedState;
-      });
-    } else if (fileOrUrl instanceof File) {
-      // Handle File case
-      const blobUrl = URL.createObjectURL(fileOrUrl);
-      setNewFiles((prevFiles) => [
-        ...prevFiles.filter((f) => f.fileType !== isFileType),
-        { file: fileOrUrl, fileType: isFileType, blobUrl },
-      ]);
-
-      setCourseFee((prevState) => {
-        const updatedState = { ...prevState };
-        if (isFileType in updatedState.studentDocument) {
-          updatedState.studentDocument[isFileType] = blobUrl;
-        } else if (isFileType in updatedState.parentDocument) {
-          updatedState.parentDocument[isFileType] = blobUrl;
-        } else if (isFileType in updatedState.siblingsDocument) {
-          updatedState.siblingsDocument[isFileType] = blobUrl;
-        } else if (isFileType in updatedState.offerLetterAnsPassport) {
-          updatedState.offerLetterAnsPassport[isFileType] = blobUrl;
-        }
-        return updatedState;
-      });
-    } else {
-      console.warn("Unsupported file type or URL format.");
-    }
-  };
-
-  const deleteFile = (fileUrl, fileType) => {
-    if (!fileUrl) return;
-
-    setDeletedFiles((prevFiles) => [...prevFiles, { fileUrl, fileType }]);
-
-    setCourseFee((prevState) => {
-      const updatedState = { ...prevState };
-      if (fileType in updatedState.studentDocument) {
-        updatedState.studentDocument[fileType] = "";
-      } else if (fileType in updatedState.parentDocument) {
-        updatedState.parentDocument[fileType] = "";
-      } else if (fileType in updatedState.siblingsDocument) {
-        updatedState.siblingsDocument[fileType] = "";
-      } else if (fileType in updatedState.offerLetterAnsPassport) {
-        updatedState.offerLetterAnsPassport[fileType] = "";
-      }
-      return updatedState;
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const validationErrors = validateFields();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      toast.error("Please fill required fields");
-      return;
-    }
-
-    // Upload new files to Firebase
-    for (const newFile of newFiles) {
-      const { file, fileType } = newFile;
-      const uniqueFileName = `${uuidv4()}-${file.name}`;
-      const storageRef = ref(
-        storage,
-        `uploads/courseFeeApplication/${uniqueFileName}`
-      );
-      try {
-        const snapshot = await uploadBytes(storageRef, file);
-        const downloadURL = await getDownloadURL(snapshot.ref);
+      if (typeof fileOrUrl === "string" && fileOrUrl.startsWith("http")) {
+        // Handle Firebase URL case
         setCourseFee((prevState) => {
           const updatedState = { ...prevState };
-          if (fileType in updatedState.studentDocument) {
-            updatedState.studentDocument[fileType] = downloadURL;
-          } else if (fileType in updatedState.parentDocument) {
-            updatedState.parentDocument[fileType] = downloadURL;
-          } else if (fileType in updatedState.siblingsDocument) {
-            updatedState.siblingsDocument[fileType] = downloadURL;
-          } else if (fileType in updatedState.offerLetterAnsPassport) {
-            updatedState.offerLetterAnsPassport[fileType] = downloadURL;
+          if (isFileType in updatedState.studentDocument) {
+            updatedState.studentDocument[isFileType] = fileOrUrl;
+          } else if (isFileType in updatedState.parentDocument) {
+            updatedState.parentDocument[isFileType] = fileOrUrl;
+          } else if (isFileType in updatedState.siblingsDocument) {
+            updatedState.siblingsDocument[isFileType] = fileOrUrl;
+          } else if (isFileType in updatedState.offerLetterAnsPassport) {
+            updatedState.offerLetterAnsPassport[isFileType] = fileOrUrl;
           }
           return updatedState;
         });
-        const uploadData = {
-          viewUrl: downloadURL,
-          documentName: file.name,
-          userId: studentId,
-        };
-        await uploadDocument(uploadData);
-        // toast.success(`${file.name} uploaded successfully!`);
-      } catch (error) {
-        // toast.error(`Error uploading ${file.name}. Please try again.`);
+      } else if (fileOrUrl instanceof File) {
+        // Handle File case
+        const blobUrl = URL.createObjectURL(fileOrUrl);
+        setNewFiles((prevFiles) => [
+          ...prevFiles.filter((f) => f.fileType !== isFileType),
+          { file: fileOrUrl, fileType: isFileType, blobUrl },
+        ]);
+
+        setCourseFee((prevState) => {
+          const updatedState = { ...prevState };
+          if (isFileType in updatedState.studentDocument) {
+            updatedState.studentDocument[isFileType] = blobUrl;
+          } else if (isFileType in updatedState.parentDocument) {
+            updatedState.parentDocument[isFileType] = blobUrl;
+          } else if (isFileType in updatedState.siblingsDocument) {
+            updatedState.siblingsDocument[isFileType] = blobUrl;
+          } else if (isFileType in updatedState.offerLetterAnsPassport) {
+            updatedState.offerLetterAnsPassport[isFileType] = blobUrl;
+          }
+          return updatedState;
+        });
+      } else {
+        console.warn("Unsupported file type or URL format.");
       }
-    }
-
-    // Delete files from Firebase
-    // for (const deletedFile of deletedFiles) {
-    //   const { fileUrl, fileType } = deletedFile;
-    //   const storageRef = ref(storage, fileUrl);
-    //   try {
-    //     await deleteObject(storageRef);
-    //     toast.success("File deleted successfully!");
-    //   } catch (error) {
-    //     toast.error("Error deleting file. Please try again.");
-    //   }
-    // }
-
-    const payload = {
-      ...courseFee,
-      studentInformationId: studentId,
     };
 
-    try {
-      setIsSubmitting(true);
-      const res = await courseFeeAdd(payload);
-      confirmPopUpOpen();
-      toast.success(res?.message || "Form Submitted");
+    const deleteFile = (fileUrl, fileType) => {
+      if (!fileUrl) return;
+
+      setDeletedFiles((prevFiles) => [...prevFiles, { fileUrl, fileType }]);
+
+      setCourseFee((prevState) => {
+        const updatedState = { ...prevState };
+        if (fileType in updatedState.studentDocument) {
+          updatedState.studentDocument[fileType] = "";
+        } else if (fileType in updatedState.parentDocument) {
+          updatedState.parentDocument[fileType] = "";
+        } else if (fileType in updatedState.siblingsDocument) {
+          updatedState.siblingsDocument[fileType] = "";
+        } else if (fileType in updatedState.offerLetterAnsPassport) {
+          updatedState.offerLetterAnsPassport[fileType] = "";
+        }
+        return updatedState;
+      });
+    };
+
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+
+      const validationErrors = validateFields();
+      if (Object.keys(validationErrors).length > 0) {
+        setErrors(validationErrors);
+        toast.error("Please fill required fields");
+        return;
+      }
+
+      // Upload new files to Firebase
+      for (const newFile of newFiles) {
+        const { file, fileType } = newFile;
+        const uniqueFileName = `${uuidv4()}-${file.name}`;
+        const storageRef = ref(
+          storage,
+          `uploads/courseFeeApplication/${uniqueFileName}`
+        );
+        try {
+        setIsSubmitting(true);
+
+          const snapshot = await uploadBytes(storageRef, file);
+          const downloadURL = await getDownloadURL(snapshot.ref);
+          setCourseFee((prevState) => {
+            const updatedState = { ...prevState };
+            if (fileType in updatedState.studentDocument) {
+              updatedState.studentDocument[fileType] = downloadURL;
+            } else if (fileType in updatedState.parentDocument) {
+              updatedState.parentDocument[fileType] = downloadURL;
+            } else if (fileType in updatedState.siblingsDocument) {
+              updatedState.siblingsDocument[fileType] = downloadURL;
+            } else if (fileType in updatedState.offerLetterAnsPassport) {
+              updatedState.offerLetterAnsPassport[fileType] = downloadURL;
+            }
+            return updatedState;
+          });
+          const uploadData = {
+            viewUrl: downloadURL,
+            documentName: file.name,
+            userId: studentId,
+          };
+          await uploadDocument(uploadData);
+          // toast.success(`${file.name} uploaded successfully!`);
+        } catch (error) {
+          // toast.error(`Error uploading ${file.name}. Please try again.`);
+        }
+      }
+
+      // Delete files from Firebase
+      // for (const deletedFile of deletedFiles) {
+      //   const { fileUrl, fileType } = deletedFile;
+      //   const storageRef = ref(storage, fileUrl);
+      //   try {
+      //     await deleteObject(storageRef);
+      //     toast.success("File deleted successfully!");
+      //   } catch (error) {
+      //     toast.error("Error deleting file. Please try again.");
+      //   }
+      // }
+
+      // const payload = {
+      //   ...courseFee,
+      //   studentInformationId: studentId,
+      // };
+
+
+      const filteredPayload = Object.fromEntries(
+        Object.entries({
+          ...courseFee,
+          studentInformationId: studentId,
+        }).filter(([key, value]) => {
+          if (key === "parentDocument" || key === "siblingsDocument") {
+            return Object.values(value).some((v) => v); // Keep only if there's at least one non-empty value
+          }
+          return true; 
+        })
+      );
+    
+      try {
+        const res = await courseFeeAdd(filteredPayload);
+        confirmPopUpOpen();
+        toast.success(res?.message || "Form Submitted");
       // Trigger notifications based on role
       if (role === "2" ) {
         if (socketServiceInstance.isConnected()) {
@@ -435,6 +450,9 @@ const courseFeeApplication = () => {
       setIsSubmitting(false);
     } catch (error) {
       toast.error(error.message || "Something went wrong");
+    }finally{
+      setIsSubmitting(false);
+
     }
   };
 
@@ -897,7 +915,7 @@ const courseFeeApplication = () => {
               onClick={handleSubmit}
               className="bg-primary text-white font-poppins rounded-md px-6 py-2 cursor-pointer"
             >
-              {isSubmitting ? "Submitting..." : "Save"}
+              {isSubmitting ? "Submitting..." : "Submit"}
             </span>
           </div>
         </div>
