@@ -466,7 +466,7 @@ const VisaWithdrawlForm = ({ choosedOption, studId }) => {
 
         <div className=" rounded-xl px-8 py-4 pb-12 -mt-4 mb-7">
           <FileUpload
-            label="Upload Aadhar Card *"
+            label="Upload Aadhar Card "
             acceptedFormats={{
               "application/pdf": [".pdf"],
               "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
@@ -505,7 +505,7 @@ const VisaWithdrawlForm = ({ choosedOption, studId }) => {
           )}
 
           <FileUpload
-            label="Upload Pan Card *"
+            label="Upload Pan Card "
             acceptedFormats={{
               "application/pdf": [".pdf"],
               "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
@@ -678,7 +678,7 @@ const VisaWithdrawlForm = ({ choosedOption, studId }) => {
 
         <div className=" rounded-xl px-8 py-4 pb-12 -mt-4 mb-7">
           <FileUpload
-            label="Upload Aadhar Card *"
+            label="Upload Aadhar Card "
             acceptedFormats={{
               "application/pdf": [".pdf"],
               "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
@@ -721,7 +721,7 @@ const VisaWithdrawlForm = ({ choosedOption, studId }) => {
           )}
 
           <FileUpload
-            label="Upload Pan Card *"
+            label="Upload Pan Card "
             acceptedFormats={{
               "application/pdf": [".pdf"],
               "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
