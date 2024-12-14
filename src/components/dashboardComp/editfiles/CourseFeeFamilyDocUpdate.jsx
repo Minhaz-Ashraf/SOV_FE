@@ -250,12 +250,12 @@ const CourseFeeFamilyDocUpdate = ({
               }
               return newState;
             });
+            setIsSubmitting(false);
+
           } catch (error) {
             // toast.error(`Error uploading ${file.name}.`);
             setIsSubmitting(false);
-          } finally {
-            setIsSubmitting(false);
-          }
+          } 
         })
       );
 
@@ -275,7 +275,7 @@ const CourseFeeFamilyDocUpdate = ({
       const payload = {
         ...filteredParentDocument,
         ...(Object.keys(filteredSiblingDocument).length > 0 && {
-          siblingDocument: filteredSiblingDocument,
+        ...filteredSiblingDocument,
         }),
       };
 
@@ -294,6 +294,8 @@ const CourseFeeFamilyDocUpdate = ({
     } catch (error) {
       console.error("Error during submission:", error);
       toast.error("Something went wrong.");
+    }finally {
+      setIsSubmitting(false);
     }
   };
 

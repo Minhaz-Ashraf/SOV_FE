@@ -194,7 +194,7 @@ const CourseFeeStudentDocumentUpdate = ({
           // Update the state with Firebase URL
           setCourseFee((prevState) => ({
             ...prevState,
-            studentDocument: updatedStudentDocument
+            studentDocument: updatedStudentDocument,
           }));
 
           // toast.success(`${file.name} uploaded successfully.`);
@@ -204,11 +204,11 @@ const CourseFeeStudentDocumentUpdate = ({
       }
 
       // Submit the updated `studentDocument` to the backend
-      const payload = {
-        ...courseFee,
-        studentDocument: updatedStudentDocument,
-      };
-      const res = await updateCourseFeeStudentDoc(appId, payload);
+    
+      const res = await updateCourseFeeStudentDoc(
+        appId,
+        updatedStudentDocument
+      );
 
       toast.success(res.message || "Data added successfully.");
       updatedData();
@@ -438,7 +438,7 @@ const CourseFeeStudentDocumentUpdate = ({
               className="bg-primary text-white px-6 py-2 rounded"
               onClick={handleSubmit}
             >
-              {isSubmitting ? "Submitting..." : "Save"}
+              {isSubmitting ? "Submitting..." : "Submit"}
             </button>
           </div>
         )}
