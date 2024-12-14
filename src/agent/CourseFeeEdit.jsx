@@ -111,7 +111,8 @@ const CourseFeeEdit = () => {
                 big deal if it's not - you can always change it.
               </p>
             </span>
-            {applicationDataById?.courseFeeApplication?.status === "rejected" && (
+            {applicationDataById?.visa?.status === "rejected" &&
+              role !== "0" ||role !== "1" && (
               <span
                 onClick={resSubmit}
                 className="px-6 py-2 bg-primary rounded-md text-white cursor-pointer"
