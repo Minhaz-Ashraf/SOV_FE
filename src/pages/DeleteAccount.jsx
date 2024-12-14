@@ -14,7 +14,7 @@ const DeleteAccount = () => {
   const { agentData } = useSelector((state) => state.agent);
 
   const { studentInfoData } = useSelector((state) => state.student);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const role = localStorage.getItem("role");
   const userId =
     role === "3"
@@ -123,9 +123,8 @@ const DeleteAccount = () => {
           </p>
           <p className="text-sidebar font-light text-center text-[14px]">
             {" "}
-            This action is permanent and cannot be undone. All your data,
-            including profile information and activity history, will be
-            permanently erased.
+            This action can be reverse anytime. All your data, including profile
+            information and activity history, will be restored.
           </p>
           <span
             onClick={openDeletePopup}

@@ -16,6 +16,7 @@ const ChangeEmail = () => {
     confirmEmail: '',
     password: '',
   });
+  
   const [isEmailChanged, setIsEmailChanged] = useState(false);
   const { newEmail, confirmEmail, password } = formData;
   const { getAdminProfile } = useSelector((state) => state.admin);
@@ -54,7 +55,7 @@ const ChangeEmail = () => {
 
     try {
       const res = await changeAdminEmail(payload);
-      toast.success(res.message || 'Email updated successfully');
+      toast.success(res.message || ' Your registered email has been successfully updated. Please log in using your new email to regain access to your account');
 
       if (res.statusCode === 200) {
         setIsEmailChanged(true);
@@ -128,7 +129,16 @@ const ChangeEmail = () => {
               onChange={handleInput}
             />
           </div>
-
+          <p className="text-body font-normal text-[13px] mt-2">
+            {" "}
+            current Email:{" "}
+            <span className="font-medium">
+              {" "}
+              {getAdminProfile?.data?.email}
+            </span>{" "}
+            <br />
+            Enter a new email address for your SOV account
+          </p>
           {/* Password Input */}
           <div className="mt-8">
             <CustomInput

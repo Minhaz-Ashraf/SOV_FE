@@ -4,7 +4,10 @@ import { toast } from "react-toastify";
 import Header from "./Header";
 import AgentSidebar from "./AgentSidebar";
 import { useSelector } from "react-redux";
-import { confirmUpdateEmail, getOtpToChageEmail } from "../../features/generalApi";
+import {
+  confirmUpdateEmail,
+  getOtpToChageEmail,
+} from "../../features/generalApi";
 import greenCheck from "../../assets/greenCheck.png"; // Make sure to update the path
 import socketServiceInstance from "../../services/socket";
 
@@ -19,9 +22,10 @@ const DashboardEmailOtp = () => {
   const navigate = useNavigate();
 
   const role = localStorage.getItem("role");
-  const userId = role === "3" ? studentInfoData?.data?.studentInformation?._id : agentData?._id
-
-
+  const userId =
+    role === "3"
+      ? studentInfoData?.data?.studentInformation?._id
+      : agentData?._id;
 
   const currentEmail =
     role === "2"
@@ -66,29 +70,28 @@ const DashboardEmailOtp = () => {
     try {
       const updatedPayload = {
         otp: otpValue,
-        email: newEmail
+        email: newEmail,
       };
       const res = await confirmUpdateEmail(updatedPayload);
-      
+
       if (res.statusCode === 200) {
         setIsOtpConfirmed(true);
-        toast.success(res.message || "OTP verified successfully");
+        toast.success(
+          res.message ||
+            " Your registered email has been successfully updated. Please log in using your new email to regain access to your account"
+        );
         if (socketServiceInstance.isConnected()) {
           //from agent to admin
-          const data = { userId : userId, reason : "password changed" }
-  
-          socketServiceInstance.socket.emit(
-            "DELETE_AUTH_TOKEN",
-            data
-          );
+          const data = { userId: userId, reason: "password changed" };
+
+          socketServiceInstance.socket.emit("DELETE_AUTH_TOKEN", data);
         } else {
           console.error("Socket connection failed, cannot emit notification.");
         }
         // Redirect to the login page after 3 seconds
         setTimeout(() => {
-        
           navigate("/login");
-          localStorage.removeItem("authToken")
+          localStorage.removeItem("authToken");
         }, 3000);
       } else {
         throw new Error("Invalid OTP");
@@ -134,13 +137,28 @@ const DashboardEmailOtp = () => {
         <div className="bg-white py-6 mb-2 md:ml-[31.5%] md:mr-[16%] sm:ml-[26%] mt-12 text-[20px] sm:mx-[22%] text-secondary">
           {isOtpConfirmed ? (
             <div className="flex flex-col justify-center w-full items-center">
-              <img src={greenCheck} alt="Success" loading="lazy" className="w-24 h-24" />
-              <p className="text-secondary font-poppins text-[22px] mt-6">Email changed successfully!</p>
-              <p className="text-green-500 font-poppins text-[16px]">We’re redirecting you to the login page...</p>
+              <img
+                src={greenCheck}
+                alt="Success"
+                loading="lazy"
+                className="w-24 h-24"
+              />
+              <p className="text-secondary font-poppins text-[22px] mt-6">
+                Email changed successfully!
+              </p>
+              <p className="text-green-500 font-poppins text-[16px]">
+                We’re redirecting you to the login page...
+              </p>
             </div>
           ) : (
             <>
-              <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} className="flex justify-center mt-4">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleSubmit();
+                }}
+                className="flex justify-center mt-4"
+              >
                 {otp.map((digit, index) => (
                   <input
                     key={index}

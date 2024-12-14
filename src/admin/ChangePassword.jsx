@@ -52,7 +52,7 @@ const ChangeAdminPassword = () => {
       const res = await changeAdminPassword(payload);
       toast.success(
         res.message ||
-          "Password changed successfully Please relogin with changed password"
+          "Your password has been successfully updated. Please log in using your new password to regain access to your account"
       );
       if (socketServiceInstance.isConnected()) {
         //from agent to admin
