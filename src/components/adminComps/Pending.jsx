@@ -81,7 +81,7 @@ const Pending = ({ data }) => {
             ? `Offer letter(${applicationData.applicationId})  has been approved for ${applicationData.institution} for the ${applicationData.fullName} ${applicationData.studentId}.`
             : `Offer letter(${applicationData.applicationId})  has been rejected for ${applicationData.institution} for the ${applicationData.fullName} ${applicationData.studentId}.Rejection Reason :- {${message}}`;
             path = "/agent/applications/lists"
-            pathData = pplicationData.studentInformationId
+            pathData = applicationData.studentInformationId
         }
       
         if (socketServiceInstance.isConnected()) {
@@ -250,9 +250,9 @@ const Pending = ({ data }) => {
                     ? `${
                         item?.type === "agent" ? "agent" : "student"
                       } has requested for reapproval of the profile .`
-                    : "has requested to register as an"
+                    : "has requested to register as "
                 } ${
-                  item?.type === "agent" ? "agent" : "student"
+                  item?.type === "agent" ? "an agent" : "a student"
                 } on SOV portal` || "Unknown User"
               }
               sectionData={item?.type === "agent" ? "company" : "student"}

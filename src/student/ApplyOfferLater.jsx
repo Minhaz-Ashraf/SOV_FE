@@ -556,7 +556,7 @@ const ApplyOfferLater = () => {
               " " +
               studentData?.studentInformation?.personalInformation?.lastName
             } ${studentId}
-`,
+`,           path: "/admin/applications-review",
             agentId: agentData?._id,
             agId: agentData?.agId,
             agentName: agentData?.companyDetails?.businessName,
@@ -597,7 +597,7 @@ const ApplyOfferLater = () => {
             } ${
               studentInfoData?.data?.studentInformation?.stId || ""
             } has submitted the offer letter application.`,
-            path: "",
+            path: "/admin/applications-review",
             recieverId: "",
           };
 
@@ -1007,7 +1007,8 @@ const ApplyOfferLater = () => {
               onClick={handleSubmit}
               className="bg-primary text-white font-poppins rounded-md px-6 py-2 cursor-pointer"
             >
-              Submit
+                           {isSubmitting ? "Submitting..." : "Submit"}
+
             </span>
           </div>
         </div>

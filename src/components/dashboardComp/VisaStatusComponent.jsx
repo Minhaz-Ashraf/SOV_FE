@@ -553,7 +553,7 @@ const VisaStatusComponent = ({ studentId }) => {
       ) : visaStatus?.visa?.status === "rejectedbyembassy" ? (
         <div
           className={`bg-white flex flex-col rounded-md justify-center items-center md:mx-52 py-9 font-poppins px-14 mb-20 ${
-              role === "3" ? "mt-60 mx-44 ml-96 " : ""
+              location.pathname === "/student/visa-update" ? "md:mx-20 md:ml-[28%] sm:mx-9 sm:ml-[28%]  mt-36 ":null
           } `}
         >
           {role !== "0" ? (

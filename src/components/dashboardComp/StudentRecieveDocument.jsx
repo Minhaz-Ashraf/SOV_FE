@@ -49,7 +49,7 @@ const StudentRecieveDocument = ({ studentId }) => {
 
   useEffect(() => {
     dispatch(getRecievedDocument({ studentId, page, perPage, search, isType }));
-    setIsLoading(false);
+    // setIsLoading(false);
   }, [dispatch, studentId, page, perPage, search, isType]);
 
   const TABLE_HEAD = [
@@ -67,7 +67,13 @@ const StudentRecieveDocument = ({ studentId }) => {
     date: formatDate(data.createdAt) || "NA",
     url: data.document[0] || "NA",
   }));
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
 
+    return () => clearTimeout(timer);
+  }, []);
   return (
     <>
       <div className="ml-6 mt-6 mr-6">
@@ -131,6 +137,7 @@ const StudentRecieveDocument = ({ studentId }) => {
             />
           </div>
         ) : (
+          <>
           <CustomTableSeven
             tableHead={TABLE_HEAD}
             tableRows={TABLE_ROWS}
@@ -138,8 +145,7 @@ const StudentRecieveDocument = ({ studentId }) => {
             icon={<FaRegEye />}
             tableType={"recieve"}
           />
-        )}
-      </div>
+    
 
       <div className="mt-16 mb-10 ">
         <Pagination
@@ -150,6 +156,9 @@ const StudentRecieveDocument = ({ studentId }) => {
           totalPagesCount={totalPagesCount}
         />
       </div>
+      </>
+    )}
+    </div>
     </>
   );
 };

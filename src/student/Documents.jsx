@@ -12,7 +12,7 @@ import TabBar from "../components/dashboardComp/TabBar";
 const Documents = () => {
   const role = localStorage.getItem("role");
   const location = useLocation();
-  const [isLoading, setIsLoading] =useState()
+  // const [isLoading, setIsLoading] =useState()
   const { studentInfoData } = useSelector((state) => state.student);
   const studentId = studentInfoData?.data?.studentInformation?._id
   const [searchParams, setSearchParams] = useSearchParams();
@@ -76,27 +76,21 @@ const Documents = () => {
     setActiveTab(tabName);
     setSearchParams({ tab: tabName });
   };
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
 
-    return () => clearTimeout(timer);
-  }, []);
   return (
     <>
       <Header customLink="/agent/shortlist" />
       <span className="fixed overflow-y-scroll scrollbar-hide  bg-white">
         <Sidebar />
       </span>
-      <div className="ml-[17%] pt-16 pb-8 bg-white border-b-2 border-[#E8E8E8] font-poppins  ">
+      <div className="ml-[17%] pt-16 pb-8 bg-white  font-poppins  ">
         <span className="flex items-center">
           <p className="text-[28px] font-bold text-sidebar mt-6 md:ml-9  sm:ml-20">
             Documents
           </p>
         </span>
         <p className="text-[16px] font-normal text-sidebar  md:ml-9  sm:ml-20">
-          Here you can view and manage all your uploaded documents.
+          Here you can view and manage all your uploaded and recieved documents.
         </p>
       </div>
       <div className="sm:ml-[9%] md:ml-0">

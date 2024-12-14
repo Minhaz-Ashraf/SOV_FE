@@ -149,7 +149,7 @@ const CourseFeeStudentDocumentUpdate = ({
     const validationErrors = validateFields();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-      toast.error("Form contains errors.");
+      toast.error("Please fill al required fields");
       return;
     }
 
@@ -197,9 +197,9 @@ const CourseFeeStudentDocumentUpdate = ({
             studentDocument: updatedStudentDocument
           }));
 
-          toast.success(`${file.name} uploaded successfully.`);
+          // toast.success(`${file.name} uploaded successfully.`);
         } catch (error) {
-          toast.error(`Error uploading ${file.name}.`);
+          // toast.error(`Error uploading ${file.name}.`);
         }
       }
 

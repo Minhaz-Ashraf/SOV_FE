@@ -57,10 +57,7 @@ const CourseFeeFamilyDocUpdate = ({
       : "sibling"
   );
 
-  console.log(
-    applicationDataById?.courseFeeApplication?.siblingsDocument
-      ?.siblingAadharCard
-  );
+
   useEffect(() => {
     dispatch(allApplication());
   }, [dispatch]);
@@ -208,7 +205,7 @@ const CourseFeeFamilyDocUpdate = ({
 
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-      toast.error("Form contains errors.");
+      toast.error("Please fill all required fields");
       return;
     }
 
@@ -254,7 +251,7 @@ const CourseFeeFamilyDocUpdate = ({
               return newState;
             });
           } catch (error) {
-            toast.error(`Error uploading ${file.name}.`);
+            // toast.error(`Error uploading ${file.name}.`);
             setIsSubmitting(false);
           } finally {
             setIsSubmitting(false);
@@ -702,7 +699,7 @@ const CourseFeeFamilyDocUpdate = ({
               className="bg-primary text-white px-6 py-2 rounded"
               onClick={handleSubmit}
             >
-              {isSubmitting ? "Submitting..." : "Save"}
+              {isSubmitting ? "Submitting..." : "Submit"}
             </button>
           </div>
         )}
@@ -712,4 +709,3 @@ const CourseFeeFamilyDocUpdate = ({
 };
 
 export default CourseFeeFamilyDocUpdate;
-  

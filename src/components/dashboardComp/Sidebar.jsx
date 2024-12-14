@@ -79,10 +79,13 @@ const Sidebar = () => {
       icon: <IoDocumentTextSharp />,
       label: "Applications",
       otherPath: "/student/application",
-      otherPathTwo: "/offerletter-apply",
+      otherPathTwo: "/offerLetter-apply",
       otherPathThree: "/offerLetter/edit",
       otherPathFive: "/visa-apply",
       otherPathSix: "/visa/edit",
+      otherPathSeven: "/course-fee/edit",
+      otherPathEight: "/course-fee"
+
     },
     {
       pathPage: "/student/visa-update",
@@ -109,7 +112,10 @@ const Sidebar = () => {
               path === item?.otherPathThree ||
               path === item?.otherPathFour ||
              path === item?.otherPathFive ||
-             path === item?.otherPathSix
+             path === item?.otherPathSix ||
+             path === item?.otherPathSeven ||
+             path === item?.otherPathEight 
+
 
                 ? "bg-[#FBD5D5] text-primary border-l-4 border-primary font-medium"
                 : "text-sidebar"

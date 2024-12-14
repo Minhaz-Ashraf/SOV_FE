@@ -88,9 +88,9 @@ const Approved = ({ data }) => {
                     ? `${
                         item?.type === "agent" ? "agent" : "student"
                       } has requested for reapproval of the profile .`
-                    : "has requested to register as an"
+                    : "has requested to register as "
                 } ${
-                  item?.type === "agent" ? "agent" : "student"
+                  item?.type === "agent" ? "an agent" : "a student"
                 } on SOV portal` || "Unknown User"
               }
               currentStatus="approved"

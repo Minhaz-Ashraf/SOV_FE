@@ -150,7 +150,7 @@ const CourseFeeDocUpdate = ({
     const validationErrors = validateFields();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-      toast.error("Form contains errors.");
+      toast.error("Please fill all required fields");
       return;
     }
 
@@ -437,7 +437,7 @@ const CourseFeeDocUpdate = ({
               className="bg-primary text-white px-6 py-2 rounded"
               onClick={handleSubmit}
             >
-              Save
+              Submit
             </button>
           </div>
         )}

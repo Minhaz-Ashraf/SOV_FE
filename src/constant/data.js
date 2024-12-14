@@ -211,7 +211,7 @@ export const applicationTypeOption = [
 ];
 export const statusOption = [
   { id: 0, option: "underreview", label: "Under Review" },
-  { id: 1, option: "completed", label: "Approved" },
+  { id: 1, option: "approved", label: "Approved" },
   { id: 2, option: "rejected", label: "Rejected" },
 ];
 export const statusApplicationView = [

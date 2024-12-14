@@ -127,7 +127,7 @@ const CertificateEdit = ({ appId, updatedData, profileViewPath, userId }) => {
   
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-      toast.error("Form contains errors.");
+      toast.error("Please fill all required fields");
       return;
     }
   
@@ -168,7 +168,7 @@ const CertificateEdit = ({ appId, updatedData, profileViewPath, userId }) => {
               },
             }));
           } catch (error) {
-            toast.error(`Error uploading ${file.name}.`);
+            // toast.error(`Error uploading ${file.name}.`);
           }
         }
       }
@@ -325,7 +325,7 @@ const CertificateEdit = ({ appId, updatedData, profileViewPath, userId }) => {
                 className="bg-primary text-white px-6 py-2 rounded"
                 onClick={handleSubmit}
               >
-                  {isSubmitting ? "Submitting..." : "Save"}
+                  {isSubmitting ? "Submitting..." : "Submit"}
               </button>
             </div>
           )}

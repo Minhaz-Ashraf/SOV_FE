@@ -671,7 +671,7 @@ const VisaApply = () => {
               onClick={handleSubmit}
               className="bg-primary text-white font-poppins rounded-md px-6 py-2 cursor-pointer"
             >
-              {isSubmitting ? "Submitting..." : "Save"}
+              {isSubmitting ? "Submitting..." : "Submit"}
             </span>
           </div>
         </div>

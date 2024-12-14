@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { CiStar } from "react-icons/ci";
 import { FaExclamation, FaCheck, FaStar } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import ApplicationChoosePop from "./ApplicationChoosePop";
 
 const InstituteCard = ({
   institutename,
@@ -13,6 +14,7 @@ const InstituteCard = ({
   status,
   customState,
 }) => {
+  const role = localStorage.getItem("role");
   const [isHovered, setIsHovered] = useState(false);
   const handleMouseEnter = () => {
     setIsHovered(true);
@@ -21,15 +23,26 @@ const InstituteCard = ({
   const handleMouseLeave = () => {
     setIsHovered(false);
   };
+  const [isOpenOpt, setIsOpenOpt] = useState(false);
+  // const availableApplications =  studentApplicationData?.applications?.filter(
+
+  // )
+
+  const closeOpt = () => {
+    setIsOpenOpt(false); // Close the popup
+  };
+
+  const handleOpenOpt = () => {
+    setIsOpenOpt(true); // Open the popup
+  };
 
   return (
     <>
       <div className="bg-white rounded-md px-6 py-6 font-poppins border border-[#E8E8E8] flex flex-col h-full ">
         <div className="flex-grow">
-        <p
+          <p
             className={`font-semibold text-[16px] text-sidebar leading-snug"
             }`} // Apply different style when hovered
-            
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
           >
@@ -37,10 +50,11 @@ const InstituteCard = ({
               ? `${institutename.slice(0, 55)}...`
               : institutename}
           </p>
-           {isHovered && (   <div className="text-start absolute  text-[13px] w-auto px-3 py-1 bg-white border  rounded-lg">
-                      <p> {institutename}</p>
-                    </div>
-                  )} 
+          {isHovered && (
+            <div className="text-start absolute  text-[13px] w-auto px-3 py-1 bg-white border  rounded-lg">
+              <p> {institutename}</p>
+            </div>
+          )}
           <p className="font-normal text-[14px] text-body">{country}</p>
         </div>
         <div className="mt-7 flex items-center justify-between gap-4 w-full">
@@ -61,27 +75,48 @@ const InstituteCard = ({
             </span>{" "}
             <span>Shortlist</span>
           </span>
-          <Link
-            to={link}
-            state={customState}
-            className="bg-primary  px-6 py-2 cursor-pointer w-1/2 text-center text-white text-[14px]"
-          >
-            Apply Now
-          </Link>
+          {role === "3" ? (
+            <span
+              onClick={handleOpenOpt}
+              className="bg-primary  px-6 py-2 cursor-pointer w-1/2 text-center text-white text-[14px]"
+            >
+              Apply Now
+            </span>
+          ) : (
+            <Link
+              to={link}
+              state={customState}
+              className="bg-primary  px-6 py-2 cursor-pointer w-1/2 text-center text-white text-[14px]"
+            >
+              Apply Now
+            </Link>
+          )}
         </div>
       </div>
+      <ApplicationChoosePop
+        isOpenOpt={isOpenOpt}
+        closeOpt={closeOpt}
+        state={customState}
+      />
     </>
   );
 };
 
-const StatusComp = ({ statusOne, statusTwo, statusThree, statusFour, statusFive, statusSix }) => {
+const StatusComp = ({
+  statusOne,
+  statusTwo,
+  statusThree,
+  statusFour,
+  statusFive,
+  statusSix,
+}) => {
   const statusList = [
     statusOne,
     statusTwo,
     "current",
-     statusFour,
-     statusFive,
-     statusSix,
+    statusFour,
+    statusFive,
+    statusSix,
   ];
   //
   const cardLabels = [

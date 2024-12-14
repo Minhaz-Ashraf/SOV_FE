@@ -35,6 +35,12 @@ const ShortlistComponent = ({ bodyText, headingText, cardData, shortlistInstitut
               country={institute.instituteId.country}
               shortlistInstitute={shortlistInstitute}
               status={institute.status}
+              link="/agent/student-lists"
+              customState={{
+                  country: institute.instituteId.country,
+                  institute: institute.instituteId.instituteName,
+                }}
+
             />
           ))}
         </div>

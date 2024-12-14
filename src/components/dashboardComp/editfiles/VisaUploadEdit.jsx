@@ -512,7 +512,7 @@ const VisaUploadEdit = ({ appId, updatedData, profileViewPath, userId }) => {
               className="bg-primary text-white px-6 py-2 rounded"
               onClick={handleSubmit}
             >
-              {isSubmitting ? "Submitting..." : "Save"}
+              {isSubmitting ? "Submitting..." : "Submit"}
             </button>
           </div>
         )}

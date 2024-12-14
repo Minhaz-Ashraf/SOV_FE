@@ -58,7 +58,7 @@ console.log(studentId)
   useEffect(() => {
     dispatch(getDocumentAll({path, search, page, perPage }));
 
-    setIsLoading(false);
+    // setIsLoading(false);
   }, [dispatch, search, page, perPage]);
 
   const TABLE_HEAD = [
@@ -135,7 +135,13 @@ console.log(studentId)
       toast.error(error.message);
     }
   };
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
 
+    return () => clearTimeout(timer);
+  }, []);
   return (
     <>
       <div className="ml-6 mt-6 mr-6">
@@ -194,6 +200,7 @@ console.log(studentId)
             />
           </div>
         ) : (
+          <>
           <CustomTableSeven
             tableHead={TABLE_HEAD}
             tableRows={TABLE_ROWS}
@@ -204,8 +211,7 @@ console.log(studentId)
             customLinkState={TABLE_ROWS?.map((data) => data.appId)}
             studentId={studentId}
           />
-        )}
-      </div>
+     
 
       <div className="mt-16 mb-10 ">
         <Pagination
@@ -216,6 +222,10 @@ console.log(studentId)
           totalPagesCount={totalPagesCount}
         />
       </div>
+      </>
+    )}
+    
+    </div>
     </>
   );
 };

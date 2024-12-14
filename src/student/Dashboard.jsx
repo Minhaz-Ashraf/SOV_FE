@@ -29,7 +29,7 @@ const Dashboard = () => {
     (state) => state.agent.shortlisted?.institutes
   );
   const { studentInfoData } = useSelector((state) => state.student);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [filterData, setFilterData] = useState({
     country: "",
     institutes: "",
@@ -48,10 +48,10 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    setIsLoading(true);
+    // setIsLoading(true);
     dispatch(getInstituteOption());
     dispatch(shortlistedData());
-    setIsLoading(false);
+    // setIsLoading(false);
   }, [dispatch]);
 
   useEffect(() => {
@@ -136,14 +136,30 @@ const Dashboard = () => {
         studentInfoData?.data?.flags?.visaApproved === "withdrawalcomplete"
       ? "pending"
       : "current";
+
+        useEffect(() => {
+          const timer = setTimeout(() => {
+            setIsLoading(false);
+          }, 2000);
+      
+          return () => clearTimeout(timer);
+        }, []);
+
   return (
-    <>
-      <Header customLink="/student/shortlist" />
-      <div className="">
-        <span className="fixed overflow-y-scroll scrollbar-hide  bg-white ">
-          <Sidebar />
-        </span>
-        <div className="md:ml-[16.5%] sm:ml-[22%] pt-24 bg-white">
+    
+     <>
+  <Header customLink="/student/shortlist" />
+  <div className="">
+    <span className="fixed overflow-y-scroll scrollbar-hide bg-white">
+      <Sidebar />
+    </span>
+    <div className="md:ml-[16.5%] sm:ml-[22%] pt-24 bg-white">
+      {isLoading ? (
+        <div className="w-1 ml-[45%]">
+          <Loader />
+        </div>
+      ) : (
+        <>
           <StatusComp
             statusOne={
               studentInfoData?.data?.studentInformation?.pageCount === 3
@@ -153,8 +169,7 @@ const Dashboard = () => {
             statusTwo={
               studentInfoData?.data?.flags?.offerLetterApproved === "approved"
                 ? "done"
-                : studentInfoData?.data?.flags?.offerLetterApproved ===
-                  "rejected"
+                : studentInfoData?.data?.flags?.offerLetterApproved === "rejected"
                 ? "pending"
                 : "current"
             }
@@ -169,7 +184,7 @@ const Dashboard = () => {
             statusSix={statusSix}
           />
           <div>
-            <span className="flex md:flex-row sm:flex-col items-center  ">
+            <span className="flex md:flex-row sm:flex-col items-center">
               <span>
                 <p className="text-[28px] font-bold text-sidebar mt-6 ml-9">
                   Explore: Colleges & Universities
@@ -180,9 +195,9 @@ const Dashboard = () => {
                   the perfect match for your educational journey.
                 </p>
               </span>
-              <span className="flex flex-row items-center md:ml-20 sm:mt-6 md:mr-6 sm:mr-3 ">
+              <span className="flex flex-row items-center md:ml-20 sm:mt-6 md:mr-6 sm:mr-3">
                 <CustomInput
-                  className="h-11 w-80 rounded-md placeholder:px-3  pl-9 border border-[#E8E8E8] outline-none"
+                  className="h-11 w-80 rounded-md placeholder:px-3 pl-9 border border-[#E8E8E8] outline-none"
                   type="text"
                   placeHodler="Search by Country & Universities"
                   name="search"
@@ -204,8 +219,6 @@ const Dashboard = () => {
                 value={filterData.country}
                 handleChange={handleInput}
               />
-              {/* Only show institute dropdown if a country is selected */}
-
               <InstituteComponent
                 imp={false}
                 name="institutes"
@@ -218,12 +231,7 @@ const Dashboard = () => {
             </span>
           </div>
 
-          {/* Loading and data handling */}
-          {isLoading ? (
-            <div className="w-1 ml-[53%]">
-              <Loader />
-            </div>
-          ) : !isFilterApplied ? (
+          {!isFilterApplied ? (
             <p className="mt-8 font-medium text-body ml-[14%] mr-[15%]">
               <Dnf
                 dnfImg={noInstitute}
@@ -267,10 +275,11 @@ const Dashboard = () => {
               </div>
             </>
           )}
-        </div>
-      </div>
-    </>
-  );
-};
+        </>
+      )}
+    </div>
+  </div>
+</>
 
+)}
 export default Dashboard;

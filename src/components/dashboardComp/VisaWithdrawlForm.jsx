@@ -262,7 +262,7 @@ const VisaWithdrawlForm = ({ choosedOption, studId }) => {
 
       // Show success message
       toast.success(res?.message || "Data added successfully");
-      if (role === "2" && res?.statusCode === 201) {
+      if (role === "2" ) {
         if (socketServiceInstance.isConnected()) {
           //from agent to admin
           const notificationData = {
@@ -284,7 +284,7 @@ const VisaWithdrawlForm = ({ choosedOption, studId }) => {
           console.error("Socket connection failed, cannot emit notification.");
         }
       }
-      if (role === "3" && res?.statusCode === 201) {
+      if (role === "3" ) {
         if (socketServiceInstance.isConnected()) {
           //from student to admin
           const notificationData = {
@@ -340,6 +340,7 @@ const VisaWithdrawlForm = ({ choosedOption, studId }) => {
         <div className="flex items-center justify-between gap-6 w-full px-6   rounded-md ">
           <span className="w-[50%]">
             <Register
+            imp={"*"}
               name="bankName"
               type="text"
               label="Bank Name"
@@ -348,7 +349,7 @@ const VisaWithdrawlForm = ({ choosedOption, studId }) => {
               errors={errors.bankName}
             />
             <CountrySelect
-              notImp={true}
+              notImp={false}
               name="country"
               label="Country"
               customClass="bg-input"
@@ -364,6 +365,8 @@ const VisaWithdrawlForm = ({ choosedOption, studId }) => {
           </span>
           <span className="w-[50%]">
             <Register
+            imp={"*"}
+
               name="branchName"
               type="text"
               label="Branch Name"
@@ -372,6 +375,8 @@ const VisaWithdrawlForm = ({ choosedOption, studId }) => {
               errors={errors.branchName}
             />
             <Register
+            imp={"*"}
+
               name="provinceState"
               type="text"
               label="Province/State"
@@ -383,6 +388,8 @@ const VisaWithdrawlForm = ({ choosedOption, studId }) => {
         </div>
         <div className="px-6">
           <Register
+            imp={"*"}
+
             name="address"
             type="text"
             label="Address"
@@ -395,6 +402,8 @@ const VisaWithdrawlForm = ({ choosedOption, studId }) => {
         <div className="flex items-center justify-between gap-6 w-full px-6 ">
           <span className="w-[50%]">
             <Register
+            imp={"*"}
+
               name="city"
               type="text"
               label="City"
@@ -404,6 +413,8 @@ const VisaWithdrawlForm = ({ choosedOption, studId }) => {
             />
 
             <Register
+            imp={"*"}
+
               name="bankAccountName"
               type="text"
               label="Bank Account Name"
@@ -422,6 +433,8 @@ const VisaWithdrawlForm = ({ choosedOption, studId }) => {
           </span>
           <span className="w-[50%]">
             <Register
+            imp={"*"}
+
               name="postalCode"
               type="number"
               label="Zip/Postal Code"
@@ -431,6 +444,8 @@ const VisaWithdrawlForm = ({ choosedOption, studId }) => {
             />
 
             <Register
+            imp={"*"}
+
               name="bankAccountNumber"
               type="text"
               label="Bank Account Number"
@@ -451,7 +466,7 @@ const VisaWithdrawlForm = ({ choosedOption, studId }) => {
 
         <div className=" rounded-xl px-8 py-4 pb-12 -mt-4 mb-7">
           <FileUpload
-            label="Upload Aadhar Card"
+            label="Upload Aadhar Card *"
             acceptedFormats={{
               "application/pdf": [".pdf"],
               "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
@@ -490,7 +505,7 @@ const VisaWithdrawlForm = ({ choosedOption, studId }) => {
           )}
 
           <FileUpload
-            label="Upload Pan Card"
+            label="Upload Pan Card *"
             acceptedFormats={{
               "application/pdf": [".pdf"],
               "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
@@ -536,6 +551,8 @@ const VisaWithdrawlForm = ({ choosedOption, studId }) => {
         <div className="flex items-center justify-between gap-6 w-full px-6   rounded-md ">
           <span className="w-[50%]">
             <Register
+            imp={"*"}
+
               name="bankName"
               type="text"
               label="Bank Name"
@@ -544,7 +561,7 @@ const VisaWithdrawlForm = ({ choosedOption, studId }) => {
               // errors={errors.bankName}
             />
             <CountrySelect
-              notImp={true}
+              notImp={false}
               name="country"
               label="Country"
               customClass="bg-input"
@@ -560,6 +577,8 @@ const VisaWithdrawlForm = ({ choosedOption, studId }) => {
           </span>
           <span className="w-[50%]">
             <Register
+            imp={"*"}
+
               name="branchName"
               type="text"
               label="Branch Name"
@@ -568,6 +587,8 @@ const VisaWithdrawlForm = ({ choosedOption, studId }) => {
               // errors={errors.branchName}
             />
             <Register
+            imp={"*"}
+
               name="provinceState"
               type="text"
               label="Province/State"
@@ -579,6 +600,8 @@ const VisaWithdrawlForm = ({ choosedOption, studId }) => {
         </div>
         <div className="px-6">
           <Register
+            imp={"*"}
+
             name="address"
             type="text"
             label="Address"
@@ -591,6 +614,8 @@ const VisaWithdrawlForm = ({ choosedOption, studId }) => {
         <div className="flex items-center justify-between gap-6 w-full px-6 ">
           <span className="w-[50%]">
             <Register
+            imp={"*"}
+
               name="city"
               type="text"
               label="City"
@@ -600,6 +625,8 @@ const VisaWithdrawlForm = ({ choosedOption, studId }) => {
             />
 
             <Register
+            imp={"*"}
+
               name="bankAccountName"
               type="text"
               label="Bank Account Name"
@@ -618,6 +645,8 @@ const VisaWithdrawlForm = ({ choosedOption, studId }) => {
           </span>
           <span className="w-[50%]">
             <Register
+            imp={"*"}
+
               name="postalCode"
               type="number"
               label="Zip/Postal Code"
@@ -627,6 +656,8 @@ const VisaWithdrawlForm = ({ choosedOption, studId }) => {
             />
 
             <Register
+            imp={"*"}
+
               name="bankAccountNumber"
               type="text"
               label="Bank Account Number"
@@ -647,7 +678,7 @@ const VisaWithdrawlForm = ({ choosedOption, studId }) => {
 
         <div className=" rounded-xl px-8 py-4 pb-12 -mt-4 mb-7">
           <FileUpload
-            label="Upload Aadhar Card"
+            label="Upload Aadhar Card *"
             acceptedFormats={{
               "application/pdf": [".pdf"],
               "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
@@ -690,7 +721,7 @@ const VisaWithdrawlForm = ({ choosedOption, studId }) => {
           )}
 
           <FileUpload
-            label="Upload Pan Card"
+            label="Upload Pan Card *"
             acceptedFormats={{
               "application/pdf": [".pdf"],
               "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
