@@ -221,7 +221,7 @@ const AgentDashboard = () => {
 
   const filteredLineData = {
     labels: monthNames, // Months as labels
-    label: `# of Students (${selectedYearBar})`,
+    label: `Total Number of Students (${selectedYearBar})`,
     values: monthNames.map((month, index) => {
       const monthNumber = index + 1; // Map index to month number (1-12)
 
