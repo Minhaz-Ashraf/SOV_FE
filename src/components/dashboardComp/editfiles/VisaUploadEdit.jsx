@@ -223,7 +223,7 @@ const VisaUploadEdit = ({ appId, updatedData, profileViewPath, userId }) => {
       // Submit the updated data to the backend
       const res = await updateVisaDocument(appId, updatedStudentDocument);
   
-      toast.success(res.message || "Data added successfully.");
+      toast.success("Data added successfully.");+-
       updatedData();
       handleCancelOne();
       setIsSubmitting(false);

@@ -232,7 +232,7 @@ const IeltsScore = ({ appId, updatedData, profileViewPath}) => {
                   className="bg-primary text-white px-6 py-2 rounded"
                   onClick={handleSubmit}
                 >
-                  Save
+                  Submit
                 </button>
               </div>
             </>
