@@ -187,7 +187,7 @@ const TicketSupport = () => {
                 </select>
                 <span className="px-3 text-body">entries</span> */}
                 <select
-                  className="ml-3 border px-2 py-1 w-24 h-11 rounded outline-none"
+                  className=" border px-2 py-1 w-24 h-11 rounded outline-none"
                   value={isPriorityType}
                   onChange={handlePriorityTypeChange}
                 >
@@ -207,7 +207,7 @@ const TicketSupport = () => {
                 />
                 <span className="flex flex-row items-center  ml-9">
                   <CustomInput
-                    className="h-11 w-80 rounded-md text-body placeholder:px-3 pl-7 border border-[#E8E8E8] outline-none"
+                    className="h-11 md:w-80 sm:w-52 rounded-md text-body placeholder:px-3 pl-7 border border-[#E8E8E8] outline-none"
                     type="text"
                     placeHodler="Search by Ticket ID"
                     name="search"
@@ -223,7 +223,7 @@ const TicketSupport = () => {
           </span>
           <span
             onClick={downloadAll}
-            className="bg-primary px-6  rounded-md text-white cursor-pointer py-2"
+            className="bg-primary px-6   rounded-md text-white cursor-pointer py-2"
           >
             {downloading ? "Downloading...." : "Download"}
           </span>

@@ -134,8 +134,8 @@ const ApplicationList = () => {
           </span>
         </span>
       </div>
-      <span className="flex md:flex-row sm:flex-col md:items-center sm:items-start justify-between mr-6">
-        <span className="flex flex-row items-center mb-3 m-6 mt-6 sm:ml-[27%] md:ml-[1%] lg:ml-[18%]  ">
+      <span className="flex flex-row  justify-between mr-6 items-baseline">
+        <span className="flex flex-row items-center mb-3 m-6 mt-6 sm:ml-[25%] md:ml-[1%] lg:ml-[18%]  ">
           {" "}
          
           <select
@@ -165,7 +165,7 @@ const ApplicationList = () => {
         </span>
         <span
           onClick={downloadAll}
-          className="bg-primary ml-5 sm:ml-[27%]  text-white px-4 rounded-md py-2 cursor-pointer"
+          className="bg-primary ml-5 text-white px-4 rounded-md py-2 cursor-pointer"
         >
                     {downloading ? "Downloading...." : "Download"}
 

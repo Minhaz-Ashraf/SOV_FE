@@ -114,7 +114,7 @@ const AgentDirectory = () => {
           <span className="flex flex-row justify-between w-full items-center">
             <span className="flex flex-row items-center">
              
-              <span className="flex flex-row items-center  sm:ml-9 md:-ml-2">
+              <span className="flex flex-row items-center  sm:ml-14 md:-ml-2 ">
                 <CustomInput
                   className="h-11 md:w-80 sm:w-60 rounded-md  text-body placeholder:px-3 pl-7 border border-[#E8E8E8] outline-none"
                   type="text"
