@@ -106,7 +106,7 @@ const DashboardEmailOtp = () => {
     try {
       const payload = { email: currentEmail };
       const res = await getOtpToChageEmail(payload);
-      toast.success(res?.message || "OTP sent successfully");
+      toast.success(" Your registered email has been successfully updated. Please log in using your new email to regain access to your account");
       setTimer(60);
       setResendDisabled(true);
     } catch (error) {

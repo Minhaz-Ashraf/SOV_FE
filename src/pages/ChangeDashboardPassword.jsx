@@ -59,7 +59,7 @@ const ChangeDashboardPassword = () => {
     try {
       const res = await changePasswordData(isPassword);
       toast.success(
-        res.message ||
+        
           "Your password has been successfully updated. Please log in using your new password to regain access to your account"
       );
       if (socketServiceInstance.isConnected()) {

@@ -43,10 +43,10 @@ const VerifyPopUp = ({ isVerifyOpen, OtpResend, handleVerify, email }) => {
     const otpValue = otp.join("");
     try {
       const res = await handleVerify(otpValue);
-      toast.success(res || "Verification Successful");
+      toast.success(res.message || "Verification Successful");
+      console.log(res)
     } catch (error) {
-      toast.error(error?.message || "Something went wrong");
-      console.log(error);
+      toast.error(error || "Something went wrong");
     } finally {
       setIsSubmitting(false); 
     }
