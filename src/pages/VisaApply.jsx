@@ -400,7 +400,7 @@ const VisaApply = () => {
             title: " STUDENT_SUBMITTED_VISA_LODGEMENT",
             message: `${agentData?.companyDetails?.businessName} ${
               agentData?.agId
-            } has submitted the  Visa lodgment application of ${CountryName}  for the student   ${
+            } has submitted the  Visa lodgment application of ${countryName}  for the student   ${
               studentData?.studentInformation?.personalInformation?.firstName +
               " " +
               studentData?.studentInformation?.personalInformation?.lastName
