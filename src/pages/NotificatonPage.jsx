@@ -154,7 +154,10 @@ const NotificationPage = () => {
               : notification.title === "VISA_REJECTED_BY_EMBASSY_AGENT" ||
                 notification.title === "VISA_APPROVED_BY_EMBASSY_AGENT" ||
                 notification.title === "STUDENT_REQUESTED_AMOUNT_WITHDRAWAL"||
-                notification.title === "AGENT_REQUESTED_AMOUNT_WITHDRAWAL"
+                notification.title === "AGENT_REQUESTED_AMOUNT_WITHDRAWAL"||
+                notification.title === "AGENT_WITHDRAWAL_COMPLETE"
+
+
 
               ? "> Go to Visa Status"
               : null}
