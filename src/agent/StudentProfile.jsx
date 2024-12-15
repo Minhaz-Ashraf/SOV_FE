@@ -225,7 +225,7 @@ const StudentProfile = () => {
                   ? "pt-20  pl-[19.5%] pb-6"
                   : location?.state?.adminState
                   ? " pl-[19.5%] pt-20 pb-6"
-                  : " pl-[19.5%] pt-[25px] pb-6"
+                  : `pl-[19.5%] ${role === "0" ? "pt-[75px] " : "pt-[25px]"} pb-6`
               }`}
             >
               <span>
