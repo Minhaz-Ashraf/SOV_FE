@@ -137,7 +137,7 @@ const Pending = ({ data }) => {
           const notificationData = {
             title: notificationTitle,
             message: notificationMessage,
-            path: `/student/visa-update`,
+            path: path,
             recieverId: applicationData.userId,
           };
       
