@@ -177,7 +177,7 @@ const ApplicationView = ({stId, adminPath, adminAccess}) => {
           className={`mt-6 mr-6 ${
             location.pathname === "/student-profile"
               ? "ml-6"
-              : "md:ml-[19.5%]  sm:ml-[27%]"
+              : "md:ml-[18.5%]  sm:ml-[25%]"
           }`}
         >
           <span className="flex flex-row items-center mb-3">
@@ -232,7 +232,7 @@ const ApplicationView = ({stId, adminPath, adminAccess}) => {
         studentApplicationData?.applications?.length > 0 ? (
         <>
           <div className={`  mt-6 mr-6 ${
-            location.pathname === "/student-profile" ? "ml-6" : "ml-[19%]"
+            location.pathname === "/student-profile" ? "ml-6" : "sm:ml-[26.5%] md:ml-[19%]"
           }`}>
             <CustomTableTwo
               tableHead={TABLE_HEAD}

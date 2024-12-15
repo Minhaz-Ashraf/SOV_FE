@@ -91,7 +91,7 @@ const Applications = () => {
         </span>
       </div>
       <div className="bg-white">
-        <span className="flex items-center pt-20 md:ml-[16.5%] sm:ml-[23%] ">
+        <span className="flex items-center pt-16 md:ml-[16.5%] sm:ml-[23%] sm:pb-6">
           <span>
             <p className="md:text-[28px] text-[22px] font-bold text-sidebar mt-6 ml-9">
               Application Overview ({totalUsersCount})
@@ -117,7 +117,7 @@ const Applications = () => {
           ))}
         </select>
         <span className="px-3 text-body">entries</span> */}
-        <span className="flex flex-row items-center  ml-9">
+        <span className="flex flex-row items-center  ">
           <CustomInput
             className="h-11 w-80 rounded-md text-body placeholder:px-3 pl-7 border border-[#E8E8E8] outline-none"
             type="text"
