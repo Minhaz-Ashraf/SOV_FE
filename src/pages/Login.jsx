@@ -11,7 +11,7 @@ const Login = () => {
         <span>
           <ImageComponent
             src={loginBanner}
-            className="md:w-[78vh] md:h-[90vh] sm:h-[60vh] rounded-xl md:mt-6 mb-5 mr-16 object-cover sm:mt-36"
+            className="md:w-[78vh] md:h-[85vh] lg:h-[90vh] sm:h-[60vh] rounded-xl md:mt-6 mb-5 mr-16 object-cover sm:mt-36"
           />
         </span>
         <span>
@@ -23,7 +23,7 @@ const Login = () => {
             Login Your Account
           </p>
 
-          <span className="flex flex-col bg-white rounded-md md:w-[80vh] xl:w-[80vh] sm:w-[30vh] px-10 py-9 md:ml-20 mt-3">
+          <span className="flex flex-col bg-white rounded-md md:w-[50vh] lg:w-[80vh] xl:w-[80vh] sm:w-[30vh] px-10 py-9 md:ml-20 mt-3">
             <p className="text-secondary text-[18px] font-medium">
               Login account as a{" "}
             </p>

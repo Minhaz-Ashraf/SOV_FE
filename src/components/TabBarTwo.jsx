@@ -17,7 +17,7 @@ const TabBarTwo = ({ tabs }) => {
             <button
               key={tab.name}
               onClick={() => handleTabClick(tab.name)}
-              className={`py-2 px-4 focus:outline-none ${
+              className={`py-2 md:px-4 sm:px-2 focus:outline-none ${
                 activeTab === tab.name
                   ? "border-b-2 border-primary"
                   : "text-gray-500"
@@ -37,7 +37,7 @@ const TabBarTwo = ({ tabs }) => {
               tab?.props?.profileView === "/admin/approvals" ||
               tab?.props?.profileView === "/admin/applications-review"
                 ? " mx-44 "
-                : " mr-6 mt-6 ml-[18.5%]"
+                : " mr- mt-6 ml-[16.5%]"
             }  `}
           >
             {activeTab === tab.name ? (

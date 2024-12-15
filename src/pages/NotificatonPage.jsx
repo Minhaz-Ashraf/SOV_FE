@@ -186,7 +186,7 @@ const NotificationPage = () => {
             <AdminSidebar />
           ) : null}
         </span>
-        <div className="ml-[17%] pt-16 pb-5 bg-white border-b-2 border-[#E8E8E8]">
+        <div className="md:ml-[17%] sm:ml-[18%] pt-16 pb-5 bg-white border-b-2 border-[#E8E8E8]">
           <span className="flex items-center pt-2 md:ml-[0%] sm:ml-7">
             <p className="text-[28px] font-bold text-sidebar mt-6 ml-9">
               Notifications Center

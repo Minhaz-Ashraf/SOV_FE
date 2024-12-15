@@ -87,7 +87,7 @@ const ChangeDashboardPassword = () => {
         </span>
       </div>
       <div className="font-poppins">
-        <span className="flex md:flex-row sm:flex-col items-center bg-white mt-20 md:ml-[16.5%] sm:ml-[22%] pb-6">
+        <span className="flex md:flex-row sm:flex-col md:items-center bg-white mt-16 md:ml-[16.5%] sm:ml-[22%]  pb-6">
           <span>
             <p className="text-[28px] font-bold text-sidebar mt-6 ml-9">
               Change Password
@@ -98,13 +98,13 @@ const ChangeDashboardPassword = () => {
           </span>
         </span>
 
-        <div className="flex flex-row gap-2 items-center mb-2 md:ml-[31.5%] md:mr-[16%] sm:ml-[26%] mt-12 text-[20px] sm:mx-[22%] text-secondary">
+        <div className="flex flex-row gap-2 items-center mb-2 md:ml-[31.5%] md:mr-[16%] sm:ml-[26%] mt-12 text-[20px] sm:mx-[22%]  text-secondary">
           <span>
             <BsKeyFill />
           </span>
           <span className="font-semibold">Password</span>
         </div>
-        <div className="bg-white rounded-md mb-20 md:ml-[31.5%] md:mr-[16%] px-8 py-6 sm:ml-[26%]">
+        <div className="bg-white rounded-md mb-20 md:ml-[31.5%] md:mr-[16%] px-8 py-6 sm:ml-[26%] sm:mr-6">
           <PasswordField
             name="password"
             value={isPassword.password}

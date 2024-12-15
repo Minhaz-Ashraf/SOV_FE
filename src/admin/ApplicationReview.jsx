@@ -140,9 +140,9 @@ const ApplicationReview = () => {
           <option value="student">Student</option>
           <option value="company">Agent</option>
         </select> */}
-        <span className="flex flex-row items-center ml-9">
+        <span className="flex flex-row items-center ">
           <CustomInput
-            className="h-11 md:w-80 sm:w-48 rounded-md text-body placeholder:px-3 pl-7 border border-[#E8E8E8] outline-none"
+            className="h-11 md:w-80 sm:w-80 rounded-md text-body placeholder:px-3 pl-7 border border-[#E8E8E8] outline-none"
             type="text"
             placeHodler="Search by User Name & Application Id "
             name="search"
@@ -159,7 +159,7 @@ const ApplicationReview = () => {
       </div>
 {applications?.applications  ?  
 
-      <div className="mt-12 mb-10 ">
+      <div className="mt-12 mb-10 ml-36 ">
         <Pagination
           currentPage={currentPage}
           hasNextPage={currentPage * perPage < totalUsersCount}

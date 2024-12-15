@@ -78,7 +78,7 @@ const DeleteAccount = () => {
           </span>
         </span>
 
-        <div className="bg-white rounded-md mb-20 mt-6 md:ml-[31.5%] md:mr-[16%] px-8 py-6 sm:ml-[26%] font-poppins flex flex-col items-center justify-center">
+        <div className="bg-white rounded-md mb-20 mt-6 md:ml-[31.5%] md:mr-[16%] px-8 py-6 sm:ml-[26%] sm:mr-6 font-poppins flex flex-col items-center justify-center">
           <img
             src={
               role === "2"

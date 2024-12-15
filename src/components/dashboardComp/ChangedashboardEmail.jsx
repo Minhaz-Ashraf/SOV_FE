@@ -74,7 +74,7 @@ const ChangeDashboardEmail = () => {
         </span>
       </div>
       <div className="font-poppins">
-        <span className="flex md:flex-row sm:flex-col items-center bg-white mt-20 md:ml-[16.5%] sm:ml-[22%] pb-6">
+        <span className="flex md:flex-row sm:flex-col items-center bg-white mt-16 md:ml-[16.5%] sm:ml-[22%] pb-6">
           <span>
             <p className="text-[28px] font-bold text-sidebar mt-6 ml-9">
               Change Email Address
@@ -86,16 +86,16 @@ const ChangeDashboardEmail = () => {
           </span>
         </span>
 
-        <div className="flex flex-row gap-2 items-center mb-2 md:ml-[31.5%] md:mr-[16%] sm:ml-[26%] mt-8 text-[20px] sm:mx-[22%] text-secondary">
+        <div className="flex flex-row gap-2 items-center mb-2 md:ml-[31.5%] md:mr-[16%] sm:ml-[26%] mt-8 text-[20px] sm:mx-[22%] sm:mr-6 text-secondary">
           <span className="font-semibold"></span>
         </div>
-        <div className="bg-white rounded-md mb-20 md:ml-[31.5%] md:mr-[16%] px-8 py-10 sm:ml-[26%] font-poppins">
+        <div className="bg-white rounded-md mb-20 md:ml-[31.5%] md:mr-[16%] px-8 py-10 sm:ml-[26%] font-poppins sm:mr-6">
           <div className="">
             <p className="text-secondary text-[14px] mb-2">New Email *</p>
             <CustomInput
               type="email"
               name="newMail"
-              className="h-11 md:w-full sm:w-48 rounded-md text-body bg-input pl-3 border border-[#E8E8E8] outline-none"
+              className="h-11 w-full  rounded-md text-body bg-input pl-3 border border-[#E8E8E8] outline-none"
               placeHodler="Enter new Email Address"
               value={newMail}
               onChange={handleInput}
@@ -107,7 +107,7 @@ const ChangeDashboardEmail = () => {
             <CustomInput
               type="email"
               name="confirmNewMail"
-              className="h-11 md:w-full sm:w-48 rounded-md text-body bg-input pl-3 border border-[#E8E8E8] outline-none"
+              className="h-11 w-full  rounded-md text-body bg-input pl-3 border border-[#E8E8E8] outline-none"
               placeHodler="Confirm new Email Address"
               value={confirmNewMail}
               onChange={handleInput}

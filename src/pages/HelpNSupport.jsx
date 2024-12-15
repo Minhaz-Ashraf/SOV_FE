@@ -224,9 +224,9 @@ const HelpNSupport = () => {
             </p>
           </span>
         </span>
-        <div className="md:ml-[19.5%] sm:ml-[27%] mt-6 mr-6">
-          <span className="flex flex-row items-center mb-3">
-            <span className="flex flex-row justify-between w-full items-center">
+        <div className="md:ml-[19.5%] sm:ml-[25%] mt-6 mr-6">
+          <span className="flex flex-row  items-center mb-3">
+            <span className="flex md:flex-row sm:flex-col justify-between w-full md:items-center sm:items-start ">
               <span className="flex flex-row items-center ">
                 {" "}
                 {/* <span className="text-body">Show</span>
@@ -243,7 +243,7 @@ const HelpNSupport = () => {
                 </select>
                 <span className="px-3 text-body">entries</span> */}
                 <select
-                  className="ml-3 border px-2 py-1 w-24 h-11 rounded outline-none"
+                  className="ml-3 border px-2 py-1 md:w-20 lg:w-24 h-11 rounded outline-none"
                   value={isStatusType}
                   onChange={handleStatusTypeChange}
                 >
@@ -269,13 +269,13 @@ const HelpNSupport = () => {
                 <CustomInput
                   type="date"
                   placeHodler="Date"
-                  className="ml-3 border px-2 py-1 w-36 h-11 rounded outline-none"
+                  className="ml-3 border px-2 py-1 md:w-36 sm:w-28 h-11 rounded outline-none"
                   value={isDate}
                   onChange={handleDateChange}
                 />
                 <span className="flex flex-row items-center  ml-9">
                   <CustomInput
-                    className="h-11 w-80 rounded-md text-body placeholder:px-3 pl-7 border border-[#E8E8E8] outline-none"
+                    className="h-11 md:w-60 sm:w-44 lg:w-80 rounded-md text-body placeholder:px-3 pl-7 border border-[#E8E8E8] outline-none"
                     type="text"
                     placeHodler="Search by Ticket ID"
                     name="search"
@@ -289,7 +289,7 @@ const HelpNSupport = () => {
               </span>
               <span
                 onClick={PopUpOpen}
-                className="bg-primary text-white px-4  rounded-md py-2 cursor-pointer"
+                className="bg-primary text-white px-4  sm:mt-6 sm:ml-3 md:mt-0 rounded-md py-2 cursor-pointer"
               >
                 + Create Ticket
               </span>

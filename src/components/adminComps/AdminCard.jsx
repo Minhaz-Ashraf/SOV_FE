@@ -47,7 +47,7 @@ const AdminCard = ({
           </span>
           <span
             className={`font-normal text-sidebar sm:text-[12px] md:text-[14px] ${
-              isApproval ? "md:w-96 sm:w-64" : "md:w-80 sm:64"
+              isApproval ? "md:w-96 sm:w-64" : "md:w-80 sm:w-36"
             }`}
           >
             {description}
