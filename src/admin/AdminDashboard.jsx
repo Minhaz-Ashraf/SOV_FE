@@ -272,7 +272,7 @@ const [userDataType, setUserDataType]  = useState('');
   // Add agent dataset if data exists
   if (agentLineData.length > 0) {
     datasets.push({
-      label: `# of Agents (${selectedYearLine})`,
+      label: `Total Number of Agents (${selectedYearLine})`,
       data: monthNames.map((month, index) => {
         const monthNumber = index + 1;
         const agent = agentLineData.find(
@@ -291,7 +291,7 @@ const [userDataType, setUserDataType]  = useState('');
   // Add student dataset if data exists
   if (studentData.length > 0) {
     datasets.push({
-      label: `# of Students (${selectedYearLine})`,
+      label: `Total Number of Students (${selectedYearLine})`,
       data: monthNames.map((month, index) => {
         const monthNumber = index + 1;
         const student = studentData.find(
@@ -467,7 +467,7 @@ const [userDataType, setUserDataType]  = useState('');
                   Application Type:{" "}
                 </label>
                 <select
-                  className="ml-3 border px-2 py-1 w-24 h-11 rounded outline-none"
+                  className="ml-3 border px-2 py-1 w-28 h-11 rounded outline-none"
                   value={isUserType}
                   onChange={handleUserChange}
                 >

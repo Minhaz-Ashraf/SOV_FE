@@ -80,7 +80,11 @@ const AdminLogin = () => {
       setLoading(false);
     }
   };
-
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleLogin(e);
+    }
+  };
 
   return (
     <>
