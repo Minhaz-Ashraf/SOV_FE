@@ -359,7 +359,7 @@ const FileUpload = ({
   return (
     <div className={`flex flex-col gap-2 font-poppins ${customClass}`}>
       <label className="text-[14px] text-secondary">{label}</label>
-      <div className="flex flex-row-reverse items-center gap-2">
+      <div className="flex md:flex-row-reverse sm:flex-col items-center gap-2 ">
         <input
           type="file"
           onChange={handleFileChange}
