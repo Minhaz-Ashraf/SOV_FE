@@ -33,7 +33,7 @@ const ProtectedAdmin = ({ children }) => {
 
   if (isRoleNotZero && !authToken ) {
     console.log('Navigating to login due to missing profile data');
-    return <Navigate to="/login" replace={true} />;
+    return <Navigate to="/admin/role/auth/login" replace={true} />;
   }
 
   // If everything is fine, render the children
