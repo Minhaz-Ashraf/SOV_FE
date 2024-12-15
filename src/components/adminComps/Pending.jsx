@@ -249,7 +249,7 @@ const Pending = ({ data }) => {
                   item?.status === "requestedForReapproval"
                     ? `${
                         item?.type === "agent" ? "agent" : "student"
-                      } has requested for reapproval of the profile as .`
+                      } has requested for reapproval of the profile as`
                     : "has requested to register as "
                 } ${
                   item?.type === "agent" ? "an agent" : "a student"
