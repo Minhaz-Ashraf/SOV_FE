@@ -8,6 +8,7 @@ import { greenCheck } from '../assets';
 import socketServiceInstance from '../services/socket';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import PasswordField from '../components/reusable/PasswordField';
 
 const ChangeEmail = () => {
   const navigate = useNavigate();
@@ -18,6 +19,8 @@ const ChangeEmail = () => {
   });
   
   const [isEmailChanged, setIsEmailChanged] = useState(false);
+  const [showConPassword, setShowConPassword] = useState(false);
+
   const { newEmail, confirmEmail, password } = formData;
   const { getAdminProfile } = useSelector((state) => state.admin);
    const userId = getAdminProfile?.data?._id
@@ -30,6 +33,7 @@ const ChangeEmail = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
+  const toggleConPasswordVisibility = () => setShowConPassword((prev) => !prev);
 
   const handleSubmit = async () => {
     // Check if fields are empty
@@ -141,13 +145,14 @@ const ChangeEmail = () => {
           </p>
           {/* Password Input */}
           <div className="mt-8">
-            <CustomInput
-              type="password"
+          
+               <PasswordField
               name="password"
-              className="h-11 md:w-full sm:w-full rounded-md text-body bg-input pl-3 border border-[#E8E8E8] outline-none"
-              placeHodler="Enter your password"
               value={password}
-              onChange={handleInput}
+              handleInput={handleInput}
+              label="Enter Your Password"
+              showPassword={showConPassword}
+              toggleVisibility={toggleConPasswordVisibility}
             />
           </div>
 

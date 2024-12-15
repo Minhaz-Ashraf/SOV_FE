@@ -25,6 +25,8 @@ const ChangeDashboardPassword = () => {
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showConPassword, setShowConPassword] = useState(false);
+
   const userId =
     role === "3"
       ? studentInfoData?.data?.studentInformation?._id
@@ -40,6 +42,8 @@ const ChangeDashboardPassword = () => {
   };
 
   const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
+  const toggleConPasswordVisibility = () => setShowConPassword((prev) => !prev);
+
   const toggleConfirmPasswordVisibility = () =>
     setShowConfirmPassword((prev) => !prev);
 
@@ -121,8 +125,8 @@ const ChangeDashboardPassword = () => {
               value={isPassword.newPassword}
               handleInput={handleInput}
               label="New Password"
-              showPassword={showPassword}
-              toggleVisibility={togglePasswordVisibility}
+              showPassword={showConPassword}
+              toggleVisibility={toggleConPasswordVisibility}
               error={errors.newPassword}
             />
             <p className="text-[13px] text-primary pt-[9px] font-poppins">

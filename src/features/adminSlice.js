@@ -285,6 +285,7 @@ const adminSlice = createSlice({
       .addCase(getAllTickets.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload || action.error.message;
+        state.ticketAll = []
       })
       .addCase(getTicketById.pending, (state) => {
         state.status = "loading";

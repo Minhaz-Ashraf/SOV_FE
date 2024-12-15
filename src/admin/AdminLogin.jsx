@@ -85,6 +85,7 @@ const AdminLogin = () => {
       handleLogin(e);
     }
   };
+  
 
   return (
     <>
@@ -113,7 +114,7 @@ const AdminLogin = () => {
               <p className="text-secondary text-[18px] font-medium">
                 Login account as a admin
               </p>
-
+              <div onKeyDown={handleKeyDown} className="login-container">
               <span className="font-poppins">
                 <div>
                   <div className="mt-6 text-secondary">Email Id</div>
@@ -169,7 +170,7 @@ const AdminLogin = () => {
                     </div>
                   )}
                 </div>
-              </span>
+              </span></div>
             </span>
           </span>
         </div>

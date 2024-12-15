@@ -54,16 +54,17 @@ const AdminSidebar = () => {
       otherPath: "/admin/agent-student",
       otherPathTwo: "/agent-profile",
     },
-    {
-      pathPage: "/admin/approvals",
-      icon: <FaUserCheck />,
-      label: "Approvals",
-    },
+   
     {
       pathPage: "/admin/application-list",
       icon: <IoDocumentTextSharp />,
       label: "Applications ",
       otherPath: "/admin/student-applications",
+    },
+    {
+      pathPage: "/admin/approvals",
+      icon: <FaUserCheck />,
+      label: "Profile Approvals",
     },
     {
       pathPage: "/admin/applications-review",
