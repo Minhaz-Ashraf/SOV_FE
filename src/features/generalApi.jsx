@@ -61,7 +61,7 @@ export const newOfferLetter = async (data) => {
       offerLetter: data,
     });
 
-    return response.data?.data;
+    return response.data;
   } catch (error) {
     if (error.response) {
       throw new Error(
