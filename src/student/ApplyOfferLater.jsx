@@ -538,7 +538,7 @@ const ApplyOfferLater = () => {
       // Submit the form data
 
       const response = await newOfferLetter(updatedOfferLater);
-   
+      console.log(response)
       // Handle successful submission
       confirmPopUpOpen();
       toast.success(response.message || "Data added successfully.");
@@ -549,13 +549,13 @@ const ApplyOfferLater = () => {
             title: " AGENT_SUBMITTED_OFFER_LETTER",
             message: `${agentData?.companyDetails?.businessName} ${
               agentData?.agId
-            } has submitted the offer letter application of ${
+            } has submitted the offer letter application ${response.data.applicationId} of ${
               offerLater.preferences.institution
-            } ${offerLater.preferences.country} for the student ${
+            } ${offerLater.preferences.country}  for the student ${
               studentData?.studentInformation?.personalInformation?.firstName +
               " " +
               studentData?.studentInformation?.personalInformation?.lastName
-            } ${studentId}
+            } ${studentData?.studentInformation?.stId}
 `,           path: "/admin/applications-review",
             agentId: agentData?._id,
             agId: agentData?.agId,
@@ -596,7 +596,7 @@ const ApplyOfferLater = () => {
                   ?.lastName || ""
             } ${
               studentInfoData?.data?.studentInformation?.stId || ""
-            } has submitted the offer letter application.`,
+            } has submitted the offer letter application ${response.data.applicationId}.`,
             path: "/admin/applications-review",
             recieverId: "",
           };
