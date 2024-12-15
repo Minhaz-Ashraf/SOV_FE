@@ -413,7 +413,7 @@ const AgentForm4 = ({ hide, handleCancel, updateData, adminId, agentId }) => {
               errors={errors.businessRegistrationType}
             />
           </span>
-          <div className="flex  items-baseline justify-between gap-6 w-full">
+          <div className="flex   items-baseline justify-between gap-6 w-full">
             <span className="w-[50%] ">
               <FileUpload
                 label="Company GST"
