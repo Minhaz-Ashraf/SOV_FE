@@ -111,7 +111,7 @@ const CourseFeeEdit = () => {
                 big deal if it's not - you can always change it.
               </p>
             </span>
-            {applicationDataById?.visa?.status === "rejected" &&
+            {applicationDataById?.courseFeeApplication?.status === "rejected" &&
               ( role !== "0" || role !== "1" ) && (
               <span
                 onClick={resSubmit}

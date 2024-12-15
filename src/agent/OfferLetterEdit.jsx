@@ -109,7 +109,7 @@ const OfferLetterEdit = () => {
                 View and Edit your offer Letter
               </p>
             </span>
-            {applicationDataById?.visa?.status === "rejected" &&
+            {applicationDataById?.offerLetter?.status === "rejected" &&
               ( role !== "0" || role !== "1" ) && (
               <span
                 onClick={resSubmit}

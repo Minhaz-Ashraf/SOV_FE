@@ -171,7 +171,7 @@ const LoginComponent = () => {
             studentInfoData?.data?.studentInformation?.pageStatus?.status ===
               "registering"
           ) {
-            redirectPath = `/student-form/${studentInfoData?.data?.studentInformation?.pageCount}`;
+            redirectPath = `/student-form/1`;
           }
           if (
             studentInfoData?.data?.studentInformation?.pageCount === 3 &&
