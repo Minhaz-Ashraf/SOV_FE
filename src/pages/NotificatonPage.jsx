@@ -145,7 +145,7 @@ const NotificationPage = () => {
           <Link
             onClick={() => handleNotificationClick(notification)}
             to={notification.routePath}
-            state={{ notifyId: notification.pathData?.studentId }}
+            state={{ notifyId: notification.pathData?.studentId, notify: notification?.pathData?.notify }}
             className="text-primary hover:underline text-sm mt-2"
           >
             Click to view{" "}
