@@ -109,7 +109,9 @@ export const router = createBrowserRouter([
   },
   {
     path: "/notifications",
-    element: <NotificatonPage></NotificatonPage>,
+    element:
+    <CommonRoleProtected>
+    <NotificatonPage></NotificatonPage></CommonRoleProtected>
   },
   {
     path: "/removed-user",
@@ -143,42 +145,42 @@ export const router = createBrowserRouter([
   {
     path: "/course-fee",
     element: (
-      // <ProtectedStudent>
+      <CommonRoleProtected>
       <CourseFeeApplication></CourseFeeApplication>
-      // </ProtectedStudent>
+       </CommonRoleProtected>
     ),
   },
   {
     path: "/settings/change-password",
     element: (
-      // <ProtectedStudent>
+      <StudentAgentProtected>
       <ChangeDashboardPassword></ChangeDashboardPassword>
-      // </ProtectedStudent>
+      </StudentAgentProtected>
     ),
   },
   {
     path: "/settings/change-email",
     element: (
-      // <ProtectedStudent>
+      <StudentAgentProtected>
       <ChangeDashboardEmail></ChangeDashboardEmail>
-      // </ProtectedStudent>
+       </StudentAgentProtected>
     ),
   },
   {
     path: "/settings/otp-confirm",
     element: (
-      // <ProtectedStudent>
-      <DashboardEmailOtp></DashboardEmailOtp>
-      // </ProtectedStudent>
+      <CommonRoleProtected>
+        <DashboardEmailOtp></DashboardEmailOtp>
+      </CommonRoleProtected>
     ),
   },
 
   {
     path: "/visa-apply",
     element: (
-      // <ProtectedStudent>
-      <VisaApply></VisaApply>
-      // </ProtectedStudent>
+      <StudentAgentProtected>
+        <VisaApply></VisaApply>
+      </StudentAgentProtected>
     ),
   },
   //student routes
@@ -225,25 +227,25 @@ export const router = createBrowserRouter([
   {
     path: "/student/shortlist",
     element: (
-      <StudentAgentInternal>
+      <StudentAgentProtected>
         <AgentShortlist></AgentShortlist>
-      </StudentAgentInternal>
+      </StudentAgentProtected>
     ),
   },
   {
     path: "/help-support",
     element: (
-      <StudentAgentInternal>
+      <StudentAgentProtected>
         <HelpNSupport></HelpNSupport>
-      </StudentAgentInternal>
+      </StudentAgentProtected>
     ),
   },
   {
     path: "/offerLetter-apply",
     element: (
-      // <StudentAgentInternal>
-      <ApplyOfferLater></ApplyOfferLater>
-      // </StudentAgentInternal>
+      <StudentAgentProtected>
+        <ApplyOfferLater></ApplyOfferLater>
+      </StudentAgentProtected>
     ),
   },
 
@@ -319,7 +321,11 @@ export const router = createBrowserRouter([
   },
   {
     path: "/settings/delete-account",
-    element: <DeleteAccount></DeleteAccount>,
+    element: (
+      <StudentAgentProtected>
+        <DeleteAccount></DeleteAccount>
+      </StudentAgentProtected>
+    ),
   },
   {
     path: "/offerLetter/edit",
@@ -364,9 +370,9 @@ export const router = createBrowserRouter([
   {
     path: "/agent/shortlist",
     element: (
-      <StudentAgentInternal>
+      <StudentAgentProtected>
         <AgentShortlist></AgentShortlist>
-      </StudentAgentInternal>
+      </StudentAgentProtected>
     ),
   },
   {

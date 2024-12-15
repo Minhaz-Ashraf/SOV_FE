@@ -4,9 +4,9 @@ import { Navigate } from "react-router-dom";
 import Loader from "../components/Loader";
 
 const CommonRoleProtected = ({ children }) => {
-  const { studentInfoData } = useSelector((state) => state.student);
-  const { agentData } = useSelector((state) => state.agent);
+ 
   const [loading, setLoading] = useState(true);
+  const authToken = localStorage.getItem("userAuthToken");
   
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -24,15 +24,13 @@ const CommonRoleProtected = ({ children }) => {
     );
   }
   const roleType = localStorage.getItem("role");
-  const pageStatus =
-    studentInfoData?.data?.studentInformation?.pageStatus?.status ||
-    agentData?.pageStatus?.status;
+
 
   const isAuthorized =
     roleType === "3" || roleType === "2" ||
-    roleType === "0"
+    roleType === "0" 
 
-  if (!isAuthorized) {
+  if (!isAuthorized && !authToken) {
     return <Navigate to="/login" replace={true} />;
   }
 
