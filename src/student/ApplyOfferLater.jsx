@@ -359,7 +359,7 @@ const ApplyOfferLater = () => {
         }),
       }));
 
-      toast.info(`${fileOrUrl.name} will be uploaded upon saving.`);
+      // toast.info(`${fileOrUrl.name} will be uploaded upon saving.`);
     } else if (typeof fileOrUrl === "string") {
       // Handle URL strings
       setOfferLater((prevState) => ({

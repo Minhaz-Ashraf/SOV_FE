@@ -80,7 +80,7 @@ export const courseFeeAdd = async (data) => {
       courseFeeApplication: data,
     });
 
-    return response.data?.data;
+    return response.data;
   } catch (error) {
     if (error.response) {
       throw new Error(
@@ -97,7 +97,7 @@ export const visaAdd = async (data) => {
   try {
     const response = await apiurl.post(`/institution/create-visa`, data);
 
-    return response.data?.data;
+    return response.data;
   } catch (error) {
     if (error.response) {
       throw new Error(

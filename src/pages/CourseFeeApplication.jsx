@@ -316,6 +316,7 @@ const courseFeeApplication = () => {
         toast.error("Please fill required fields");
         return;
       }
+      setIsSubmitting(true);
 
       // Upload new files to Firebase
       for (const newFile of newFiles) {
@@ -326,7 +327,6 @@ const courseFeeApplication = () => {
           `uploads/courseFeeApplication/${uniqueFileName}`
         );
         try {
-        setIsSubmitting(true);
 
           const snapshot = await uploadBytes(storageRef, file);
           const downloadURL = await getDownloadURL(snapshot.ref);
@@ -397,7 +397,7 @@ const courseFeeApplication = () => {
             title: " AGENT_SUBMITTED_COURSE_FEE",
             message: `${agentData?.companyDetails?.businessName} ${
               agentData?.agId
-            } has submitted the course fee application   ${
+            } has submitted the course fee application ${res?.data?.applicationId}   ${
               applicationDataById?.applicationId
             } for the student ${
               studentData?.studentInformation?.personalInformation?.firstName +
@@ -415,7 +415,7 @@ const courseFeeApplication = () => {
           console.error("Socket connection failed, cannot emit notification.");
         }
       }
-      if (role === "3" ) {
+      if (role === "3") {
         if (socketServiceInstance.isConnected()) {
           //from student to admin
           const notificationData = {
@@ -428,7 +428,7 @@ const courseFeeApplication = () => {
                 ?.lastName
             } ${
               studentInfoData?.data?.studentInformation?.stId
-            }  has submitted the course fee application.  `,
+            }  has submitted the course fee application ${res?.data?.applicationId}.  `,
             agentId: agentData?._id,
             agId: agentData?.agId,
             agentName: agentData?.companyDetails?.businessName,

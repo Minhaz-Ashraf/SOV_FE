@@ -376,7 +376,7 @@ const VisaApply = () => {
             title: " AGENT_SUBMITTED_VISA_LODGEMENT",
             message: `${agentData?.companyDetails?.businessName} ${
               agentData?.agId
-            } has submitted the  Visa lodgment application of ${countryName} for the student ${
+            } has submitted the  Visa lodgment application ${res?.data?.applicationId} of ${countryName} for the student ${
               studentData?.studentInformation?.personalInformation?.firstName +
               " " +
               studentData?.studentInformation?.personalInformation?.lastName
@@ -393,32 +393,32 @@ const VisaApply = () => {
           console.error("Socket connection failed, cannot emit notification.");
         }
       }
-      if (role === "3" ) {
-        if (socketServiceInstance.isConnected()) {
-          //from agent to admin
-          const notificationData = {
-            title: " STUDENT_SUBMITTED_VISA_LODGEMENT",
-            message: `${agentData?.companyDetails?.businessName} ${
-              agentData?.agId
-            } has submitted the  Visa lodgment application of ${countryName}  for the student   ${
-              studentData?.studentInformation?.personalInformation?.firstName +
-              " " +
-              studentData?.studentInformation?.personalInformation?.lastName
-            } ${studentId}`,
+      // if (role === "3" ) {
+      //   if (socketServiceInstance.isConnected()) {
+      //     //from agent to admin
+      //     const notificationData = {
+      //       title: " STUDENT_SUBMITTED_VISA_LODGEMENT",
+      //       message: `${agentData?.companyDetails?.businessName} ${
+      //         agentData?.agId
+      //       } has submitted the  Visa lodgment application ${res?.data?.applicationId} of ${countryName}  for the student   ${
+      //         studentData?.studentInformation?.personalInformation?.firstName +
+      //         " " +
+      //         studentData?.studentInformation?.personalInformation?.lastName
+      //       } ${studentData?.studentInformation?.stId}`,
 
-            path: "/admin/applications-review",
-            pathData: {},
-            recieverId: "",
-          };
+      //       path: "/admin/applications-review",
+      //       pathData: {},
+      //       recieverId: "",
+      //     };
 
-          socketServiceInstance.socket.emit(
-            "NOTIFICATION_STUDENT_TO_ADMIN",
-            notificationData
-          );
-        } else {
-          console.error("Socket connection failed, cannot emit notification.");
-        }
-      }
+      //     socketServiceInstance.socket.emit(
+      //       "NOTIFICATION_STUDENT_TO_ADMIN",
+      //       notificationData
+      //     );
+      //   } else {
+      //     console.error("Socket connection failed, cannot emit notification.");
+      //   }
+      // }
       if (role === "3") {
         if (socketServiceInstance.isConnected()) {
           //from student to admin
@@ -432,7 +432,7 @@ const VisaApply = () => {
                 ?.lastName
             } ${
               studentInfoData?.data?.studentInformation?.stId
-            }  has submitted the course fee application.  `,
+            }  has submitted the course fee application ${response.data.applicationId}.  `,
             agentId: agentData?._id,
             agId: agentData?.agId,
             agentName: agentData?.companyDetails?.businessName,
