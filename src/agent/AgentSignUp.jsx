@@ -60,6 +60,7 @@ const AgentSignUp = () => {
     postalCode: "",
     email: "",
     phone: "",
+    primaryEmail:"",
     password: "",
   });
 
@@ -151,6 +152,10 @@ const AgentSignUp = () => {
       newErrors.name = "Primary contact name is required.";
       isValid = false;
     }
+    if (!agentRegister.primaryContactPerson.email) {
+      newErrors.primaryEmail = "Primary contact email is required.";
+      isValid = false;
+    }
     if (!agentRegister.companyDetails.country) {
       newErrors.country = "Country is required.";
       isValid = false;
@@ -225,8 +230,19 @@ const AgentSignUp = () => {
     try {
       const res = await newAgentReg(payload);
       console.log(res);
-      toast.success(res.message || "Registration completed!");
-      return res;
+
+      if (res.success) {
+        toast.success(res.message || "Registration completed!");
+        return res;
+      } else {
+        // Handle validation errors if the `success` flag is false
+        if (res.message && Array.isArray(res.message)) {
+          const formattedErrors = res.message.map((error) => error.message).join(", ");
+          toast.error(`Validation Errors: ${formattedErrors}`);
+        } else {
+          toast.error(res.message || "Something went wrong.");
+        }
+      }
     } catch (error) {
       console.error("Registration failed:", error);
       setIsVerifyingLoading(false);
@@ -249,7 +265,7 @@ const AgentSignUp = () => {
       }
     } else {
       console.log("Form has errors.");
-      toast.error("Error in form fields");
+      toast.error("Please fill al required fields");
     }
   };
 
@@ -410,7 +426,7 @@ const AgentSignUp = () => {
                       label="Email Id"
                       handleInput={handleInput}
                       value={agentRegister.primaryContactPerson.email}
-                      errors={errors.email}
+                      errors={errors.primaryEmail}
                       imp="*"
                     />
                   </span>

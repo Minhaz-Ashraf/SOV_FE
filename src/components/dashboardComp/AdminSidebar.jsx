@@ -214,7 +214,7 @@ const AdminSidebar = () => {
               <MdOutlineHistory />
             </span>{" "}
             <span>Payment Details</span>
-          </Link>
+        </Link>
         </div> */}
 
         <div
