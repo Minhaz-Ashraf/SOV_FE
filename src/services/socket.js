@@ -59,15 +59,14 @@ class SocketService {
     });
     this.socket.on("DELETE_AUTH_TOKEN", (data) => {
 
-      console.log("mak");
-      // const navigate= useNavigate()
+      // console.log("mak");
 
       localStorage.removeItem('role')
       localStorage.removeItem('student')
       localStorage.removeItem('form')
       localStorage.removeItem('userAuthToken')
 
-      // navigate("/login")
+      window.location.href = "/login";
 
 
     });

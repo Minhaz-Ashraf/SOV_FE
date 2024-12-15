@@ -37,7 +37,7 @@ const TabBarTwo = ({ tabs }) => {
               tab?.props?.profileView === "/admin/approvals" ||
               tab?.props?.profileView === "/admin/applications-review"
                 ? " mx-44 "
-                : " mr- mt-6 ml-[16.5%]"
+                : " mr-6 mt-6 md:ml-[19%] sm:ml-[17.5%]"
             }  `}
           >
             {activeTab === tab.name ? (

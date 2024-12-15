@@ -786,7 +786,7 @@ const ApplyOfferLater = () => {
             <span className="font-bold text-[25px] text-secondary  sm:px-6">
               Education Details
             </span>
-            <div className="grid md:grid-cols-3 grid-cols-2 mt-4 md:px-8 sm:px-6 gap-6 text-body">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 grid-cols-2 mt-4 md:px-8 sm:px-6 gap-6 text-body">
               {Object.keys(educationLevels).map((level) => (
                 <span
                   key={level}

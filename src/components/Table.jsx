@@ -1540,7 +1540,7 @@ export function CustomTableEight({
                       onClick={() =>
                         handleOpen(
                           row.data?._id || row.data?.id,
-                          row?.data?.studentId
+                          row?.data?.studentId || row?.data?.id
                         )
                       }
                       className="flex flex-row items-center gap-2"

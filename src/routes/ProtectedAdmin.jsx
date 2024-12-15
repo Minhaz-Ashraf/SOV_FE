@@ -4,7 +4,7 @@ import Loader from "../components/Loader";
 import { useSelector } from "react-redux";
 
 const ProtectedAdmin = ({ children }) => {
-  const { getAdminProfile } = useSelector((state) => state.admin);
+  // const { getAdminProfile } = useSelector((state) => state.admin);
   const roleType = localStorage.getItem("role");
   const authToken = localStorage.getItem("userAuthToken");
 
@@ -27,12 +27,13 @@ const ProtectedAdmin = ({ children }) => {
   }
 
 
+
   // Check the conditions for navigation
-  const isRoleNotZero = roleType !== "0";
+  const isRoleNotZero = roleType !== "3";
 
   if (isRoleNotZero && !authToken ) {
     console.log('Navigating to login due to missing profile data');
-    return <Navigate to="/admin/role/auth/login" replace={true} />;
+    return <Navigate to="/login" replace={true} />;
   }
 
   // If everything is fine, render the children

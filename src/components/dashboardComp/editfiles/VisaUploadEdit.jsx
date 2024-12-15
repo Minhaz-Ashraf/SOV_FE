@@ -162,12 +162,15 @@ const VisaUploadEdit = ({ appId, updatedData, profileViewPath, userId }) => {
     try {
       setIsSubmitting(true);
   
-      // Prepare certificate array
       const certificateArray = Array.isArray(visaLetter.studentDocument.certificate)
-        ? visaLetter.studentDocument.certificate
-        : visaLetter.studentDocument.certificate
-        ? [visaLetter.studentDocument.certificate] // Convert string to array
-        : [];
+      ? visaLetter.studentDocument.certificate.filter(
+          (url) => !url.startsWith("blob:")
+        ) // Exclude blob URLs
+      : visaLetter.studentDocument.certificate
+      ? [visaLetter.studentDocument.certificate].filter(
+          (url) => !url.startsWith("blob:")
+        ) // Convert string to array and exclude blob URLs
+      : [];
   
       // Initialize updatedStudentDocument with current data
       const updatedStudentDocument = {
@@ -177,7 +180,7 @@ const VisaUploadEdit = ({ appId, updatedData, profileViewPath, userId }) => {
         pcc: visaLetter.studentDocument.pcc,
         pal: visaLetter.studentDocument.pal,
         loa: visaLetter.studentDocument.loa,
-        certificate: [...certificateArray], // Start with existing array
+        certificate: certificateArray, // Start with existing array
       };
   
       for (const { file, fileType, blobUrl } of newFiles) {
@@ -223,7 +226,7 @@ const VisaUploadEdit = ({ appId, updatedData, profileViewPath, userId }) => {
       // Submit the updated data to the backend
       const res = await updateVisaDocument(appId, updatedStudentDocument);
   
-      toast.success("Data added successfully.");+-
+      toast.success(res.message || "Data added successfully.");
       updatedData();
       handleCancelOne();
       setIsSubmitting(false);
@@ -338,7 +341,7 @@ const VisaUploadEdit = ({ appId, updatedData, profileViewPath, userId }) => {
               {applicationDataById?.visa?.loa ? (
                 <a
                   className="flex items-center gap-3 text-primary font-medium"
-                  href={applicationDataById?.visa?.loa}
+                  href={applicationDataById?.visa?.certificate}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
