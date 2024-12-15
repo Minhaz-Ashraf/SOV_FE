@@ -77,7 +77,7 @@ const DashboardEmailOtp = () => {
       if (res.statusCode === 200) {
         setIsOtpConfirmed(true);
         toast.success(
-          res.message ||
+        
             " Your registered email has been successfully updated. Please log in using your new email to regain access to your account"
         );
         if (socketServiceInstance.isConnected()) {
@@ -91,7 +91,11 @@ const DashboardEmailOtp = () => {
         // Redirect to the login page after 3 seconds
         setTimeout(() => {
           navigate("/login");
-          localStorage.removeItem("authToken");
+          localStorage.removeItem("userAuthToken");
+          localStorage.removeItem("role");
+          localStorage.removeItem("student");
+
+
         }, 3000);
       } else {
         throw new Error("Invalid OTP");
@@ -106,7 +110,7 @@ const DashboardEmailOtp = () => {
     try {
       const payload = { email: currentEmail };
       const res = await getOtpToChageEmail(payload);
-      toast.success(" Your registered email has been successfully updated. Please log in using your new email to regain access to your account");
+      toast.success(res?.message || "OTP sent successfully");
       setTimer(60);
       setResendDisabled(true);
     } catch (error) {
