@@ -15,8 +15,11 @@ import { chngeApplicationStatus } from "../../features/adminApi";
 import { useDispatch, useSelector } from "react-redux";
 import { visaStatusData } from "../../features/generalSlice";
 import { createSprinklesEffect } from "../SprinklesParty";
+import socketServiceInstance from "../../services/socket";
 
 const VisaCompleteUpload = ({appId, studId}) => {
+    const { studentData } = useSelector((state) => state.general);
+  const role = localStorage.getItem('role')
   const { agentData } = useSelector((state) => state.agent);
   const { studentInfoData } = useSelector((state) => state.student);
   const { visaStatus } = useSelector((state) => state.general);
@@ -133,7 +136,7 @@ const VisaCompleteUpload = ({appId, studId}) => {
 const handleSubmit = async()=>{
     if (!validateFields()) {
         toast.error("Please upload all required documents before submitting.");
-        return;
+        return; 
       }
   
     try{
@@ -143,6 +146,58 @@ const handleSubmit = async()=>{
 
     toast.success(res.message || "Document Submitted Successfully")
     startSprinkles()
+
+    if (role === "2" ) {
+        if (socketServiceInstance.isConnected()) {
+          //from agent to admin
+          const notificationData = {
+            title: "   AGENT_STUDENT_VISA_STAMP",
+            message: `${agentData?.companyDetails?.businessName} ${agentData?.agId} has submitted Visa Stamp and PPR  ${visaStatus?.applicationId} for  ${studentData?.studentInformation?.personalInformation?.firstName} ${studentData?.studentInformation?.personalInformation?.lastName} ${studentData?.studentInformation?.stId}`,
+            path: "",
+            path: "/student-profile",
+            pathData: {
+              studentId: studentData?.studentInformation?._id,
+            },
+            recieverId: "",
+          };
+
+          socketServiceInstance.socket.emit(
+            "NOTIFICATION_AGENT_TO_ADMIN",
+            notificationData
+          );
+        } else {
+          console.error("Socket connection failed, cannot emit notification.");
+        }
+      }
+      if (role === "3" ) {
+        if (socketServiceInstance.isConnected()) {
+          //from student to admin
+          const notificationData = {
+            title: "    STUDENT_STUDENT_VISA_STAMP",
+            message: `${
+              studentInfoData?.data?.studentInformation?.personalInformation
+                .firstName +
+              " " +
+              studentInfoData?.data?.studentInformation?.personalInformation
+                .lastName
+            }  ${
+              studentInfoData?.data?.studentInformation?.stId
+            }  has submitted the Visa Stamp and PPR ${visaStatus?.applicationId} `,
+            path: "/student/visa-update",
+            pathData: {
+              studentId: studentInfoData?.data?.studentInformation?._id,
+            },
+
+            recieverId: "",
+          };
+          socketServiceInstance.socket.emit(
+            "NOTIFICATION_STUDENT_TO_ADMIN",
+            notificationData
+          )
+        } else {
+          console.error("Socket connection failed, cannot emit notification.");
+        }
+      }
     }catch(error){
         console.log(error)
         toast.error(error.message || "Error while submitting")

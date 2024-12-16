@@ -11,7 +11,6 @@ export const StudentPersnalInfo = async (payload, edit) => {
         }
       }
     );
-    console.log(response?.data)
     localStorage.setItem("form", response?.data?.data?._id);
     return response.data;
   } catch (error) {
@@ -80,6 +79,9 @@ export const studentAddress = async (payload, formId, edit) => {
         }
       }
     );
+    localStorage.setItem("form", response?.data?.data?._id) 
+    console.log(response.data, response, "datac");
+
     return response.data;
   }catch (error) {
     if (error.response) {

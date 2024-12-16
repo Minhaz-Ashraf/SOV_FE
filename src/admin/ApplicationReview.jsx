@@ -23,7 +23,7 @@ const ApplicationReview = () => {
   const [perPage, setPerPage] = useState(10);
   const [isTypeFilter, setIsFilterType] = useState("")
   const [page, setPage] = useState(1);
-  const totalUsersCount = applications?.totalRecords || 0;
+  const totalUsersCount = applications?.total || 0;
   const currentPage = applications?.currentPage;
   const totalPagesCount = applications?.totalPages;
  
@@ -53,10 +53,10 @@ const ApplicationReview = () => {
   }
   useEffect(() => {
     if(tabType === "underreview" || tabType === "approved" || tabType === "rejected"){
-      setPage(1);
 
     dispatch(applicationForApproval({tabType, page, perPage, search, isTypeFilter}));
     }
+
   }, [page, perPage, updateState, tabType, search, isTypeFilter]);
 
   const tabs = [
@@ -92,6 +92,8 @@ const ApplicationReview = () => {
   const handleTabChange = (tabName) => {
     setActiveTab(tabName);
     setSearchParams({ tab: tabName });
+    setPage(1);
+
   };
   return (
     <>
@@ -161,11 +163,11 @@ const ApplicationReview = () => {
 
       <div className="mt-12 mb-10 ml-36 ">
         <Pagination
-          currentPage={currentPage}
-          hasNextPage={currentPage * perPage < totalUsersCount}
-          hasPreviousPage={currentPage > 1}
-          onPageChange={handlePageChange}
-          totalPagesCount={totalPagesCount}
+           currentPage={currentPage}
+              hasNextPage={currentPage * perPage < totalUsersCount}
+              hasPreviousPage={currentPage > 1}
+              onPageChange={handlePageChange}
+              totalPagesCount={totalPagesCount}
         />
       </div> : null}
     </>

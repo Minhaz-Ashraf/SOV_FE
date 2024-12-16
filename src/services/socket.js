@@ -27,13 +27,15 @@ class SocketService {
     });
 
     // Handle connection success
-    this.socket.on("connect", () => {
-      
-      if (role === "0") {
+ this.socket.on("connect", () => {
+      if (role === "0" || role === "1") {
+        this.socket.emit("GET_UNREAD_COUNT", "emitForAdmin" );
         this.socket.emit("GET_NOTIFICATIONS_FOR_ADMIN", { page: 1, limit: 10 });
       } else {
+        this.socket.emit("GET_UNREAD_COUNT", "emitForUser" );
         this.socket.emit("GET_NOTIFICATIONS_FOR_USER", { page: 1, limit: 10 });
       }
+      
       console.log("Successfully connected to socket:", this.socket.id);
     });
 
@@ -59,7 +61,7 @@ class SocketService {
     });
     this.socket.on("DELETE_AUTH_TOKEN", (data) => {
 
-      // console.log("mak");
+      console.log("mak");
 
       localStorage.removeItem('role')
       localStorage.removeItem('student')
