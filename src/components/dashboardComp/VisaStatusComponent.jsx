@@ -49,7 +49,7 @@ const VisaStatusComponent = ({ studentId }) => {
   const [isOpenOption, setIsOpenOption] = useState(false);
   const [selectedOption, setSelectedOption] = useState("");
   const [showWithdrwalData, setShowWithdrawalData] = useState(false);
-
+console.log(showWithdrawForm)
   const closeOption = () => {
     setIsOpenOption(false);
   };
@@ -76,6 +76,10 @@ const VisaStatusComponent = ({ studentId }) => {
   const handleWithdrawalData = () => {
     setShowWithdrawalData(true);
   };
+  const handleClose = () => {
+    setShowWithdrawForm(false); 
+  };
+
   useEffect(() => {
     dispatch(visaStatusData(studId));
   }, [dispatch, studId]);
@@ -239,11 +243,11 @@ if(flag === "approvedbyembassy"){
       ) : (
         ""
       )}
-      {showWithdrwalData ? (
+      {showWithdrwalData   ? (
         <WithDrawalData userId={visaStatus?.userId} />
       ) : showWithdrawForm ? (
         <div className={`${role === "3" ? "mt-20 ml-64" : ""} `}>
-          <VisaWithdrawlForm choosedOption={selectedOption} studId={studId} />
+          <VisaWithdrawlForm choosedOption={selectedOption} studId={studId} handleClose={handleClose}/>
         </div>
       ) : visaStatus?.visa?.status === "underreview" ? (
         <div

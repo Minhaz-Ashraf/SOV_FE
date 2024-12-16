@@ -19,7 +19,7 @@ import { chngeApplicationStatus } from "../../features/adminApi";
 import { visaStatusData } from "../../features/generalSlice";
 import socketServiceInstance from "../../services/socket";
 
-const VisaWithdrawlForm = ({ choosedOption, studId }) => {
+const VisaWithdrawlForm = ({ choosedOption, studId, handleClose }) => {
   const dispatch = useDispatch();
 
   const { countryOption } = useSelector((state) => state.general);
@@ -102,6 +102,7 @@ const VisaWithdrawlForm = ({ choosedOption, studId }) => {
       setErrors({ ...errors, [name]: "" });
     }
   };
+
   const handleParentInput = (e) => {
     const { name, value } = e.target;
     setParentData({ ...parentData, [name]: value });
@@ -145,7 +146,9 @@ const VisaWithdrawlForm = ({ choosedOption, studId }) => {
         }));
       }
 
-      console.log("Updated bankData:", bankData);
+      // console.log("Updated bankData:", bankData);
+      dispatch(visaStatusData(studId));
+
     } catch (error) {
       console.error("Error uploading file:", error);
       toast.error(`Error uploading ${file.name}. Please try again.`);
@@ -201,7 +204,7 @@ const VisaWithdrawlForm = ({ choosedOption, studId }) => {
   const handleSubmit = async () => {
     // Run field validations first
     const isValid = validateFields();
-  console.log(errors)
+  // console.log(errors)
     // Proceed only if all fields are valid
     if (!isValid) {
       toast.error("Please fix the validation errors before submitting.");
@@ -258,10 +261,11 @@ const VisaWithdrawlForm = ({ choosedOption, studId }) => {
         "withdrawalrequest",
         "visa"
       );
-      dispatch(visaStatusData(studId));
 
       // Show success message
       toast.success(res?.message || "Data added successfully");
+      dispatch(visaStatusData(studId));
+      handleClose();
       if (role === "2" ) {
         if (socketServiceInstance.isConnected()) {
           //from agent to admin
@@ -766,7 +770,7 @@ const VisaWithdrawlForm = ({ choosedOption, studId }) => {
       </div>
       <span className="flex justify-end mt-9 mb-20 mr-6">
         <span
-          onClick={handleSubmit}
+           onClick={handleSubmit}
           className="bg-primary text-white rounded-md px-6 py-2 flex cursor-pointer"
         >
           Withdraw
