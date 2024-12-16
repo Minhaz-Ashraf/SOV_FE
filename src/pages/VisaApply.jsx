@@ -375,10 +375,10 @@ const VisaApply = () => {
       }
 
       // Submit the updated data to the backend
-      const res = await visaAdd(updatedStudentDocument);
+      const response = await visaAdd(updatedStudentDocument);
       setIsConfirmPopUp(true);
       startSprinkles();
-      toast.success(res.message || "Data added successfully.");
+      toast.success(response.message || "Data added successfully.");
       if (role === "2") {
         if (socketServiceInstance.isConnected()) {
           //from agent to admin
@@ -430,7 +430,9 @@ const VisaApply = () => {
       //   }
       // }
       if (role === "3") {
+        
         if (socketServiceInstance.isConnected()) {
+
           //from student to admin
           const notificationData = {
             title: " STUDENT_SUBMITTED_VISA_LODGEMENT",
@@ -467,6 +469,7 @@ const VisaApply = () => {
             "NOTIFICATION_STUDENT_TO_ADMIN",
             notificationData
           );
+
         } else {
           console.error("Socket connection failed, cannot emit notification.");
         }

@@ -428,6 +428,7 @@ const courseFeeApplication = () => {
       if (role === "3") {
         if (socketServiceInstance.isConnected()) {
           //from student to admin
+
           const notificationData = {
             title: " STUDENT_SUBMITTED_COURSE_FEE",
             message: `${
@@ -453,6 +454,7 @@ const courseFeeApplication = () => {
             "NOTIFICATION_STUDENT_TO_ADMIN",
             notificationData
           );
+
         } else {
           console.error("Socket connection failed, cannot emit notification.");
         }
