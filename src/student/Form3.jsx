@@ -138,7 +138,7 @@ const Form3 = ({
         toast.success(
           res?.message || "Personal Information Submitted successfully"
         );
-
+  console.log(res);
         {
           hide === true ? updateData() : PopUpOpen();
         }
@@ -148,7 +148,7 @@ const Form3 = ({
             //from agent to admin
             const notificationData = {
               title: " STUDENT_REGISTERED_FOR_APPROVAL",
-              message: `${studentInfoData?.data?.studentInformation?.firstName} ${studentInfoData?.data?.studentInformation?.lastName}  ${studentInfoData?.data?.studentInformation?.stId} Student registered for approval.
+              message: `${studentInfoData?.data?.studentInformation?.personalInformation?.firstName} ${studentInfoData?.data?.studentInformation?.personalInformation?.lastName}  ${studentInfoData?.data?.studentInformation?.stId} Student registered for approval.
   `,
               path:"/admin/approvals",
               recieverId: "",
@@ -164,7 +164,7 @@ const Form3 = ({
         }
      
   
-        console.log(res);
+        // console.log(res);
       } catch (error) {
         console.error(error);
         toast.error(error.message || "Something went wrong");

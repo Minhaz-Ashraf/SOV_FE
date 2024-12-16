@@ -390,7 +390,7 @@ const VisaApply = () => {
               studentData?.studentInformation?.personalInformation?.firstName +
               " " +
               studentData?.studentInformation?.personalInformation?.lastName
-            } ${studentFullId}`,
+            } ${ studentData?.studentInformation?.stId}`,
             path: "/admin/applications-review",
 
             recieverId: "",
