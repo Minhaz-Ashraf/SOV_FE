@@ -28,6 +28,7 @@ import {
 } from "../features/generalApi";
 import socketServiceInstance from "../services/socket";
 import { v4 as uuidv4 } from "uuid";
+import { createSprinklesEffect } from "../components/SprinklesParty";
 
 // Initial states
 const initialPersonalInfo = {
@@ -286,6 +287,15 @@ const VisaApply = () => {
 
     // toast.info("File marked for deletion.");
   };
+
+   function startSprinkles() {
+      const stopSprinkles = createSprinklesEffect();
+    
+      // Stop the sprinkles after 10 seconds
+      setTimeout(() => {
+        stopSprinkles();
+      }, 12000);
+    }
   const handleSubmit = async () => {
     const validationErrors = validateFields();
   
@@ -367,7 +377,7 @@ const VisaApply = () => {
       // Submit the updated data to the backend
       const res = await visaAdd(updatedStudentDocument);
       setIsConfirmPopUp(true);
-
+      startSprinkles();
       toast.success(res.message || "Data added successfully.");
       if (role === "2") {
         if (socketServiceInstance.isConnected()) {

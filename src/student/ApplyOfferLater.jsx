@@ -113,6 +113,7 @@ const initialEducationDetails = {
   markSheetPostGraduate: "",
 };
 import { v4 as uuidv4 } from "uuid";
+import { createSprinklesEffect } from "../components/SprinklesParty";
 const ApplyOfferLater = () => {
   const role = localStorage.getItem("role");
   const studentUserId = useSelector((state) => state.student.studentInfoData);
@@ -359,7 +360,7 @@ const ApplyOfferLater = () => {
         }),
       }));
 
-      // toast.info(`${fileOrUrl.name} will be uploaded upon saving.`);
+      toast.info(`${fileOrUrl.name} will be uploaded upon saving.`);
     } else if (typeof fileOrUrl === "string") {
       // Handle URL strings
       setOfferLater((prevState) => ({
@@ -409,6 +410,16 @@ const ApplyOfferLater = () => {
     // toast.info("File marked for deletion. Changes will be applied upon saving.");
   };
 
+
+
+  function startSprinkles() {
+    const stopSprinkles = createSprinklesEffect();
+  
+    // Stop the sprinkles after 10 seconds
+    setTimeout(() => {
+      stopSprinkles();
+    }, 12000);
+  }
   const handleSubmit = async () => {
     const validationErrors = validateFields();
 
@@ -538,9 +549,10 @@ const ApplyOfferLater = () => {
       // Submit the form data
 
       const response = await newOfferLetter(updatedOfferLater);
-      console.log(response)
+      // console.log(response)
       // Handle successful submission
       confirmPopUpOpen();
+      startSprinkles();
       toast.success(response.message || "Data added successfully.");
       if (role === "2") {
         if (socketServiceInstance.isConnected()) {

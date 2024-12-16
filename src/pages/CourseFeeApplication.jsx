@@ -40,6 +40,7 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import Sidebar from "../components/dashboardComp/Sidebar";
 import { v4 as uuidv4 } from "uuid";
 import socketServiceInstance from "../services/socket";
+import { createSprinklesEffect } from "../components/SprinklesParty";
 
 const initialPersonalInfo = {
   fullName: "",
@@ -306,7 +307,14 @@ const courseFeeApplication = () => {
         return updatedState;
       });
     };
-
+  function startSprinkles() {
+      const stopSprinkles = createSprinklesEffect();
+    
+      // Stop the sprinkles after 10 seconds
+      setTimeout(() => {
+        stopSprinkles();
+      }, 12000);
+    }
     const handleSubmit = async (e) => {
       e.preventDefault();
 
@@ -349,6 +357,7 @@ const courseFeeApplication = () => {
             userId: studentId,
           };
           await uploadDocument(uploadData);
+          startSprinkles();
           // toast.success(`${file.name} uploaded successfully!`);
         } catch (error) {
           // toast.error(`Error uploading ${file.name}. Please try again.`);

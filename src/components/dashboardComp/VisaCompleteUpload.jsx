@@ -14,6 +14,7 @@ import { v4 as uuidv4 } from "uuid";
 import { chngeApplicationStatus } from "../../features/adminApi";
 import { useDispatch, useSelector } from "react-redux";
 import { visaStatusData } from "../../features/generalSlice";
+import { createSprinklesEffect } from "../SprinklesParty";
 
 const VisaCompleteUpload = ({appId, studId}) => {
   const { agentData } = useSelector((state) => state.agent);
@@ -121,6 +122,14 @@ const VisaCompleteUpload = ({appId, studId}) => {
     // If there are no errors, return true
     return Object.keys(newErrors).length === 0;
   };
+  function startSprinkles() {
+    const stopSprinkles = createSprinklesEffect();
+  
+    // Stop the sprinkles after 10 seconds
+    setTimeout(() => {
+      stopSprinkles();
+    }, 12000);
+  }
 const handleSubmit = async()=>{
     if (!validateFields()) {
         toast.error("Please upload all required documents before submitting.");
@@ -133,6 +142,7 @@ const handleSubmit = async()=>{
     dispatch(visaStatusData(studId));
 
     toast.success(res.message || "Document Submitted Successfully")
+    startSprinkles()
     }catch(error){
         console.log(error)
         toast.error(error.message || "Error while submitting")

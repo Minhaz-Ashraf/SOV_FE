@@ -19,6 +19,7 @@ import WithdrwalChoosePop from "./WithdrwalChoosePop";
 import WithDrawalData from "./WithDrawalData";
 import socketServiceInstance from "../../services/socket";
 import { Link, useLocation } from "react-router-dom";
+import { createSprinklesEffect } from "../SprinklesParty";
 
 const VisaStatusComponent = ({ studentId }) => {
   const location = useLocation();
@@ -79,13 +80,23 @@ const VisaStatusComponent = ({ studentId }) => {
     dispatch(visaStatusData(studId));
   }, [dispatch, studId]);
 
+  function startSprinkles() {
+    const stopSprinkles = createSprinklesEffect();
+  
+    // Stop the sprinkles after 10 seconds
+    setTimeout(() => {
+      stopSprinkles();
+    }, 12000);
+  }
   const applicationStatus = async (flag, message) => {
     try {
       const payload = { status: flag, message: message };
       const res = await changeVisaStatus(visaStatus?._id, payload);
       dispatch(visaStatusData(studId));
       toast.success(res.message || "Approval Status Updated");
-
+if(flag === "approvedbyembassy"){
+  startSprinkles()
+}
       if (socketServiceInstance.isConnected()) {
         let notificationTitle = "";
         let notificationMessage = "";
