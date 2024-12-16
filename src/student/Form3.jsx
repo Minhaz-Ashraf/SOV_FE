@@ -143,7 +143,7 @@ const Form3 = ({
           hide === true ? updateData() : PopUpOpen();
         }
         localStorage.removeItem("form");
-        if (role === "2" && res?.statusCode === 200) {
+        if (role === "3" ) {
           if (socketServiceInstance.isConnected()) {
             //from agent to admin
             const notificationData = {

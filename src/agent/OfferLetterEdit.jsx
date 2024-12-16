@@ -25,7 +25,7 @@ const OfferLetterEdit = () => {
   const { studentInfoData } = useSelector((state) => state.student);
   const dispatch = useDispatch();
   const location = useLocation();
-  const profileView = role === "0"
+  const profileView = role === "0";
   const appId = location.state.id || location.state;
   const [isUpdated, setIsUpdated] = useState(false);
 
@@ -35,19 +35,29 @@ const OfferLetterEdit = () => {
   const handleProfileUpdate = () => {
     setIsUpdated((prev) => !prev);
   };
-  
+
   const resSubmit = async () => {
     try {
       const section = "offerLetter";
       const res = await applicationReSubmit(appId, section);
       dispatch(applicationById(appId));
       toast.success(res.message || "Application Re-Submitted");
-      if (role === "2" ) {
+      if (role === "2") {
         if (socketServiceInstance.isConnected()) {
           //from agent to admin
           const notificationData = {
-            title: " STUDENT_RESUBMITTED_OFFER_LETTER",
-            message: `${studentInfoData?.data?.studentInformation?.personalInformation.firstName + " " + studentInfoData?.data?.studentInformation?.personalInformation.lastName}  ${studentInfoData?.data?.studentInformation?.stId}  has resubmitted the offer letter application   ${applicationDataById?.applicationId} of    ${applicationDataById?.offerLetter?.preferences?.institution} ${applicationDataById?.offerLetter?.preferences?.institution}`,
+            title: " AGENT_RESUBMITTED_OFFER_LETTER",
+            message: `${
+              studentData?.studentInformation?.personalInformation?.firstName +
+              " " +
+              studentData?.studentInformation?.personalInformation?.lastName
+            }  ${
+              studentInfoData?.data?.studentInformation?.stId
+            }  has resubmitted the offer letter application   ${
+              applicationDataById?.applicationId
+            } of    ${
+              applicationDataById?.offerLetter?.preferences?.institution
+            } ${applicationDataById?.offerLetter?.preferences?.institution}`,
             path: "/admin/applications-review",
             recieverId: "",
           };
@@ -64,7 +74,19 @@ const OfferLetterEdit = () => {
           //from student to admin
           const notificationData = {
             title: " STUDENT_RESUBMITTED_OFFER_LETTER",
-            message: `${studentInfoData?.data?.studentInformation?.personalInformation.firstName + " " + studentInfoData?.data?.studentInformation?.personalInformation.lastName}  ${studentInfoData?.data?.studentInformation?.stId}  has resubmitted the offer letter application   ${applicationDataById?.applicationId} of    ${applicationDataById?.offerLetter?.preferences?.institution} ${applicationDataById?.offerLetter?.preferences?.institution}`,
+            message: `${
+              studentInfoData?.data?.studentInformation?.personalInformation
+                .firstName +
+              " " +
+              studentInfoData?.data?.studentInformation?.personalInformation
+                .lastName
+            }  ${
+              studentInfoData?.data?.studentInformation?.stId
+            }  has resubmitted the offer letter application   ${
+              applicationDataById?.applicationId
+            } of    ${
+              applicationDataById?.offerLetter?.preferences?.institution
+            } ${applicationDataById?.offerLetter?.preferences?.institution}`,
             path: "/admin/applications-review",
             recieverId: "",
           };
@@ -91,7 +113,13 @@ const OfferLetterEdit = () => {
           <Header customLink="/agent/shortlist" />
           <div>
             <span className="fixed overflow-y-scroll scrollbar-hide  bg-white">
-            {role === "3" ? <Sidebar /> : role === "2" ? <AgentSidebar /> : <AdminSidebar/> }
+              {role === "3" ? (
+                <Sidebar />
+              ) : role === "2" ? (
+                <AgentSidebar />
+              ) : (
+                <AdminSidebar />
+              )}
             </span>
           </div>
         </>
@@ -110,14 +138,15 @@ const OfferLetterEdit = () => {
               </p>
             </span>
             {applicationDataById?.offerLetter?.status === "rejected" &&
-              ( role !== "0" && role !== "1" ) && (
-              <span
-                onClick={resSubmit}
-                className="px-6 py-2 bg-primary rounded-md text-white cursor-pointer"
-              >
-                Re-Submit
-              </span>
-            )}
+              role !== "0" &&
+              role !== "1" && (
+                <span
+                  onClick={resSubmit}
+                  className="px-6 py-2 bg-primary rounded-md text-white cursor-pointer"
+                >
+                  Re-Submit
+                </span>
+              )}
           </span>
         )}
       </div>
@@ -152,7 +181,6 @@ const OfferLetterEdit = () => {
               ? studentInfoData?.data?.studentInformation?._id
               : null
           }
-        
         />
       </div>
       <div
@@ -209,8 +237,7 @@ const OfferLetterEdit = () => {
       </div>
       <div
         className={`${
-          profileView
-           === "/admin/applications-review"
+          profileView === "/admin/applications-review"
             ? " mx-44 mt-20"
             : " ml-[19.5%] mt-9 mr-6"
         }  `}

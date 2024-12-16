@@ -62,7 +62,7 @@ const VisaApply = () => {
   const { agentData } = useSelector((state) => state.agent);
   const studentUserId = useSelector((state) => state.student.studentInfoData);
   const location = useLocation();
-  console.log(location);
+  // console.log(location);
 
   const studentId =
     role === "3"
@@ -641,7 +641,8 @@ const VisaApply = () => {
                 {docType
                   .replace(/([A-Z])/g, " $1")
                   .trim()
-                  .replace(/^./, (str) => str.toUpperCase()) } *
+                  .replace(/^./, (str) => str.toUpperCase()) } {docType === "pal" && countryName === "Germany" ? "*" : docType === "pal" ? "" : "*"}
+
               </p>
               <div className="flex flex-col justify-center items-center border-2 border-dashed border-body rounded-md py-9 mt-5 mb-4">
                 <button
