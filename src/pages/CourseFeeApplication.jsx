@@ -357,7 +357,6 @@ const courseFeeApplication = () => {
             userId: studentId,
           };
           await uploadDocument(uploadData);
-          startSprinkles();
           // toast.success(`${file.name} uploaded successfully!`);
         } catch (error) {
           // toast.error(`Error uploading ${file.name}. Please try again.`);
@@ -397,6 +396,8 @@ const courseFeeApplication = () => {
       try {
         const res = await courseFeeAdd(filteredPayload);
         confirmPopUpOpen();
+        startSprinkles();
+
         toast.success(res?.message || "Form Submitted");
       // Trigger notifications based on role
       if (role === "2" ) {
