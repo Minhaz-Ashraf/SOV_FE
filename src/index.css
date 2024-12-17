@@ -151,7 +151,7 @@ input[type="radio"] {
 }
 
 .slide-out-right {
-  animation: slideOutRight 0.3s ease-in-out forwards;
+  animation: slideOutRight 0.5s ease-in-out forwards;
 }
 
 .swal-subtitle {

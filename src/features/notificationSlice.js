@@ -19,6 +19,9 @@ const notificationsSlice = createSlice({
         (n) => n._id !== action.payload
       );
     },
+    removeAllNotification: (state) => {
+      state.notifications = []
+    },
     markNotificationAsRead: (state, action) => {
       const id = action.payload;
       state.notifications = state.notifications.map((n) =>
@@ -69,6 +72,6 @@ const notificationsSlice = createSlice({
   },
 });
 
-export const { markNotificationAsRead, addAllNotifications, updateNotificationCount, addOneCountToNotification, clearNotificationCount, addNewNotification, removeNotification, markAllAsSeen } = notificationsSlice.actions;
+export const { markNotificationAsRead, addAllNotifications, updateNotificationCount, addOneCountToNotification, clearNotificationCount, addNewNotification, removeNotification, markAllAsSeen, removeAllNotification } = notificationsSlice.actions;
 
 export default notificationsSlice.reducer;

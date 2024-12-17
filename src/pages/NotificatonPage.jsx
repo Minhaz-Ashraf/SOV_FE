@@ -5,6 +5,7 @@ import {
   removeNotification,
   addAllNotifications,
   markAllAsSeen,
+  removeAllNotification,
 } from "../features/notificationSlice";
 import Header from "../components/dashboardComp/Header";
 import { FaBell, FaStar } from "react-icons/fa";
@@ -18,8 +19,16 @@ import { Link } from "react-router-dom";
 const NotificationPage = () => {
   const dispatch = useDispatch();
   const role = localStorage.getItem("role");
-
+  const { agentData } = useSelector((state) => state.agent);
+  const { studentInfoData } = useSelector((state) => state.student);
+    const { getAdminProfile } = useSelector((state) => state.admin);
+  
   const [deletingNotification, setDeletingNotification] = useState(null);
+  const studentId = studentInfoData?.data?.studentInformation?._id;
+  const agentId = agentData?._id
+  const adminId  =  getAdminProfile?.data?._id
+  const clearAllId =  role === "3" ? studentId : role === "2" ? agentId : role === "0" || role === "1" ? adminId : null
+  // const [deletingAllNotification, setDeletingAllNotification] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [noMoreNotifications, setNoMoreNotifications] = useState(false);
 
@@ -45,11 +54,24 @@ const NotificationPage = () => {
       socketServiceInstance.socket?.on("DELETE_NOTIFICATION", (response) => {
         setDeletingNotification(notificationId);
         setTimeout(() => {
-          dispatch(removeNotification(notificationId)); // Remove from Redux state
+          dispatch(removeNotification(notificationId))
         }, 300);
       });
     }
   };
+
+  const handleDeleteAllNotification = (recieverId) => {
+    if (socketServiceInstance.socket) {
+      socketServiceInstance.socket?.emit("DELETE_ALL_NOTIFICATION", recieverId);
+      socketServiceInstance.socket?.on("DELETE_ALL_NOTIFICATION", (response) => {
+        // setDeletingAllNotification(recieverId);
+        setTimeout(() => {
+          dispatch(removeAllNotification()); 
+        }, 300);
+      });
+    }
+  };
+
 
   const fetchNotifications = useCallback(() => {
     if (isLoading || !nextPage || noMoreNotifications) return;
@@ -216,7 +238,7 @@ const NotificationPage = () => {
               Mark All as Seen
             </span>
             <span
-              onClick={handleMarkAllAsSeen}
+              onClick={() => handleDeleteAllNotification(clearAllId)}
               className="text-body bg-[#F2F5F7] px-6 py-2 rounded-md cursor-pointer"
             >
               Clear All
