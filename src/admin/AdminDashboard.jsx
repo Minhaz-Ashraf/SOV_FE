@@ -21,7 +21,8 @@ const AdminDashboard = () => {
   const { getAdminProfile } = useSelector((state) => state.admin);
   const [applicationData, setApplicationData] = useState();
   const [isAgentData, setAgentData] = useState();
-  const [isStudentData, setStudentData] = useState();
+const [isStudentData, setStudentData] = useState();
+  const [loading, setLoading] = useState(true);
   const [userMonthlyData, setUserMontlyData] = useState();
   const [ticketData, setTicketData] = useState();
   const [userCount, setUserCount] = useState();
