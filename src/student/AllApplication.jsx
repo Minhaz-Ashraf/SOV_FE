@@ -192,7 +192,7 @@ const AllApplication = () => {
 
             {totalUsersCount > 0 ? (
               <>
-                <div className="md:ml-[19.5%] sm:ml-[27%] mt-6 w-[85%]  ">
+                <div className="md:ml-[19.5%] sm:ml-[27%] mt-6 md:w-[85%]  ">
                   <CustomTableTwo
                     tableHead={TABLE_HEAD}
                     tableRows={TABLE_ROWS}
