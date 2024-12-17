@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Header from "../components/dashboardComp/Header";
 import AdminSidebar from "../components/dashboardComp/AdminSidebar";
-import TabBar from "../components/dashboardComp/TabBar";
-import Pending from "../components/adminComps/Pending";
 import { useDispatch, useSelector } from "react-redux";
 import { CustomInput } from "../components/reusable/Input";
 import { IoSearchOutline } from "react-icons/io5";
-import Approved from "../components/adminComps/Approved";
-import Rejected from "../components/adminComps/Rejected";
 import Pagination from "../components/dashboardComp/Pagination";
 import {
   adminApplicationOverview,
@@ -135,7 +131,7 @@ const ApplicationList = () => {
         </span>
       </div>
       <span className="flex flex-row  justify-between mr-6 items-baseline">
-        <span className="flex flex-row items-center mb-3 m-6 mt-6 sm:ml-[25%] md:ml-[1%] lg:ml-[18%]  ">
+        <span className="flex flex-row items-center mb-3 m-6 mt-6 sm:ml-[24%] md:ml-[2%] lg:ml-[18%]  ">
           {" "}
          
           <select
@@ -165,7 +161,7 @@ const ApplicationList = () => {
         </span>
         <span
           onClick={downloadAll}
-          className="bg-primary ml-5 text-white px-4 rounded-md py-2 cursor-pointer"
+          className="bg-primary ml-5  text-white px-4 rounded-md py-2 cursor-pointer"
         >
                     {downloading ? "Downloading...." : "Download"}
 
@@ -173,7 +169,7 @@ const ApplicationList = () => {
       </span>
       {loading ? (
         <div
-          className={`w-1  mt-12 ${
+          className={`w-full  mt-12 ${
             location.pathname === "/student-profile" ? "ml-[45%]" : "ml-[53%]"
           }`}
         >

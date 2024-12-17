@@ -29,7 +29,7 @@ const ProtectedAdmin = ({ children }) => {
 
 
   // Check the conditions for navigation
-  const isRoleNotZero = roleType !== "3";
+  const isRoleNotZero = roleType !== "0";
 
   if (isRoleNotZero && !authToken ) {
     console.log('Navigating to login due to missing profile data');

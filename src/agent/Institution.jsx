@@ -172,7 +172,7 @@ const Institution = () => {
 
       {/* Loading and data handling */}
       {isLoading ? (
-        <div className="w-1 ml-[53%]">
+        <div className="w-full ml-[53%]">
           <Loader />
         </div>
       ) : !isFilterApplied ? (

@@ -178,7 +178,7 @@ const StudentProfile = () => {
         </>
       )}
       {isLoading ? (
-        <div className="w-1 ml-[50%] mt-52">
+        <div className="w-full ml-[50%] mt-52">
           <Loader />
         </div>
       ) : (

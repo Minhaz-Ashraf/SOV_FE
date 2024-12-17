@@ -67,7 +67,7 @@ const ProfileEdit = () => {
       </div>
       {loading ? ( // Display loading indicator
         <div
-          className={`w-1 ml-[50%] mt-52 ${
+          className={`w-full ml-[50%] mt-52 ${
             role === "0" ? "ml-[50%]" : "ml-[55%]"
           }`}
         >

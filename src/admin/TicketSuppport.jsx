@@ -230,7 +230,7 @@ const TicketSupport = () => {
         </span>
       </div>
       {loading ? (
-        <div className="w-1 ml-[53%] mt-12">
+        <div className="w-full ml-[53%] mt-12">
           <Loader />
         </div>
       ) : (

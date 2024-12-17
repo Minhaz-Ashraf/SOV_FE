@@ -187,7 +187,7 @@ const AgentForm6 = ({hide, handleCancel, updateData, adminId, agentId}) => {
   };
 
   return (
-    <div className="min-h-screen font-poppins">
+    <div className=" font-poppins">
        <div className={`${hide === true? "" : "md:mx-48 sm:mx-10"}`}>
 
         {referenceData.map((reference, index) => (

@@ -52,6 +52,7 @@ const StudentsList = () => {
   useEffect(() => {
     dispatch(allStudent({ perPage, page, search }));
     dispatch(allStudentCount());
+    
   }, [perPage, page, search, listUpdated ]);
 
   const handleListUpdate = () => {
@@ -133,7 +134,7 @@ const StudentsList = () => {
         </div>
 
         {isLoading ? (
-          <div className="w-1 ml-[53%] mt-12">
+          <div className="w-full ml-[53%] mt-12">
             <Loader />
           </div>
         ) : !studentData?.students ? (

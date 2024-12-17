@@ -20,7 +20,7 @@ const StudentAgentProtected = ({ children }) => {
 
   if (loading) {
     return (
-      <div className="flex justify-center md:ml-32 sm:ml-20 md:mt-48 mt-60 sm:mt-80">
+      <div className="flex justify-center md:ml-52 sm:ml-24 md:mt-48 mt-60 sm:mt-80">
         <Loader />
       </div>
     );

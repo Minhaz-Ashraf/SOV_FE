@@ -28,7 +28,7 @@ const ApplicationView = ({stId, adminPath, adminAccess}) => {
   location.pathname === "/student-profile" 
     ? stId || (adminPath && adminAccess) || location?.state?.notifyId
     : location?.state?.notify === "notify" ? location?.state?.notifyId : location.state ||  location?.state?.notifyId
-// console.log(location)
+console.log(location)
   const [isLoading, setIsLoading] = useState(true);
   const [perPage, setPerPage] = useState(10);
   const totalUsersCount = studentApplicationData?.totalApplications || 0;
@@ -223,7 +223,7 @@ const ApplicationView = ({stId, adminPath, adminAccess}) => {
         </div>
       </div>
       {isLoading ? (
-        <div className={`w-1  mt-12 ${
+        <div className={`w-full  mt-12 ${
             location.pathname === "/student-profile" ? "ml-[45%]" : "ml-[53%]"
           }`}>
           <Loader />

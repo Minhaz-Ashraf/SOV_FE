@@ -19,7 +19,7 @@ const TabBar = ({ tabs, activeTab, onTabChange  }) => {
             <button
               key={tab.name}
               onClick={() => onTabChange(tab.name)}
-              className={`py-2 md:px-4  px-2 focus:outline-none ${
+              className={`py-2 md:px-4   px-2 focus:outline-none ${
                 activeTab === tab.name
                   ? "border-b-2 border-primary"
                   : "text-gray-500"

@@ -138,7 +138,7 @@ const Form3 = ({
         toast.success(
           res?.message || "Personal Information Submitted successfully"
         );
-  console.log(res);
+  // console.log(res);
         {
           hide === true ? updateData() : PopUpOpen();
         }

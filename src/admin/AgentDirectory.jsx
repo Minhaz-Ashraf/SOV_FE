@@ -147,7 +147,7 @@ const AgentDirectory = () => {
       </div>
       {loading ? (
         <div
-          className={`w-1  mt-12 ${
+          className={`w-full  mt-12 ${
             location.pathname === "/student-profile" ? "ml-[45%]" : "ml-[53%]"
           }`}
         >

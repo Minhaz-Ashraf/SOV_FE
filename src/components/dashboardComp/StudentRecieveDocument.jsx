@@ -125,7 +125,7 @@ const StudentRecieveDocument = ({ studentId }) => {
 
       <div className="mt-6 mr-6">
         {isLoading ? (
-          <div className="w-1 ml-[48%] mt-12">
+          <div className="w-full ml-[48%] mt-12">
             <Loader />
           </div>
         ) : recieveDocs && recieveDocs.length === 0 ? (

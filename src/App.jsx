@@ -36,7 +36,7 @@ function App() {
           data = await getConnectionDetails();
         }
   
-        await socketServiceInstance.connectToSocket("https://sovtest.slashifytech.in", data);
+        await socketServiceInstance.connectToSocket("http://localhost:8080", data);
       } catch (error) {
         console.error("Error initializing socket connection:", error);
       }

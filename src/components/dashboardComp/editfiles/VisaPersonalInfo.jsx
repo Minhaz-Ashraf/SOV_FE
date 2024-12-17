@@ -8,6 +8,7 @@ import PhoneInputComponent from "../../reusable/PhoneInputComponent";
 import { allApplication } from "../../../features/agentSlice";
 import { countryOptions, OfferLetterPersonalInfoEdit, updateVisaPersonalInfo } from "../../../features/generalApi";
 import { toast } from "react-toastify";
+import { createSprinklesEffect } from "../../SprinklesParty";
 
 const initialPersonalInfo = {
   fullName: "",
@@ -137,6 +138,10 @@ const VisaPersonalInfo = ({appId, updatedData, profileViewPath}) => {
     }
     return errors;
   };
+ 
+  
+  // Call this function when needed
+  
   const handleSubmit = async() => {
  
     const validationErrors = validateFields();
@@ -153,6 +158,7 @@ const VisaPersonalInfo = ({appId, updatedData, profileViewPath}) => {
       const res = await updateVisaPersonalInfo(appId, visaLetter)
       toast.success(res.message || "Data Added successfully");
       updatedData()
+    
       handleCancelOne();
 
     }catch(error){

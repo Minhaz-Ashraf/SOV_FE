@@ -52,12 +52,17 @@ const StudentCards = ({
     setIsHovered(false);
   };
   const handleMouseSecondEnter = () => {
+
     setIsHoveredSecond(true);
   };
 
   const handleMouseSecondLeave = () => {
     setIsHoveredSecond(false);
   };
+  const handleRemoveLocalStorage= () => {
+    localStorage.removeItem('form')
+
+  }
   return (
     <>
       <div className="bg-white border border-[#E8E8E8] py-4 px-4 rounded-md font-poppins  w-full relative">
@@ -106,6 +111,7 @@ const StudentCards = ({
                     </span>
 
                     <Link
+                    onClick={handleRemoveLocalStorage}
                       onMouseEnter={handleMouseSecondEnter}
                       onMouseLeave={handleMouseSecondLeave}
                       to={`/student-form/${page}`}

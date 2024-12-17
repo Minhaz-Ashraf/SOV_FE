@@ -174,7 +174,7 @@ const Pending = ({ data }) => {
   if (loading) {
     return (
       <div
-      className={`w-1  mt-12 ${
+      className={`w-full  mt-12 ${
      "ml-[42%]"
       }`}
     >
