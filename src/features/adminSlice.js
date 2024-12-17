@@ -215,11 +215,14 @@ const adminSlice = createSlice({
     setTabType: (state, action) => {
       state.updateState = !state.updateState;
       state.tabType = action.payload;
+      state.applications = []
+
     },
   
   setUpdateTicket: (state, action) => {
     state.updateState = !state.updateState;
     state.updateTicketTab = action.payload;
+
   },
   setNullStudentDirectory :(state, action) => {
     state.getAllStudentData = [];
