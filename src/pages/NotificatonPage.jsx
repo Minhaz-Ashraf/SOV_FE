@@ -22,15 +22,21 @@ const NotificationPage = () => {
   const { agentData } = useSelector((state) => state.agent);
   const { studentInfoData } = useSelector((state) => state.student);
     const { getAdminProfile } = useSelector((state) => state.admin);
-  
+  console.log(agentData?._id)
+  console.log(studentInfoData?.data?.studentInformation?._id)
+
+
   const [deletingNotification, setDeletingNotification] = useState(null);
-  const studentId = studentInfoData?.data?.studentInformation?._id;
-  const agentId = agentData?._id
+  const studentId = studentInfoData?.data?.studentInformation?.studentId;
+  const agentId = agentData?.agentId
   const adminId  =  getAdminProfile?.data?._id
   const clearAllId =  role === "3" ? studentId : role === "2" ? agentId : role === "0" || role === "1" ? adminId : null
+  const type = role == 3 || role == 2 ? "emitForUser" : "";
+
   // const [deletingAllNotification, setDeletingAllNotification] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [noMoreNotifications, setNoMoreNotifications] = useState(false);
+  console.log(clearAllId)
 
   const { notifications, currentPage, nextPage, totalNotification, totalPage } =
     useSelector((state) => state.notifications);
@@ -62,9 +68,9 @@ const NotificationPage = () => {
 
   const handleDeleteAllNotification = (recieverId) => {
     if (socketServiceInstance.socket) {
-      socketServiceInstance.socket?.emit("DELETE_ALL_NOTIFICATION", recieverId);
+      socketServiceInstance.socket?.emit("DELETE_ALL_NOTIFICATION", recieverId, type);
       socketServiceInstance.socket?.on("DELETE_ALL_NOTIFICATION", (response) => {
-        // setDeletingAllNotification(recieverId);
+        console.log(response)
         setTimeout(() => {
           dispatch(removeAllNotification()); 
         }, 300);
