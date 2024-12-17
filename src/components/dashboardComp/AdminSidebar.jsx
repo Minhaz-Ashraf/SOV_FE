@@ -110,7 +110,7 @@ const AdminSidebar = () => {
             <Link
               to={item.pathPage}
               onClick={item.label === "Applications" ? handleDispatch() : null}
-              className="flex items-center gap-3 px-6"
+           className="flex items-center gap-3 md:pl-6 lg:px-6 sm:pl-6 "
             >
               <span className="text-[20px]"> {item.icon}</span>{" "}
               <span>{item.label}</span>
@@ -124,7 +124,7 @@ const AdminSidebar = () => {
               : "text-sidebar"
           }`}
         >
-          <Link to="/admin/ticket" className="flex items-center gap-3 px-6">
+          <Link to="/admin/ticket"  className="flex items-center gap-3 md:pl-6 lg:px-6 sm:pl-6 ">
             <span className="text-[20px]">
               {" "}
               <BsFillTicketPerforatedFill />

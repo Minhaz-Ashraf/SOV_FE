@@ -32,7 +32,7 @@ const RejectedPopUp = ({
               <textarea
                 name=""
                 placeholder="Enter the reason for rejection..."
-                className="shadow mt-5 w-96 px-2  py-2 bg-input"
+                className="shadow mt-5 md:w-72 sm:w-72 lg:w-96 px-2  py-2 bg-input"
                 value={reviewText}
                 onChange={handleTextareaChange}
               ></textarea>

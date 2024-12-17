@@ -197,7 +197,7 @@ console.log(location)
                     </option>
                   ))}
                 </select>
-                <span className="flex flex-row items-center  ml-9">
+                <span className="flex flex-row items-center  md:ml-9 sm:ml-3">
                   <CustomInput
                     className="h-11 md:w-80 sm:w-60 rounded-md text-body placeholder:px-3 pl-7 border border-[#E8E8E8] outline-none"
                     type="text"
@@ -214,7 +214,7 @@ console.log(location)
               {!adminPath && 
               <Link
                 onClick={handleOpenOpt}
-                className="bg-primary text-white px-4  rounded-md py-2"
+                className="bg-primary text-white md:px-4 sm:px-2  rounded-md py-2"
               >
                 + Add Application
               </Link>}

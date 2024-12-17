@@ -101,12 +101,12 @@ const CourseFeeEdit = () => {
         {profileView === "/admin/applications-review" ? (
           ""
         ) : (
-          <span className="flex items-center justify-between pr-7 md:pt-20 sm:pt-28 md:ml-[16.5%] sm:ml-[20%] ">
+          <span className="flex items-center justify-between pr-7 md:pt-20 sm:pt-24 md:ml-[16.5%] sm:ml-[20%] ">
             <span>
-              <p className="text-[28px] font-bold text-sidebar mt-6 ml-9">
+              <p className="text-[28px] font-bold text-sidebar md:mt-6 md:ml-9 sm:ml-16">
                 College Fee Form
               </p>
-              <p className="mt-1 font-normal text-body mb-5 ml-9">
+              <p className="mt-1 font-normal text-body mb-5 md:ml-9 sm:ml-16">
                 Check your details and make sure everything looks good. It's no
                 big deal if it's not - you can always change it.
               </p>
@@ -127,7 +127,7 @@ const CourseFeeEdit = () => {
         className={`${
           profileView === "/admin/applications-review"
             ? " mx-44 mt-20"
-            : " ml-[19.5%] mt-9 mr-6"
+           : " md:ml-[19.5%] sm:ml-[26.5%] mt-9 mr-6"
         }  `}
       >
         <CourseFeePersonalInfoUpdate
@@ -140,7 +140,7 @@ const CourseFeeEdit = () => {
         className={`${
           profileView === "/admin/applications-review"
             ? " mx-44 mt-20"
-            : " ml-[19.5%] mt-9 mr-6"
+           : " md:ml-[19.5%] sm:ml-[26.5%] mt-9 mr-6"
         }  `}
       >
         <CourseFeeStudentDocumentUpdate
@@ -161,7 +161,7 @@ const CourseFeeEdit = () => {
         className={`${
           profileView === "/admin/applications-review"
             ? " mx-44 mt-20"
-            : " ml-[19.5%] mt-9 mr-6"
+           : " md:ml-[19.5%] sm:ml-[26.5%] mt-9 mr-6"
         }  `}
       >
         <CourseFeeFamilyDocUpdate
@@ -182,7 +182,7 @@ const CourseFeeEdit = () => {
         className={`${
           profileView === "/admin/applications-review"
             ? " mx-44 mt-20"
-            : " ml-[19.5%] mt-9 mr-6"
+           : " md:ml-[19.5%] sm:ml-[26.5%] mt-9 mr-6"
         }  `}
       >
         <CourseFeeDocUpdate

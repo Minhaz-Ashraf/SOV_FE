@@ -253,13 +253,13 @@ const NotificationPage = () => {
           {notifications.length > 0 ? (
             renderNotifications(notifications)
           ) : (
-            <p className="text-center text-gray-500 mt-10">
+            <p className="text-center ml-36 text-gray-500 mt-10">
               No notifications to show.
             </p>
           )}
           {isLoading && <p className="text-center text-gray-500">Loading...</p>}
           {noMoreNotifications && notifications.length > 0 && (
-            <p className="text-center text-gray-500 mt-4">
+            <p className="text-center  text-gray-500 mt-4">
               No more notifications to show.
             </p>
           )}

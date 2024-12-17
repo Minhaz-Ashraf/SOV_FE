@@ -273,7 +273,7 @@ const HelpNSupport = () => {
                   value={isDate}
                   onChange={handleDateChange}
                 />
-                <span className="flex flex-row items-center  ml-9">
+                <span className="flex flex-row items-center  md:ml-9 sm:ml-3">
                   <CustomInput
                     className="h-11 md:w-60 sm:w-44 lg:w-80 rounded-md text-body placeholder:px-3 pl-7 border border-[#E8E8E8] outline-none"
                     type="text"
