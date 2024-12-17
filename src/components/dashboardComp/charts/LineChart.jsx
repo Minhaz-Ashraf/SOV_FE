@@ -143,7 +143,7 @@ const LineChartAgent = ({ data }) => {
       x: {
         title: {
           display: true,
-          text: 'Dates', 
+          text: 'Months', 
           font: {
             size: 16,
           },
@@ -155,7 +155,7 @@ const LineChartAgent = ({ data }) => {
       y: {
         title: {
           display: true,
-          text: 'Values',
+          text: 'Counts',
           font: {
             size: 16,
           },
