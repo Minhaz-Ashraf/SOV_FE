@@ -1,4 +1,4 @@
-import { RouterProvider } from "react-router-dom";
+import { RouterProvider, useNavigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
@@ -11,46 +11,54 @@ import { useDispatch, useSelector } from "react-redux";
 import { router } from "./routes/Route";
 import { agentInformation } from "./features/agentSlice";
 import { studentInfo } from "./features/studentSlice";
-import { getAdminConnectionDetails, getConnectionDetails } from "./features/getConnectionDetails";
+import {
+  getAdminConnectionDetails,
+  getConnectionDetails,
+} from "./features/getConnectionDetails";
 import socketServiceInstance from "./services/socket";
+import { io } from "socket.io-client";
 import { adminProfileData } from "./features/adminSlice";
+import { startTokenHeartbeat } from "./services/tokenCheck";
 
 function App() {
   const role = localStorage.getItem("role");
-  const studentId = localStorage.getItem("student")
+  const studentId = localStorage.getItem("student");
   const dispatch = useDispatch();
+
   const { prefCountryOption, courses, countryOption } = useSelector(
     (state) => state.general
   );
 
   useEffect(() => {
     let socket;
-  
+
     const initializeSocketConnection = async () => {
       try {
         let data;
-  
+
         if (role === "0") {
           data = await getAdminConnectionDetails();
         } else {
           data = await getConnectionDetails();
         }
-  
-        await socketServiceInstance.connectToSocket("https://sovtest.slashifytech.in", data);
+
+        await socketServiceInstance.connectToSocket(
+          import.meta.env.VITE_APP_DEV_BASE,
+          data
+        );
       } catch (error) {
         console.error("Error initializing socket connection:", error);
       }
     };
-  
+
     initializeSocketConnection();
-  
+
     return () => {
       if (socket) {
         socket.disconnect();
       }
     };
   }, [role, socketServiceInstance]);
-  
 
   useEffect(() => {
     if (!countryOption || countryOption.length === 0) {
@@ -62,15 +70,15 @@ function App() {
     if ((!courses || courses.length === 0) && (role === "2" || role === "3")) {
       dispatch(getCourses());
     }
-    
+
     if (role === "2") {
       dispatch(agentInformation());
     }
-    if (role==="3"){
-      dispatch(studentInfo(studentId))
+    if (role === "3") {
+      dispatch(studentInfo(studentId));
     }
-    if(role === "0"){
-      dispatch(adminProfileData())
+    if (role === "0") {
+      dispatch(adminProfileData());
     }
 
     // Interval to check every 3 seconds
@@ -81,15 +89,25 @@ function App() {
       if (prefCountryOption.length === 0) {
         dispatch(getPrefCountryOption());
       }
-      if ((courses.length === 0) && (role === "2" || role === "3" || role === "0")) {
+      if (
+        courses.length === 0 &&
+        (role === "2" || role === "3" || role === "0")
+      ) {
         dispatch(getCourses());
       }
-      
     }, 3000);
 
     return () => clearInterval(intervalId);
   }, [dispatch, countryOption, prefCountryOption, courses]);
 
+ 
+  useEffect(() => {
+    const stopHeartbeat = startTokenHeartbeat();
+
+    return () => {
+      stopHeartbeat();
+    };
+  }, []);
   return (
     <>
       <ToastContainer position="top-center" autoClose={5000} hideProgressBar />
