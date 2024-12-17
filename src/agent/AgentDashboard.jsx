@@ -16,11 +16,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { agentInformation, allStudentCount } from "../features/agentSlice";
 import { totalAgentStudent } from "../features/adminApi";
 import { appType, donoughtFilter, userType } from "../constant/data";
+import Loader from "../components/Loader";
 
 const AgentDashboard = () => {
   const totalStudentCount = useSelector((state) => state.agent.studentCount);
   const { agentData } = useSelector((state) => state.agent);
   const [applicationData, setApplicationData] = useState();
+   const [loading, setLoading] = useState(true);
   const [underReviewData, setUnderreviewData] = useState();
   const [completedApplication, setCompletedApplication] = useState();
   const [appOverviewCount, setAppOverviewCount] = useState();
@@ -251,13 +253,31 @@ const AgentDashboard = () => {
     }),
   };
   // console.log(appOverviewCount?.data?.visaCount, "test");
+
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+
   return (
     <>
+   
       <Header customLink="/agent/shortlist" />
       <div>
         <span className="fixed overflow-y-scroll scrollbar-hide  bg-white ">
           <AgentSidebar />
         </span>
+        {loading ? (
+        <div className=" ml-[53%] pt-52">
+          <Loader />
+        </div>
+      ) : (
+        <>
         <div className="md:ml-[17%] ml-[22%] pt-14 font-poppins">
           <p className="md:text-[28px] text-[24px] font-bold text-sidebar mt-6 ml-9">
             Dashboard
@@ -402,8 +422,8 @@ const AgentDashboard = () => {
             </span>
           </span>
           <BarChart data={filteredBarData} />
-        </div>
-      </div>
+        </div></>)}
+      </div> 
     </>
   );
 };

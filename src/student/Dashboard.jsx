@@ -155,7 +155,7 @@ const Dashboard = () => {
     </span>
     <div className="md:ml-[16.5%] sm:ml-[22%] pt-24 bg-white">
       {isLoading ? (
-        <div className="w-1 ml-[45%]">
+        <div className=" ml-[45%]">
           <Loader />
         </div>
       ) : (

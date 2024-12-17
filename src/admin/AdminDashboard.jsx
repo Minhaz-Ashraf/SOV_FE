@@ -15,18 +15,14 @@ import {
   totalAgentStudent,
 } from "../features/adminApi";
 import { appType, donoughtFilter, userType } from "../constant/data";
+import Loader from "../components/Loader";
 
 const AdminDashboard = () => {
   const { getAdminProfile } = useSelector((state) => state.admin);
-
-  const totalStudentCount = useSelector((state) => state.agent.studentCount);
-  const { agentData } = useSelector((state) => state.agent);
   const [applicationData, setApplicationData] = useState();
   const [isAgentData, setAgentData] = useState();
   const [isStudentData, setStudentData] = useState();
-
   const [userMonthlyData, setUserMontlyData] = useState();
-  // const [monthlyApplicationData, setMontlyApplicationData] = useState();
   const [ticketData, setTicketData] = useState();
   const [userCount, setUserCount] = useState();
   const [appCount, setAppCount] = useState();
@@ -269,7 +265,6 @@ const [userDataType, setUserDataType]  = useState('');
 
   const datasets = [];
 
-  // Add agent dataset if data exists
   if (agentLineData.length > 0) {
     datasets.push({
       label: `Total Number of Agents (${selectedYearLine})`,
@@ -288,7 +283,6 @@ const [userDataType, setUserDataType]  = useState('');
     });
   }
   
-  // Add student dataset if data exists
   if (studentData.length > 0) {
     datasets.push({
       label: `Total Number of Students (${selectedYearLine})`,
@@ -307,27 +301,33 @@ const [userDataType, setUserDataType]  = useState('');
     });
   }
   
-  // Check if we have any datasets to render
   const filteredLineData = {
-    labels: monthNames, // Months as labels
-    datasets: datasets.length > 0 ? datasets : [], // Only include datasets if they exist
+    labels: monthNames, 
+    datasets: datasets.length > 0 ? datasets : [], 
   };  
   const filteredBarData = {
-    labels: monthNames, // Months as labels
+    labels: monthNames, 
     label: `# of Applications (${selectedYearBar})`,
     values: monthNames.map((month, index) => {
-      const monthNumber = index + 1; // Map index to month number (1-12)
+      const monthNumber = index + 1;
 
-      // Ensure appCount exists and is accessed correctly
       const applicationCounts = appCount?.applicationCounts || [];
       const matchedAppCount = applicationCounts.find(
         (app) => app.year === selectedYearBar && app.month === monthNumber
       );
 
-      return matchedAppCount ? matchedAppCount.count : 0; // Return count or 0 if not found
+      return matchedAppCount ? matchedAppCount.count : 0; 
     }),
   };
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+ 
   return (
     <>
       <Header customLink="/agent/shortlist" />
@@ -335,6 +335,12 @@ const [userDataType, setUserDataType]  = useState('');
         <span className="fixed overflow-y-scroll scrollbar-hide  bg-white ">
           <AdminSidebar />
         </span>
+        {loading ? (
+        <div className=" ml-[53%] pt-52">
+          <Loader />
+        </div>
+      ) : (
+        <>
         <div className="md:ml-[17%] ml-[22%] pt-14 font-poppins">
           <p className="md:text-[28px] text-[24px] font-bold text-sidebar mt-6 ml-9">
             Dashboard
@@ -499,7 +505,7 @@ const [userDataType, setUserDataType]  = useState('');
             </span>
           </span>
           <BarChart data={filteredBarData} />
-        </div>
+        </div></>)}
       </div>
     </>
   );
