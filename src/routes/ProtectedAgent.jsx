@@ -24,7 +24,7 @@ const ProtectedAgent  = ({ children }) => {
     );
   }
 
-  const isAuthorizedRole = roleType === "3";
+  const isAuthorizedRole = roleType === "2";
 
   if (!isAuthorizedRole || !authToken) {
     return <Navigate to="/login" replace={true} />;
