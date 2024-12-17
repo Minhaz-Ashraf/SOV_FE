@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import AdminCard from "./AdminCard";
 import { toast } from "react-toastify";
 
@@ -6,10 +6,13 @@ import { useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setTabType } from "../../features/adminSlice";
 import { DataNotFound } from "../Dnf";
+import Loader from "../Loader";
 
 const Rejected = ({ data }) => {
   const location = useLocation();
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(true);
+
 
   useEffect(() => {
     dispatch(setTabType("rejected"));
@@ -17,6 +20,25 @@ const Rejected = ({ data }) => {
 
   const applications = data?.applications;
 
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+  if (loading) {
+    return (
+      <div
+      className={`w-full  mt-12 ${
+     "ml-[42%]"
+      }`}
+    >
+      <Loader />
+    </div>
+    );
+  }
   return (
     <div className="mt-4">
       {location.pathname === "/admin/applications-review" ? (
