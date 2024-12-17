@@ -37,6 +37,8 @@ const CourseFeeDocUpdate = ({
   const [newFiles, setNewFiles] = useState([]);
   const [deletedFiles, setDeletedFiles] = useState([]);
   const [isOne, setIsOne] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const [courseFee, setCourseFee] = useState({
     offerLetterAnsPassport: { ...initialofferLetterAnsPassport },
   });
@@ -114,7 +116,7 @@ const CourseFeeDocUpdate = ({
         },
       }));
 
-      toast.success("Document URL has been set.");
+      // toast.success("Document URL has been set.");
     }
   };
 
@@ -155,6 +157,8 @@ const CourseFeeDocUpdate = ({
     }
 
     try {
+      setIsSubmitting(true);
+
       // Handle deletions
       // for (const { fileUrl } of deletedFiles) {
       //   const storageRef = ref(storage, fileUrl);
@@ -200,6 +204,9 @@ const CourseFeeDocUpdate = ({
           
           } catch (error) {
             // toast.error(`Error uploading ${file.name}.`);
+          }finally{
+            setIsSubmitting(false);
+
           }
         })
       );
@@ -437,7 +444,7 @@ const CourseFeeDocUpdate = ({
               className="bg-primary text-white px-6 py-2 rounded"
               onClick={handleSubmit}
             >
-              Submit
+              {isSubmitting ? "Suvmitting.." : "Submit"}
             </button>
           </div>
         )}

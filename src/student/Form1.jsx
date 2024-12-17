@@ -320,6 +320,8 @@ const Form1 = ({
     }
 
     try {
+      setIsSubmitting(true);
+
       // Handle deletions
       for (const fileUrl of deletedFiles) {
         const storageRef = ref(storage, fileUrl);
@@ -342,7 +344,6 @@ const Form1 = ({
         // console.log("Uploading file with unique name:", uniqueFileName)
         const storageRef = ref(storage, `uploads/student/${uniqueFileName}`);
         try {
-          setIsSubmitting(true);
           const snapshot = await uploadBytes(storageRef, file);
           const downloadURL = await getDownloadURL(snapshot.ref);
 
@@ -367,6 +368,8 @@ const Form1 = ({
           }
         } catch (error) {
           toast.error(`Error uploading ${file.name}.`);
+        }finally{
+          setIsSubmitting(false)
         }
       }
       if (
@@ -715,7 +718,7 @@ const Form1 = ({
                 handleSubmit();
               }}
             >
-              {isSubmitting ? "Submitting..." : "Save"}
+              {isSubmitting ? "Submitting..." : "Submit"}
             </button>
           </div>
         ) : (

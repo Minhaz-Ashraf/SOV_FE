@@ -60,6 +60,8 @@ const TicketAddPop = ({ isOpen, closePopUp, value, handleInput, handleFunc }) =>
                       </option>
                     ))}
                   </select>
+               {value.priorityStatus === "Urgent"  &&  <p className="text-primary text-[14px]">You need to pay 12$ for Urgent priority.</p>}
+
                 </div>
               </span>
 

@@ -375,10 +375,10 @@ const VisaApply = () => {
       }
 
       // Submit the updated data to the backend
-      const response = await visaAdd(updatedStudentDocument);
+      const res = await visaAdd(updatedStudentDocument);
       setIsConfirmPopUp(true);
       startSprinkles();
-      toast.success(response.message || "Data added successfully.");
+      toast.success(res.message || "Data added successfully.");
       if (role === "2") {
         if (socketServiceInstance.isConnected()) {
           //from agent to admin
@@ -444,7 +444,7 @@ const VisaApply = () => {
                 ?.lastName
             } ${
               studentInfoData?.data?.studentInformation?.stId
-            }  has submitted the course fee application ${response.data.applicationId}.  `,
+            }  has submitted the course fee application ${res.data.applicationId}.  `,
             agentId: agentData?._id,
             agId: agentData?.agId,
             agentName: agentData?.companyDetails?.businessName,

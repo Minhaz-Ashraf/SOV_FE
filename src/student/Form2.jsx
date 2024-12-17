@@ -347,7 +347,7 @@ const Form2 = ({
                 handleCancel();
               }}
             >
-              Save
+              Submit
             </button>
           </div>
         ) : (
