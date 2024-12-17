@@ -20,21 +20,26 @@ const AgentDirectory = () => {
   const [page, setPage] = useState(1)
   const [downloading, setDownloading] = useState(false);
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [perPage, setPerPage] = useState(10);
 
   // Select data from Redux
 
   const { getAllAgentData } = useSelector((state) => state.admin);
-  console.log(getAllAgentData);
   const totalUsersCount = getAllAgentData?.data?.pagination?.totalAgents || 0;
   const currentPage = getAllAgentData?.data?.pagination?.currentPage || 1;
   const totalPagesCount = getAllAgentData?.data?.pagination?.totalPages || 1;
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
 
-  const perPageOptions = Array.from(
-    { length: Math.min(totalUsersCount, 100) / 10 },
-    (_, i) => (i + 1) * 10
-  );
+    return () => clearTimeout(timer);
+  }, []);
+  // const perPageOptions = Array.from(
+  //   { length: Math.min(totalUsersCount, 100) / 10 },
+  //   (_, i) => (i + 1) * 10
+  // );
 
   const handlePerPageChange = (e) => {
     setPerPage(parseInt(e.target.value));
@@ -93,6 +98,13 @@ const AgentDirectory = () => {
 
     }
   };
+  useEffect(() => {
+      const timer = setTimeout(() => {
+        setLoading(false);
+      }, 2000);
+  
+      return () => clearTimeout(timer);
+    }, []);
   return (
     <>
       <Header customLink="/agent/shortlist" />
