@@ -90,7 +90,7 @@ const AllApplication = () => {
       </span>
 
       {isLoading ? (
-        <div className="w-1 ml-[53%] mt-44">
+        <div className=" ml-[53%] md:mt-80 sm:mt-80 ">
           <Loader />
         </div>
       ) : (

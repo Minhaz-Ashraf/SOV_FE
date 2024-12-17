@@ -188,7 +188,7 @@ console.log(studentId)
 
       <div className="mt-6 mr-6">
         {isLoading ? (
-          <div className="w-full ml-[48%] mt-12">
+          <div className="w-full ml-[48%] ">
             <Loader />
           </div>
         ) : getAllDocuments && getAllDocuments.length === 0 ? (
