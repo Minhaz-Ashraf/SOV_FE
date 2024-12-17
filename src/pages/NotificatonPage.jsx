@@ -156,7 +156,9 @@ const NotificationPage = () => {
                 notification.title === "STUDENT_REQUESTED_AMOUNT_WITHDRAWAL"||
                 notification.title === "AGENT_REQUESTED_AMOUNT_WITHDRAWAL"||
                 notification.title === "AGENT_WITHDRAWAL_COMPLETE"||
-                notification.title === "AGENT_STUDENT_VISA_STAMP"
+                notification.title === "AGENT_STUDENT_VISA_STAMP"||
+                notification.title === "STUDENT_STUDENT_VISA_STAMP"
+
 
 
 
@@ -206,12 +208,18 @@ const NotificationPage = () => {
           </p>
         </div>
         <div className="mb-20">
-          <span className="flex justify-end mr-9 mt-6">
+          <span className="flex justify-end mr-9 mt-6 gap-5">
             <span
               onClick={handleMarkAllAsSeen}
               className="text-body bg-[#F2F5F7] px-6 py-2 rounded-md cursor-pointer"
             >
               Mark All as Seen
+            </span>
+            <span
+              onClick={handleMarkAllAsSeen}
+              className="text-body bg-[#F2F5F7] px-6 py-2 rounded-md cursor-pointer"
+            >
+              Clear All
             </span>
           </span>
           {notifications.length > 0 ? (

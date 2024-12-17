@@ -153,7 +153,6 @@ const handleSubmit = async()=>{
           const notificationData = {
             title: "   AGENT_STUDENT_VISA_STAMP",
             message: `${agentData?.companyDetails?.businessName} ${agentData?.agId} has submitted Visa Stamp and PPR  ${visaStatus?.applicationId} for  ${studentData?.studentInformation?.personalInformation?.firstName} ${studentData?.studentInformation?.personalInformation?.lastName} ${studentData?.studentInformation?.stId}`,
-            path: "",
             path: "/student-profile",
             pathData: {
               studentId: studentData?.studentInformation?._id,
@@ -183,7 +182,7 @@ const handleSubmit = async()=>{
             }  ${
               studentInfoData?.data?.studentInformation?.stId
             }  has submitted the Visa Stamp and PPR ${visaStatus?.applicationId} `,
-            path: "/student/visa-update",
+            path: "/student-profile",
             pathData: {
               studentId: studentInfoData?.data?.studentInformation?._id,
             },

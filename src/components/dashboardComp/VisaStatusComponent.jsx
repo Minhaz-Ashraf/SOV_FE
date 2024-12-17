@@ -566,7 +566,7 @@ if(flag === "approvedbyembassy"){
                 </span>
               </span>
               <span className="w-1/2">
-                <span className="font-light mt-4">visa Stamp</span>
+                <span className="font-light mt-4">Visa Stamp</span>
                 <span className="font-medium">
                   {visaStatus?.visa?.visaStamp ? (
                     <a
@@ -575,7 +575,7 @@ if(flag === "approvedbyembassy"){
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      View visa Stamp
+                      View Visa Stamp
                       <span>
                         <FaRegEye />
                       </span>
