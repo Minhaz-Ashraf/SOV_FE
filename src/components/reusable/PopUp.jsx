@@ -24,7 +24,7 @@ const PopUp = ({
             heading === "Visa Form Submitted" ||
             heading === "Course Fee Form Submitted") &&
           role === "3"
-        ? navigate("/student/dashboard")
+        ? navigate("/student/application")
         : heading === "Successfully Registered" && role === "2"
         ? navigate("/agent/student-lists")
         : navigate("/login");
@@ -73,7 +73,7 @@ const PopUp = ({
                       heading === "Visa Form Submitted" ||
                       heading === "Course Fee Form Submitted") &&
                     role === "3"
-                  ? "Back to Dashboard"
+                  ? "Back to Applications"
                   : heading === "Successfully Registered" && role === "2"
                   ? "Back to Lists"
                   : "Back to login"}
