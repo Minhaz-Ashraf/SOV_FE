@@ -33,10 +33,12 @@ import { BsKey } from "react-icons/bs";
 import { genderOption, maritalOption } from "../constant/data";
 import { useLocation } from "react-router-dom";
 import { editTeam } from "./../features/adminApi";
+import { useNavigate } from "react-router-dom";
 
 const AddMember = () => {
   const dispatch = useDispatch();
   const location = useLocation();
+  const navigate = useNavigate();
   console.log(location);
   const id = location?.state?.id;
   const [memberData, setMemberData] = useState({
@@ -56,6 +58,7 @@ const AddMember = () => {
     maritalStatus: "",
     password: "",
   });
+  
   const [newFiles, setNewFiles] = useState([]);
   const [deletedFiles, setDeletedFiles] = useState([]);
   const [errors, setErrors] = useState({});
@@ -300,7 +303,7 @@ const AddMember = () => {
       setNewFiles([]);
       setDeletedFiles([]);
       dispatch(setEmptyMemberInput());
-
+     navigate("/admin/team-members")
     } catch (error) {
       console.error("Error during submission:", error);
       toast.error(error?.message || "Something went wrong.");
