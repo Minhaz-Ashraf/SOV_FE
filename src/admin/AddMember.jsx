@@ -63,7 +63,7 @@ const AddMember = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const { countryOption } = useSelector((state) => state.general);
   const { getMember } = useSelector((state) => state.admin);
-
+  const [isEdit, setEdit] = useState(location?.state?.edit)
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -155,7 +155,9 @@ const AddMember = () => {
       phone: phoneData.number,
     }));
   };
-
+  const handleEdit= () => {
+   setEdit("noEdit")
+  };
   // Validation logic
   const validateFields = () => {
     const validationErrors = {};
@@ -204,7 +206,7 @@ const AddMember = () => {
     }
 
     // Password validation
-    if (location?.state?.edit !== "edit") {
+    if (isEdit !== "edit") {
       const passwordRegex =
         /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{10,16}$/;
   
@@ -283,12 +285,12 @@ const AddMember = () => {
     zipcode: memberData.zipcode,
   },
   // Add password only if not in edit mode
-  ...(location?.state?.edit !== "edit" && { password: memberData.password }),
+  ...(isEdit !== "edit" && { password: memberData.password }),
 };
 
       // Submit the data
       const res =
-        location?.state?.edit === "edit"
+        isEdit === "edit"
           ? await editTeam(payload, id)
           : await addTeam(payload);
 
@@ -548,13 +550,17 @@ const AddMember = () => {
               errors={errors.zipcode}
             />
           </div>
-          {location?.state?.edit !== "edit" && <>
+        <div className="flex items-center">
           <FormSection
             icon={<BsKey />}
             title="Password Information"
             customClass="-mt-14"
           />
-        
+          {isEdit === "edit"  &&
+            <span onClick={handleEdit} className="-mt-14 border rounded-md text-primary px-3 py-2 text-[14px] cursor-pointer border-primary"> Edit Password</span>}
+          </div>
+
+          {isEdit !== "edit" && <>
           <div className="bg-white rounded-xl px-8 py-8 pb-12  -mt-9  mb-16">
             <PasswordField
               name="password"

@@ -760,7 +760,7 @@ export const getTicketActivity = async (id, page, perPage, dateObj,  search, isP
         perPage: perPage,
         date: dateObj,
         searchData: search,
-        ticketType: isPriorityType
+        priorityStatus: isPriorityType
       }
     
     });
@@ -784,7 +784,7 @@ export const getApplicationActivity = async (id, page, perPage, isType, search )
         page: page,
         perPage: perPage,
         status: isType,
-        searchData: search
+        searchQuery: search
       }
  
     });
