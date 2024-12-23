@@ -53,7 +53,7 @@ export const chngeApplicationStatus = async ( id, status, section, message) => {
   try {
     
      const path =
-          role !== "0"
+          role === "0"
             ? "/admin/change-application-status"
             : role === "1"
             ? "/admin/change-application-status-subadmin"
