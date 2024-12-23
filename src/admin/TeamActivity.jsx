@@ -78,9 +78,7 @@ const TeamActivity = () => {
                 loading="lazy"
               />
               <span className="flex flex-col">
-                <span className="text-primary font-medium text-[13px]">
-                  Applications
-                </span>
+             
                 <span className="text-sidebar text-[18px] font-medium ">
                   {getMember?.data?.firstName +
                     " " +

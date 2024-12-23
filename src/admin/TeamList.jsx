@@ -17,7 +17,6 @@ import socketServiceInstance from "../services/socket";
 
 const TeamList = () => {
   const teamData = useSelector((state) => state.admin.getTeams);
-  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const perPage = 10;
   const [page, setPage] = useState(1);
@@ -36,6 +35,10 @@ const TeamList = () => {
     setPage(1);
   };
 
+  const handleEmptyForm = (e) => {
+    dispatch(setEmptyMemberInput());
+
+  };
   useEffect(() => {
     dispatch(getAllTeamData({ perPage, page, search }));
   }, [perPage, page, search]);
@@ -62,7 +65,6 @@ const TeamList = () => {
       } else {
         console.error("Socket connection failed, cannot emit notification.");
       }
-      navigate("/login");
     } catch (error) {
       console.log(error);
       toast.error(error.message || "something went wrong");
@@ -101,8 +103,8 @@ const TeamList = () => {
               </span>
             </span>
           </span>
-          <Link to="/admin/add-member" state={"passPage"}>
-            <span className="bg-primary text-white rounded-md px-6 py-2 cursor-pointer text-[13px]">
+          <Link onclick={handleEmptyForm} to="/admin/add-member" state={"passPage"}>
+            <span  className="bg-primary text-white rounded-md px-6 py-2 cursor-pointer text-[13px]">
               + Add New Member
             </span>
           </Link>

@@ -356,8 +356,11 @@ const adminSlice = createSlice({
     setNullStudentDirectory: (state) => {
       state.getAllStudentData = [];
     },
-    setEmptyInstitute: (state, action) => {
+    setEmptyInstitute: (state) => {
       state.instituteById = [];
+    },
+    setEmptyMemberInput: (state) => {
+      state.getMember = [];
     },
   },
   extraReducers: (builder) => {
