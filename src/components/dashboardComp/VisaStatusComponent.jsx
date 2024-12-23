@@ -404,7 +404,7 @@ const VisaStatusComponent = ({ studentId }) => {
         </div>
       ) : visaStatus?.visa?.status === "deferment" ? (
         <div
-          className={`bg-white flex flex-col rounded-md justify-center items-center md:mx-52 py-9 font-poppins px-14 mb-20 ${
+          className={`bg-white flex flex-col rounded-md justify-center items-center md:mx-60 py-9 font-poppins px-14 mb-20 ${
             location.pathname === "/student/visa-update"
               ? "md:mx-20 md:ml-[28%] sm:mx-9 sm:ml-[28%]  mt-36 "
               : null
@@ -421,7 +421,7 @@ const VisaStatusComponent = ({ studentId }) => {
           />
           {role === "0" || role === "1" ? (
             <>
-              <p className="text-sidebar text-[15px] font-semibold mt-3 text-center">
+              <p className="text-sidebar text-[22px] font-semibold mt-3 text-center">
               Visa application has been rejected by embassy for this student and student requested for deferment.
               </p>
             </>

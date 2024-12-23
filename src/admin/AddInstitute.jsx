@@ -15,14 +15,16 @@ import {
   deleteObject,
 } from "firebase/storage";
 import { storage } from "../utils/fireBase";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { getSingleInstitute } from "../features/adminSlice";
 import PopUp from "../components/reusable/PopUp";
 import { greenTick } from "../assets";
-
+import { Select} from 'antd';
+import { intakeOption } from "../constant/data";
 const AddInstitute = () => {
   const location = useLocation();
   const dispatch = useDispatch();
+  const navigate =useNavigate();
    const id = location?.state?.id
    console.log(id)
    const {instituteById} = useSelector((state)=>state.admin)
@@ -199,7 +201,7 @@ const AddInstitute = () => {
         toast.success(res.message || "Institute added successfully.");
         setNewFiles([]);
         setDeletedFiles([]);
-    
+    navigate("/admin/institute");
     } catch (error) {
       console.error("Error during submission:", error);
       toast.error(error?.message || "Something went wrong.");
@@ -321,6 +323,17 @@ const AddInstitute = () => {
                 value={instituteData.inTake}
                 errors={errors.inTake}
               />
+<Select
+  mode="multiple"
+  allowClear
+  value={instituteData.inTake} 
+  style={{ width: '100%' }}
+  placeholder="Please select intake"
+  onChange={(selectedValues) => handleInput("inTake", selectedValues)} 
+  options={intakeOption} 
+/>
+
+
               <span className="text-[15px] text-secondary mt-6 ">
                 {" "}
                 About the institute <span className="text-primary">*</span> 

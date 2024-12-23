@@ -97,7 +97,7 @@ const SelectComponent = ({ name, label, options, value, handleChange, notImp }) 
   return (
     <div className="flex flex-col mb-4 mt-6 font-poppins">
       <label className="font-normal text-secondary mb-2 text-[14px]">
-        {label} {notImp === true ? "" : "*"}
+        {label} {notImp === true ? "" : <span className="text-primary">*</span>}
       </label>
       <select
         name={name}
@@ -145,7 +145,7 @@ const InstituteComponent = ({ name, label, options, value, handleChange, customC
   return (
     <div className="flex flex-col mb-4 mt-6 font-poppins">
       <label className="font-normal text-secondary mb-2 text-[14px]">
-        {label} {imp === false ? "" : "*"}
+        {label} {imp === false ? "" : <span className="text-primary">*</span>}
       </label>
       <select
         name={name}

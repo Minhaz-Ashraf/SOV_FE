@@ -866,16 +866,8 @@ const ApplyOfferLater = () => {
               </div>
             )}
 
-            {/* Error Display */}
-            {Object.keys(errors).length > 0 && (
-              <div className="mt-6">
-                {Object.values(errors).map((error, index) => (
-                  <p key={index} className="text-red-500">
-                    {error}
-                  </p>
-                ))}
-              </div>
-            )}
+      
+         
           </div>
           <div className="bg-white rounded-xl px-8 py-4 pb-12 mt-6">
             <span className="font-bold text-[25px] text-secondary ">
@@ -969,7 +961,7 @@ const ApplyOfferLater = () => {
               Upload Documents
             </span>
             <p className="text-[15px] mt-3 text-body">
-              IELTS/PTE/TOEFL/MOI/Certificate*
+              IELTS/PTE/TOEFL/MOI/Certificate <span className="text-primary">*</span>
             </p>
             <div className="flex flex-col justify-center items-center border-2 border-dashed border-body rounded-md py-9 mt-9 mb-4">
               <button
@@ -1015,6 +1007,16 @@ const ApplyOfferLater = () => {
                   </ul>
                 </div>
               )}
+              {Object.keys(errors).length > 0 && (
+  <div className="mt-6">
+    <p className="text-red-500">
+      {
+        Object.values(errors)[Object.values(errors).length - 1]
+      }
+    </p>
+  </div>
+)}
+
           </div>
           <div className="flex justify-end mb-12 mt-12">
             <span

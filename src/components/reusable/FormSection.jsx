@@ -23,7 +23,7 @@ const ScoreInputForm = ({ scoreType, scoreData, handleInput,namePrefix, errors, 
       <span className="flex items-center justify-between gap-4 w-full">
       <span className="w-1/2">
         <Register
-          imp="*"
+          // imp="*"
           name={`${namePrefix}.reading`}
           type="number"
           label="Reading"
@@ -32,7 +32,7 @@ const ScoreInputForm = ({ scoreType, scoreData, handleInput,namePrefix, errors, 
           errors={errors?.reading}
         />
         <Register
-          imp="*"
+          // imp="*"
           name={`${namePrefix}.speaking`}
           type="number"
           label="Speaking"
@@ -45,7 +45,7 @@ const ScoreInputForm = ({ scoreType, scoreData, handleInput,namePrefix, errors, 
       <span className="w-1/2">
 
         <Register
-          imp="*"
+          // imp="*"
           name={`${namePrefix}.writing`}
           type="number"
           label="Writing"
@@ -54,7 +54,7 @@ const ScoreInputForm = ({ scoreType, scoreData, handleInput,namePrefix, errors, 
           errors={errors?.writing}
         />
         <Register
-          imp="*"
+          // imp="*"
           name={`${namePrefix}.listening`}
             type="number"
           label="Listening"
@@ -65,7 +65,7 @@ const ScoreInputForm = ({ scoreType, scoreData, handleInput,namePrefix, errors, 
         </span>
       </span>
       <Register
-        imp="*"
+        // imp="*"
         name={`${namePrefix}.overallBand`}
          type="number"
         label="Overall Bands"

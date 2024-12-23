@@ -13,6 +13,7 @@ import AgentForm5 from "./../../../agent/AgentForm5";
 import { FaBuildingFlag } from "react-icons/fa6";
 import AgentForm6 from "./../../../agent/AgentForm6";
 import { IoClose, IoNavigateCircle } from "react-icons/io5";
+import { RxHamburgerMenu } from "react-icons/rx";
 
 const AgentProfileEdit = ({
   agentData,
@@ -27,6 +28,8 @@ const AgentProfileEdit = ({
   const sectionRef3 = useRef(null);
   const sectionRef4 = useRef(null);
   const sectionRef5 = useRef(null);
+  const sectionRef6 = useRef(null);
+
 
   const [isOpen, setIsOpen] = useState(false);
   const [toggleStates, setToggleStates] = useState({
@@ -37,12 +40,17 @@ const AgentProfileEdit = ({
     isFive: false,
     isSix: false,
   });
+  
+  const togglePopup = () => {
+    setIsOpen(!isOpen);
+  };
 
   const scrollToSection = (sectionRef) => {
     sectionRef.current.scrollIntoView({
       behavior: "smooth",
       block: "start",
     });
+    setIsOpen(false)
   };
 
   const handleToggle = (key) => {
@@ -52,9 +60,6 @@ const AgentProfileEdit = ({
     }));
   };
 
-  const togglePopup = () => {
-    setIsOpen(!isOpen);
-  };
   const handleCancel = (key) => {
     setToggleStates((prevStates) => ({
       ...prevStates,
@@ -786,7 +791,7 @@ const AgentProfileEdit = ({
       <div className="bg-white rounded-md px-6 py-4 font-poppins mb-16 mt-9">
         <div className="flex flex-row text-sidebar items-center justify-between border-b border-greyish">
           <span
-            ref={sectionRef5}
+            ref={sectionRef6}
             className="flex flex-row gap-4 items-center pb-3"
           >
             <span className="text-[24px]">
@@ -875,39 +880,45 @@ const AgentProfileEdit = ({
         {isOpen && (
           <div
             className="absolute bottom-16 right-0 p-4 bg-[#FAFAFA] shadow-lg rounded-lg animate-slideIn transition-all duration-300 ease-in-out"
-            style={{ minWidth: "200px" }}
+            style={{ minWidth: "250px" }}
           >
             <p
               onClick={() => scrollToSection(sectionRef1)}
-              className="text-primary underline py-1 cursor-pointer font-medium "
+              className="text-sidebar hover:text-primary py-1 cursor-pointer font-medium "
             >
               Company Details
             </p>
 
             <p
               onClick={() => scrollToSection(sectionRef2)}
-              className="text-primary underline py-1 cursor-pointer font-medium "
+              className="text-sidebar hover:text-primary py-1 cursor-pointer font-medium "
             >
-              Contacts
+             Primary Contact for Company
             </p>
 
             <p
               onClick={() => scrollToSection(sectionRef3)}
-              className="text-primary underline py-1 cursor-pointer font-medium "
+              className="text-sidebar hover:text-primary py-1 cursor-pointer font-medium "
             >
               Bank Details
             </p>
 
             <p
               onClick={() => scrollToSection(sectionRef4)}
-              className="text-primary underline py-1 cursor-pointer font-medium "
+              className="text-sidebar hover:text-primary py-1 cursor-pointer font-medium "
             >
               Company Overview
             </p>
-
             <p
               onClick={() => scrollToSection(sectionRef5)}
-              className="text-primary underline py-1 cursor-pointer font-medium "
+              className="text-sidebar hover:text-primary py-1 cursor-pointer font-medium "
+            >
+              Company Operations
+            </p>
+
+            <p
+              onClick={() => scrollToSection(sectionRef6)}
+              className="text-sidebar hover:text-primary py-1 cursor-pointer font-medium "
             >
               References
             </p>
@@ -917,12 +928,12 @@ const AgentProfileEdit = ({
         {/* Floating Button */}
         <button
           onClick={togglePopup}
-          className={`w-14 h-14 rounded-full flex items-center justify-center shadow-lg bg-primary transition-transform duration-300 ${
+          className={`w-14 h-14 rounded-full flex items-center justify-center shadow-xl bg-[#FAFAFA] transition-transform duration-300 ${
             isOpen ? "rotate-90" : ""
           }`}
         >
-          <span className="text-white text-2xl font-extrabold">
-            {isOpen ? <IoClose /> : <IoNavigateCircle />}
+          <span className="text-primary text-2xl font-extrabold">
+            {isOpen ? <IoClose /> : <RxHamburgerMenu />}
           </span>
         </button>
       </div>

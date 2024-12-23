@@ -52,9 +52,9 @@ const initialStudentDocument = {
   pcc: "",
   pal: "",
   certificate: "",
-  lor:"",
+  lor: "",
   sop: "",
-  blockedaccount:""
+  blockedaccount: "",
 };
 
 const VisaApply = () => {
@@ -123,24 +123,26 @@ const VisaApply = () => {
   const validateFields = () => {
     const errors = {};
     const { personalDetails, studentDocument } = visaLetter;
-  
+
     // Personal Details Validation
     if (!personalDetails.fullName?.trim()) {
       errors.fullName = "Full name is required.";
     } else if (!/^[a-zA-Z\s]+$/.test(personalDetails.fullName)) {
       errors.fullName = "Full name can only contain alphabets and spaces.";
     }
-  
+
     if (!personalDetails.email) {
       errors.email = "Email is required.";
-    } else if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(personalDetails.email)) {
+    } else if (
+      !/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(personalDetails.email)
+    ) {
       errors.email = "Invalid email format.";
     }
-  
+
     if (!personalDetails.phoneNumber) {
       errors.phoneNumber = "Phone number is required.";
     }
-  
+
     // Address Validation
     if (!personalDetails.address?.street?.trim()) {
       errors.street = "Street address is required.";
@@ -159,33 +161,33 @@ const VisaApply = () => {
     if (!personalDetails.address?.country?.trim()) {
       errors.country = "Country is required.";
     }
-  
+
     // Student Document Validation
     Object.keys(initialStudentDocument).forEach((docType) => {
-      // Skip validation for 'lop' and 'sop'
-      if (["lop", "sop"].includes(docType)) {
-        return;
-      }
-  
-      // Require 'blockedaccount' and 'pal' only for Germany
-      if (
-        (docType === "blockedaccount" || docType === "pal") &&
-        countryName === "Germany" &&
-        !studentDocument[docType]
-      ) {
-        errors[docType] = `${docType.replace(/([A-Z])/g, " $1")} is required.`;
-        return;
-      }
-  
-      // General validation for other required documents
-      if (!studentDocument[docType]) {
-        errors[docType] = `${docType.replace(/([A-Z])/g, " $1")} is required.`;
+      // Documents specific to Germany
+      const germanyRequiredDocs = ["blockedaccount", "lor", "pal", "sop"];
+
+      // Require these documents only for Germany
+      if (germanyRequiredDocs.includes(docType)) {
+        if (countryName === "Germany" && !studentDocument[docType]) {
+          errors[docType] = `${docType.replace(
+            /([A-Z])/g,
+            " $1"
+          )} is required for Germany.`;
+        }
+      } else {
+        // General validation for other documents
+        if (!studentDocument[docType]) {
+          errors[docType] = `${docType.replace(
+            /([A-Z])/g,
+            " $1"
+          )} is required.`;
+        }
       }
     });
-  
+
     return errors;
   };
-  
 
   const handleFilePopupOpen = (fileType) => {
     setFileType(fileType);
@@ -658,17 +660,23 @@ const VisaApply = () => {
               className="bg-white rounded-xl px-8 pt-4 pb-12 mt-6"
               key={docType}
             >
-              <p className="text-[15px]  text-body">
-                {docType
-                  .replace(/([A-Z])/g, " $1")
-                  .trim()
-                  .replace(/^./, (str) => str.toUpperCase())}{" "}
-                {docType === "pal" && countryName === "Germany"
-                  ? <span className="text-primary">*</span>
-                  : docType === "pal"
-                  ? ""
-                  :<span className="text-primary">*</span>}
+              <p className="text-[15px] text-body">
+                {docType === "blockedaccount"
+                  ? "Blocked Account"
+                  : docType
+                      .replace(/([A-Z])/g, " $1")
+                      .trim()
+                      .replace(/^./, (str) => str.toUpperCase())}{" "}
+                {countryName === "Germany" &&
+                ["pal", "sop", "blockedaccount", "lor"].includes(docType) ? (
+                  <span className="text-primary">*</span>
+                ) : !["pal", "sop", "blockedaccount", "lor"].includes(
+                    docType
+                  ) ? (
+                  <span className="text-primary">*</span>
+                ) : null}
               </p>
+
               <div className="flex flex-col justify-center items-center border-2 border-dashed border-body rounded-md py-9 mt-5 mb-4">
                 <button
                   className="text-black flex items-center"
@@ -678,10 +686,12 @@ const VisaApply = () => {
                 </button>
                 <p>
                   Upload{" "}
-                  {docType
-                    .replace(/([A-Z])/g, " $1")
-                    .trim()
-                    .replace(/^./, (str) => str.toUpperCase())}
+                  {docType === "blockedaccount"
+                    ? "Blocked Account"
+                    : docType
+                        .replace(/([A-Z])/g, " $1")
+                        .trim()
+                        .replace(/^./, (str) => str.toUpperCase())}
                 </p>
               </div>
               {visaLetter.studentDocument[docType] && (

@@ -8,7 +8,7 @@ import { CustomTableTen, CustomTableTwelve } from "../Table";
 import Dnf from "../Dnf";
 import Pagination from "../dashboardComp/Pagination";
 import { CustomInput } from "../reusable/Input";
-import { priorityOption, statusOption } from "../../constant/data";
+import { priorityOption, statusOpt, statusOption } from "../../constant/data";
 import { formatDate } from "./../../constant/commonfunction";
 import { dnf } from "../../assets";
 
@@ -110,7 +110,7 @@ const ApplicationActivity = ({ id }) => {
               onChange={handleTypeChange}
             >
               <option value="">Status</option>
-              {statusOption.map((option) => (
+              {statusOpt.map((option) => (
                 <option key={option.option} value={option.option}>
                   {option.label}
                 </option>
