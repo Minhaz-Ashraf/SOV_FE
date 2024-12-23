@@ -808,7 +808,7 @@ export const getApprovalActivity = async (id, page, perPage, isType, search) => 
         page: page,
         perPage: perPage,
         userType: isType,
-        searchData: search
+        search: search
       }
    
     });

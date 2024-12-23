@@ -23,8 +23,8 @@ const ApprovalActivity = ({id}) => {
   const { getApprovalActivityData } = useSelector((state) => state.admin);
   const [isLoading, setIsLoading] = useState(true);
   const [perPage, setPerPage] = useState(10);
-  const totalUsersCount = getApprovalActivityData?.totalStudents + getApprovalActivityData?.totalCompanies || 0;
-  const currentPage = getApprovalActivityData?.currentPage + getApprovalActivityData?.totalStudentPages || 1;
+  const totalUsersCount = getApprovalActivityData?.totalUsers || 0;
+  const currentPage = getApprovalActivityData?.currentPage  || 1;
   const totalPagesCount =
     getApprovalActivityData?.totalPages || 1;
   const dispatch = useDispatch();
