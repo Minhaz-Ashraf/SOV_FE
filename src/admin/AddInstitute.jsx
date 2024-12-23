@@ -318,7 +318,7 @@ const AddInstitute = () => {
                 type="number"
                 label="Intake"
                 handleInput={handleInput}
-                value={instituteData.offerLetterPrice}
+                value={instituteData.inTake}
                 errors={errors.inTake}
               />
               <span className="text-[15px] text-secondary mt-6 ">
