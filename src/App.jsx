@@ -35,15 +35,15 @@ function App() {
     const initializeSocketConnection = async () => {
       try {
         let data;
-
-        if (role === "0") {
+        console.log(role);
+        if (role === "0" || role === "1") {
           data = await getAdminConnectionDetails();
-        } else {
+        } else if (role === "2" || role === "3") {
           data = await getConnectionDetails();
         }
 
         await socketServiceInstance.connectToSocket(
-          "https://sovtest.slashifytech.in",
+          "http://localhost:8080",
           data
         );
       } catch (error) {
@@ -102,7 +102,6 @@ function App() {
     return () => clearInterval(intervalId);
   }, [dispatch, countryOption, prefCountryOption, courses]);
 
- 
   useEffect(() => {
     const stopHeartbeat = startTokenHeartbeat();
 
