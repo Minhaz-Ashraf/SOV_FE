@@ -589,6 +589,6 @@ const adminSlice = createSlice({
       });
   },
 });
-export const { setTabType, setUpdateTicket, setNullStudentDirectory, setEmptyInstitute } =
+export const { setTabType, setUpdateTicket, setNullStudentDirectory, setEmptyInstitute, setEmptyMemberInput } =
   adminSlice.actions;
 export default adminSlice.reducer;

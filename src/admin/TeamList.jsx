@@ -11,7 +11,7 @@ import Loader from "../components/Loader";
 import { toast } from "react-toastify";
 import AdminSidebar from "../components/dashboardComp/AdminSidebar";
 import MemberCard from "../components/dashboardComp/MemberCard";
-import { getAllTeamData } from "../features/adminSlice";
+import { getAllTeamData, setEmptyMemberInput } from "../features/adminSlice";
 import { deleteTeam } from "../features/adminApi";
 import socketServiceInstance from "../services/socket";
 

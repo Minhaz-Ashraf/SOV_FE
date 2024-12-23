@@ -25,6 +25,7 @@ import {
   adminProfileData,
   getAllTeamData,
   getMemberProfile,
+  setEmptyMemberInput,
 } from "../features/adminSlice";
 import PasswordField from "../components/reusable/PasswordField";
 import FormSection from "../components/reusable/FormSection";
@@ -298,6 +299,8 @@ const AddMember = () => {
       toast.success(res?.message || "Profile updated successfully.");
       setNewFiles([]);
       setDeletedFiles([]);
+      dispatch(setEmptyMemberInput());
+
     } catch (error) {
       console.error("Error during submission:", error);
       toast.error(error?.message || "Something went wrong.");
