@@ -1,39 +1,38 @@
 import React, { useEffect, useState } from "react";
 import Header from "../components/dashboardComp/Header";
 import AdminSidebar from "../components/dashboardComp/AdminSidebar";
-import { useDispatch, useSelector } from "react-redux";
-import { CustomInput } from "../components/reusable/Input";
-import { IoSearchOutline } from "react-icons/io5";
 import Pagination from "../components/dashboardComp/Pagination";
-import {
-  adminApplicationOverview,
-  applicationForApproval,
-} from "../features/adminSlice";
-import { CustomTableNine } from "../components/Table";
-import { downloadFile } from "../features/adminApi";
-import { toast } from "react-toastify";
-import { FaRegEye } from "react-icons/fa";
-import { dnf } from "../assets";
-import Dnf from "../components/Dnf";
+import { IoSearchOutline } from "react-icons/io5";
+import { CountrySelect, CustomInput } from "../components/reusable/Input";
+import { useDispatch, useSelector } from "react-redux";
 import Loader from "../components/Loader";
+import Dnf from "../components/Dnf";
+import { getInstitutes, setEmptyInstitute } from "../features/adminSlice";
+import { dnf } from "../assets";
+import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
+import { CustomTableTen } from "../components/Table";
+import { FaRegEye } from "react-icons/fa";
+import { RiEdit2Line } from "react-icons/ri";
+import { ImBin } from "react-icons/im";
+import { downloadFile } from "../features/adminApi";
 
-const ApplicationList = () => {
+const AdminInstitute = () => {
+  const role = localStorage.getItem("role");
+  const { prefCountryOption } = useSelector((state) => state.general);
+  const { allInstitutes } = useSelector((state) => state.admin);
+
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
-  const role = localStorage.getItem("role");
 
-  // const { applications } = useSelector((state) => state.admin);
-  // const {} = useSelector((state) => state.admin);
-  const { getApplicationOverview } = useSelector((state) => state.admin);
-  // const { updateState, tabType } = useSelector((state) => state.admin);
   const [downloading, setDownloading] = useState(false);
   const [search, setSearch] = useState("");
   const [perPage, setPerPage] = useState(10);
   const [isTypeFilter, setIsFilterType] = useState("");
   const [page, setPage] = useState(1);
-  const totalUsersCount = getApplicationOverview?.data?.totalCount || 0;
-  const currentPage = getApplicationOverview?.data?.currentPage;
-  const totalPagesCount = getApplicationOverview?.data?.totalPages;
+  const totalUsersCount = allInstitutes?.data?.totalRecords || 0;
+  const currentPage = allInstitutes?.data?.currentPage;
+  const totalPagesCount = allInstitutes?.data?.totalPages;
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
@@ -60,46 +59,36 @@ const ApplicationList = () => {
     setPage(1);
   };
 
+  const handleEmpty = () => {
+    dispatch(setEmptyInstitute());
+  };
+
   const perPageOptions = [];
   for (let i = 10; i <= Math.min(totalUsersCount, 100); i += 10) {
     perPageOptions.push(i);
   }
   useEffect(() => {
     // setLoading(true);
-    dispatch(adminApplicationOverview({ page, perPage, search, isTypeFilter }));
+    dispatch(getInstitutes({ isTypeFilter, search, page, perPage }));
 
     // setLoading(false);
-  }, [page, perPage, search, isTypeFilter]);
+  }, [isTypeFilter, search, page, perPage]);
 
-  const TABLE_HEAD = [
-    "S.No.",
-    "Sudent Name",
-    "Student Id",
-    "Submitted by",
-    "Total Applications",
-    "Under Review",
-    "Approved",
-    "Action",
-  ];
+  const TABLE_HEAD = ["S.No.", "Institute Name", "Country", "View", "Action"];
 
-  const TABLE_ROWS = getApplicationOverview?.data?.data?.map((data, index) => ({
+  const TABLE_ROWS = allInstitutes?.data?.institutes?.map((data, index) => ({
     sno: (currentPage - 1) * perPage + index + 1,
-    name: data?.firstName + " " + data?.lastName || "NA",
-    stId: data?.stId || "0",
-    submittedby: data?.submittedBy || "0",
-    total: data?.institutionCount || "0",
-    underreview: data?.underReviewCount || "0",
-    approved: data?.approvedCount || "0",
-    action: data?.action || "NA",
+    name: data?.instituteName || "NA",
     data: data || "NA",
   }));
-  // console.log(getApplicationOverview)
+  // console.log(allInstitutes)
+
   const downloadAll = async () => {
     try {
       setDownloading(true);
       await new Promise((resolve) => setTimeout(resolve, 2000));
       await downloadFile({
-        url: "/admin/total-application-download",
+        url: "/institute/download-all",
         filename: "Application.csv",
       });
       // toast.info("Downloading will start in few seconds");
@@ -122,51 +111,56 @@ const ApplicationList = () => {
         <span className="flex items-center pt-16 md:ml-[16.5%] sm:ml-[22%]  ">
           <span>
             <p className="text-[28px] font-bold text-sidebar mt-4 ml-9">
-              Applications ({totalUsersCount})
+              Institutions ({totalUsersCount})
             </p>
-            <p className="mt-1 font-normal text-body ml-9 pr-[30%] mb-2">
-              Review your agents and students applications here. Stay updated on
-              their status and view detailed forms for each submission.
+            <p className="mt-1 font-normal text-body ml-9  mb-2">
+              Easily find and manage all your listed institutions.
             </p>
           </span>
         </span>
       </div>
-      <span className="flex flex-row  justify-between mr-6 items-baseline">
-        <span className="flex flex-row items-center mb-3 m-6 mt-6 sm:ml-[24%] md:ml-[2%] lg:ml-[18%]  ">
+      <span className="flex md:flex-row sm:flex-col md:justify-between  -mt-7   mr-6 md:items-center ">
+        <span className="flex flex-row items-center mb-3 m-6 sm:ml-[25%] md:ml-[20%] lg:ml-[18%] gap-3  ">
           {" "}
-          <select
-            className="ml-3 border px-2 py-1 w-40 h-11 rounded outline-none"
-            onChange={handleTypeFilter}
+          <CountrySelect
+            notImp={true}
+            name="isTypeFilter"
+            options={prefCountryOption}
+            customClass="bg-white ml-6"
             value={isTypeFilter}
-          >
-            <option value="" className="text-body">
-              Submitted By
-            </option>
-            <option value="student">Student</option>
-            <option value="agent">Agent</option>
-          </select>
-          <span className="flex flex-row items-center ml-9">
+            handleChange={handleTypeFilter}
+          />
+          <span className="flex flex-row items-center ">
             <CustomInput
-              className="h-11 md:w-80 sm:w-40 rounded-md text-body placeholder:px-3 pl-7 border border-[#E8E8E8] outline-none"
+              className="h-11 w-80 mt-4 rounded-md text-body placeholder:px-3 pl-7 border border-[#E8E8E8] outline-none"
               type="text"
               placeHodler="Search by User Name & User Id "
               name="search"
               value={search}
               onChange={handleSearchChange}
             />
-            <span className="absolute pl-2 text-[20px] text-body">
+            <span className="absolute pl-2 mt-4  text-[20px] text-body">
               <IoSearchOutline />
             </span>
           </span>
         </span>
-        {role !== "1" && (
-          <span
-            onClick={downloadAll}
+        <span className="flex items-center sm:ml-48 ">
+          {role === "0" && (
+            <span
+              onClick={downloadAll}
+              className="bg-primary ml-5  text-white px-4 rounded-md py-2 cursor-pointer"
+            >
+              {downloading ? "Downloading...." : "Download"}
+            </span>
+          )}
+          <Link
+            onClick={handleEmpty}
+            to="/add-institute"
             className="bg-primary ml-5  text-white px-4 rounded-md py-2 cursor-pointer"
           >
-            {downloading ? "Downloading...." : "Download"}
-          </span>
-        )}
+            + Add Institute
+          </Link>
+        </span>
       </span>
       {loading ? (
         <div
@@ -179,12 +173,14 @@ const ApplicationList = () => {
       ) : TABLE_ROWS?.length > 0 ? (
         <>
           <div className="mt-3 mr-6 md:ml-[19%] sm:ml-[26%]">
-            <CustomTableNine
+            <CustomTableTen
               tableHead={TABLE_HEAD}
               tableRows={TABLE_ROWS}
-              action="View List"
-              linkOne={"/admin/student-applications"}
+              action="View"
+              linkOne={"/institute-view"}
               icon={<FaRegEye />}
+              iconTwo={<RiEdit2Line />}
+              iconThree={<ImBin />}
             />
           </div>
 
@@ -203,7 +199,7 @@ const ApplicationList = () => {
           <Dnf
             dnfImg={dnf}
             headingText="Start Your Journey!"
-            bodyText="No Application Data Available "
+            bodyText="No Institutte Available to Show"
           />
         </div>
       )}
@@ -211,4 +207,4 @@ const ApplicationList = () => {
   );
 };
 
-export default ApplicationList;
+export default AdminInstitute;

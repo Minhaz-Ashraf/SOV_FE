@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { greenCheck, NoVisa, urAdmin, VisaUr } from "../../assets";
+import { deferment, greenCheck, NoVisa, urAdmin, VisaUr } from "../../assets";
 import VisastatusPopToApply from "../VisastatusPopToApply";
 import { useDispatch, useSelector } from "react-redux";
 import { visaStatusData } from "../../features/generalSlice";
@@ -35,7 +35,7 @@ const VisaStatusComponent = ({ studentId }) => {
     role === "3"
       ? studentInfoData?.data?.studentInformation?._id ||
         location?.state?.notifyId
-      : role === "2" || role === "0"
+      : role === "2" || role === "0" || role === "1"
       ? studentId
       : null;
 
@@ -49,7 +49,7 @@ const VisaStatusComponent = ({ studentId }) => {
   const [isOpenOption, setIsOpenOption] = useState(false);
   const [selectedOption, setSelectedOption] = useState("");
   const [showWithdrwalData, setShowWithdrawalData] = useState(false);
-console.log(showWithdrawForm)
+  console.log(showWithdrawForm);
   const closeOption = () => {
     setIsOpenOption(false);
   };
@@ -77,7 +77,7 @@ console.log(showWithdrawForm)
     setShowWithdrawalData(true);
   };
   const handleClose = () => {
-    setShowWithdrawForm(false); 
+    setShowWithdrawForm(false);
   };
 
   useEffect(() => {
@@ -86,7 +86,7 @@ console.log(showWithdrawForm)
 
   function startSprinkles() {
     const stopSprinkles = createSprinklesEffect();
-  
+
     // Stop the sprinkles after 10 seconds
     setTimeout(() => {
       stopSprinkles();
@@ -98,9 +98,9 @@ console.log(showWithdrawForm)
       const res = await changeVisaStatus(visaStatus?._id, payload);
       dispatch(visaStatusData(studId));
       toast.success(res.message || "Approval Status Updated");
-if(flag === "approvedbyembassy"){
-  startSprinkles()
-}
+      if (flag === "approvedbyembassy") {
+        startSprinkles();
+      }
       if (socketServiceInstance.isConnected()) {
         let notificationTitle = "";
         let notificationMessage = "";
@@ -231,6 +231,75 @@ if(flag === "approvedbyembassy"){
     }
   };
 
+  const applicationStatusChange = async (id) => {
+    try {
+      const type = "visa";
+      const res = await chngeApplicationStatus(id, "deferment", type, null);
+      dispatch(visaStatusData(studId));
+
+      toast.success(res?.message || "Visa Updated for defrmation");
+      if (agentData?.agId) {
+        if (socketServiceInstance.isConnected()) {
+          //from agent to admin
+          const notificationData = {
+            title: " DEFERMATION_BY_AGENT",
+            message: `${agentData?.companyDetails?.businessName} ${agentData?.agId} requested for deferment ${visaStatus?.applicationId} for the ${
+              studentData?.studentInformation?.personalInformation
+                .firstName +
+              " " +
+              studentData?.studentInformation?.personalInformation
+                .lastName
+            } ${
+              studentData?.studentInformation?.stId
+            } `,
+            path: "/student-profile",
+            pathData: {
+              studentId: studentData?.studentInformation?._id,
+            },
+            recieverId: studentData.studentInformation.agentId,
+          };
+
+          socketServiceInstance.socket.emit(
+            "NOTIFICATION_AGENT_TO_ADMIN",
+            notificationData
+          );
+        } else {
+          console.error("Socket connection failed, cannot emit notification.");
+        }
+      }
+      if ( studentInfoData?.data?.studentInformation?.stId) {
+        if (socketServiceInstance.isConnected()) {
+          //from student to admin
+          const notificationData = {
+            title: " DEFERMATION_BY_STUDENT",
+            message: `${
+              studentInfoData?.data?.studentInformation?.personalInformation
+                .firstName +
+              " " +
+              studentInfoData?.data?.studentInformation?.personalInformation
+                .lastName
+            } ${
+              studentInfoData?.data?.studentInformation?.stId
+            } requested for deferment ${visaStatus?.applicationId}.`,
+            path: "/student/visa-update",
+            pathData: {
+              studentId: getStudentDataById?.studentInformation?._id,
+            },
+            recieverId: getStudentDataById.studentInformation.studentId,
+          };
+          socketServiceInstance.socket.emit(
+            "NOTIFICATION_STUDENT_TO_ADMIN",
+            notificationData
+          );
+        } else {
+          console.error("Socket connection failed, cannot emit notification.");
+        }
+      }
+    } catch (error) {
+      toast.error(error.message || "Something went wrong");
+      console.log(error);
+    }
+  };
   return (
     <>
       {role === "3" ? (
@@ -243,11 +312,15 @@ if(flag === "approvedbyembassy"){
       ) : (
         ""
       )}
-      {showWithdrwalData   ? (
+      {showWithdrwalData ? (
         <WithDrawalData userId={visaStatus?.userId} />
       ) : showWithdrawForm ? (
         <div className={`${role === "3" ? "mt-20 ml-64" : ""} `}>
-          <VisaWithdrawlForm choosedOption={selectedOption} studId={studId} handleClose={handleClose}/>
+          <VisaWithdrawlForm
+            choosedOption={selectedOption}
+            studId={studId}
+            handleClose={handleClose}
+          />
         </div>
       ) : visaStatus?.visa?.status === "underreview" ? (
         <div
@@ -293,7 +366,7 @@ if(flag === "approvedbyembassy"){
             }}
             loading="lazy"
           />
-          {role === "0" ? (
+          {role === "0" || role === "1" ? (
             <>
               <p className="text-sidebar text-[15px] font-normal mt-3 text-center">
                 Visa lodegement has been approved from admin side. Review the
@@ -324,6 +397,42 @@ if(flag === "approvedbyembassy"){
               <p className="text-sidebar text-[16px] text-center font-light mt-3">
                 We’ll notify you with updates. Please ensure all required
                 documents are submitted and check your email for further
+                requests.
+              </p>
+            </>
+          )}
+        </div>
+      ) : visaStatus?.visa?.status === "deferment" ? (
+        <div
+          className={`bg-white flex flex-col rounded-md justify-center items-center md:mx-52 py-9 font-poppins px-14 mb-20 ${
+            location.pathname === "/student/visa-update"
+              ? "md:mx-20 md:ml-[28%] sm:mx-9 sm:ml-[28%]  mt-36 "
+              : null
+          } `}
+        >
+          <img
+            src={deferment}
+            alt="img"
+            className="w-40 h-36"
+            onError={(e) => {
+              e.target.src = profileSkeleton;
+            }}
+            loading="lazy"
+          />
+          {role === "0" || role === "1" ? (
+            <>
+              <p className="text-sidebar text-[15px] font-semibold mt-3 text-center">
+              Visa application has been rejected by embassy for this student and student requested for deferment.
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="text-sidebar text-[22px] font-semibold mt-3 text-center">
+                Your visa application has been rejected by embassy and You
+                requested for deferment.
+              </p>
+              <p className="text-sidebar text-[16px] text-center font-light mt-3">
+                We’ll notify you with updates. check your email for further
                 requests.
               </p>
             </>
@@ -364,7 +473,7 @@ if(flag === "approvedbyembassy"){
         </div>
       ) : visaStatus?.visa?.status === "withdrawalrequest" ? (
         <>
-          {role === "0" && (
+          {role === "0" || role === "1"  && (
             <div
               className={`bg-white flex flex-col rounded-md justify-center items-center md:mx-52 py-9 font-poppins px-14 mb-20 ${
                 location.pathname === "/student/visa-update"
@@ -483,7 +592,7 @@ if(flag === "approvedbyembassy"){
                 <FaRegEye />
               </span>
             </span>
-            {role === "0" ? (
+            {role === "0" || role === "1"  ? (
               ""
             ) : (
               <span
@@ -612,8 +721,14 @@ if(flag === "approvedbyembassy"){
                 Re-Apply for Visa
               </span>
               <span
-                onClick={handleOpenOption}
+                onClick={() => applicationStatusChange(visaStatus?._id)}
                 className="bg-primary text-white rounded-md px-12 py-2 text-[14px] cursor-pointer mt-4"
+              >
+                Deferment
+              </span>
+              <span
+                onClick={handleOpenOption}
+                className="text-primary border border-primary border-rounded-md px-12 py-2 text-[14px] cursor-pointer mt-4"
               >
                 Withdraw
               </span>{" "}
@@ -713,7 +828,7 @@ if(flag === "approvedbyembassy"){
             Start your application now to begin the process and track your
             progress here.
           </p>
-          {role === "0" ? (
+          {role === "0" || role === "1"  ? (
             ""
           ) : (
             <span

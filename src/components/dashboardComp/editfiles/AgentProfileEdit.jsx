@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import AgentForm1 from "../../../agent/AgentForm1";
 import { BsFillBuildingsFill } from "react-icons/bs";
 import { TbPencilMinus } from "react-icons/tb";
@@ -12,6 +12,7 @@ import { HiBuildingOffice2 } from "react-icons/hi2";
 import AgentForm5 from "./../../../agent/AgentForm5";
 import { FaBuildingFlag } from "react-icons/fa6";
 import AgentForm6 from "./../../../agent/AgentForm6";
+import { IoClose, IoNavigateCircle } from "react-icons/io5";
 
 const AgentProfileEdit = ({
   agentData,
@@ -21,6 +22,13 @@ const AgentProfileEdit = ({
   agentId,
 }) => {
   const profileView = locationPath?.state?.isprofileView;
+  const sectionRef1 = useRef(null);
+  const sectionRef2 = useRef(null);
+  const sectionRef3 = useRef(null);
+  const sectionRef4 = useRef(null);
+  const sectionRef5 = useRef(null);
+
+  const [isOpen, setIsOpen] = useState(false);
   const [toggleStates, setToggleStates] = useState({
     isOne: false,
     isTwo: false,
@@ -30,6 +38,13 @@ const AgentProfileEdit = ({
     isSix: false,
   });
 
+  const scrollToSection = (sectionRef) => {
+    sectionRef.current.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
   const handleToggle = (key) => {
     setToggleStates((prevStates) => ({
       ...prevStates,
@@ -37,6 +52,9 @@ const AgentProfileEdit = ({
     }));
   };
 
+  const togglePopup = () => {
+    setIsOpen(!isOpen);
+  };
   const handleCancel = (key) => {
     setToggleStates((prevStates) => ({
       ...prevStates,
@@ -47,7 +65,10 @@ const AgentProfileEdit = ({
     <>
       <div className="bg-white rounded-md px-6 py-4 font-poppins">
         <div className="flex flex-row text-sidebar items-center justify-between border-b border-greyish">
-          <span className="flex flex-row gap-4 items-center pb-3">
+          <span
+            ref={sectionRef1}
+            className="flex flex-row gap-4 items-center pb-3"
+          >
             <span className="text-[24px]">
               <BsFillBuildingsFill />
             </span>
@@ -154,7 +175,7 @@ const AgentProfileEdit = ({
         <div
           className={`transition-all duration-500 ease-in-out transform ${
             toggleStates.isOne
-                 ? "md:h-[100vh] lg:h-[130vh] sm:h-[87vh]  translate-y-0 opacity-100"
+              ? "md:h-[100vh] lg:h-[130vh] sm:h-[87vh]  translate-y-0 opacity-100"
               : "max-h-0 -translate-y-10 opacity-0 overflow-hidden"
           }`}
         >
@@ -174,7 +195,10 @@ const AgentProfileEdit = ({
 
       <div className="bg-white rounded-md px-6 py-4 font-poppins mt-6">
         <div className="flex flex-row text-sidebar items-center justify-between border-b border-greyish">
-          <span className="flex flex-row gap-4 items-center pb-3">
+          <span
+            ref={sectionRef2}
+            className="flex flex-row gap-4 items-center pb-3"
+          >
             <span className="text-[24px]">
               <MdCall />
             </span>
@@ -318,7 +342,7 @@ const AgentProfileEdit = ({
         <div
           className={`transition-all duration-500 ease-in-out transform ${
             toggleStates.isTwo
-                ? "md:min-h-[70vh] lg:min-h-[100vh] sm:min-h-[60vh] translate-y-0 opacity-100"
+              ? "md:min-h-[70vh] lg:min-h-[100vh] sm:min-h-[60vh] translate-y-0 opacity-100"
               : "max-h-0 -translate-y-10 opacity-0 overflow-hidden"
           }`}
         >
@@ -338,7 +362,10 @@ const AgentProfileEdit = ({
 
       <div className="bg-white rounded-md py-4 px-6  mt-10 font-poppins">
         <div className="flex flex-row text-sidebar items-center justify-between border-b border-greyish">
-          <span className="flex flex-row gap-4 items-center pb-3">
+          <span
+            ref={sectionRef3}
+            className="flex flex-row gap-4 items-center pb-3"
+          >
             <span className="text-[24px]">
               <RiBankLine />
             </span>
@@ -421,7 +448,7 @@ const AgentProfileEdit = ({
         <div
           className={`transition-all duration-500 ease-in-out transform ${
             toggleStates.isThree
-                              ? "md:h-[100vh] lg:h-[130vh] sm:h-[87vh]  translate-y-0 opacity-100"
+              ? "md:h-[100vh] lg:h-[130vh] sm:h-[87vh]  translate-y-0 opacity-100"
               : "max-h-0 -translate-y-10 opacity-0 overflow-hidden"
           }`}
         >
@@ -441,7 +468,10 @@ const AgentProfileEdit = ({
 
       <div className="bg-white rounded-md py-4 px-8 mt-9 font-poppins">
         <div className="flex flex-row text-sidebar items-center justify-between border-b border-greyish">
-          <span className="flex flex-row gap-4 items-center pb-3">
+          <span
+            ref={sectionRef4}
+            className="flex flex-row gap-4 items-center pb-3"
+          >
             <span className="text-[24px]">
               <HiBuildingOffice2 />
             </span>
@@ -640,7 +670,7 @@ const AgentProfileEdit = ({
         <div
           className={`transition-all duration-500 ease-in-out transform ${
             toggleStates.isFour
-                ? "md:min-h-[80vh] lg:min-h-[100vh] sm:min-h-[60vh] translate-y-0 opacity-100"
+              ? "md:min-h-[80vh] lg:min-h-[100vh] sm:min-h-[60vh] translate-y-0 opacity-100"
               : "max-h-0 -translate-y-10 opacity-0 overflow-hidden"
           }`}
         >
@@ -660,7 +690,10 @@ const AgentProfileEdit = ({
 
       <div className="bg-white rounded-md px-6 py-4 font-poppins mt-9">
         <div className="flex flex-row text-sidebar items-center justify-between border-b border-greyish">
-          <span className="flex flex-row gap-4 items-center pb-3">
+          <span
+            ref={sectionRef5}
+            className="flex flex-row gap-4 items-center pb-3"
+          >
             <span className="text-[24px]">
               <FaBuildingFlag />
             </span>
@@ -732,7 +765,7 @@ const AgentProfileEdit = ({
         <div
           className={`transition-all duration-500 ease-in-out transform ${
             toggleStates.isFive
-                 ? "md:h-[70vh] lg:h-[100vh] sm:h-[72vh]  translate-y-0 opacity-100"
+              ? "md:h-[70vh] lg:h-[100vh] sm:h-[72vh]  translate-y-0 opacity-100"
               : "max-h-0 -translate-y-10 opacity-0 overflow-hidden"
           }`}
         >
@@ -752,7 +785,10 @@ const AgentProfileEdit = ({
 
       <div className="bg-white rounded-md px-6 py-4 font-poppins mb-16 mt-9">
         <div className="flex flex-row text-sidebar items-center justify-between border-b border-greyish">
-          <span className="flex flex-row gap-4 items-center pb-3">
+          <span
+            ref={sectionRef5}
+            className="flex flex-row gap-4 items-center pb-3"
+          >
             <span className="text-[24px]">
               <FaUser />
             </span>
@@ -832,6 +868,63 @@ const AgentProfileEdit = ({
             </div>
           )}
         </div>
+      </div>
+
+      <div className="fixed bottom-5 right-5 flex flex-col items-center">
+        {/* Popup */}
+        {isOpen && (
+          <div
+            className="absolute bottom-16 right-0 p-4 bg-[#FAFAFA] shadow-lg rounded-lg animate-slideIn transition-all duration-300 ease-in-out"
+            style={{ minWidth: "200px" }}
+          >
+            <p
+              onClick={() => scrollToSection(sectionRef1)}
+              className="text-primary underline py-1 cursor-pointer font-medium "
+            >
+              Company Details
+            </p>
+
+            <p
+              onClick={() => scrollToSection(sectionRef2)}
+              className="text-primary underline py-1 cursor-pointer font-medium "
+            >
+              Contacts
+            </p>
+
+            <p
+              onClick={() => scrollToSection(sectionRef3)}
+              className="text-primary underline py-1 cursor-pointer font-medium "
+            >
+              Bank Details
+            </p>
+
+            <p
+              onClick={() => scrollToSection(sectionRef4)}
+              className="text-primary underline py-1 cursor-pointer font-medium "
+            >
+              Company Overview
+            </p>
+
+            <p
+              onClick={() => scrollToSection(sectionRef5)}
+              className="text-primary underline py-1 cursor-pointer font-medium "
+            >
+              References
+            </p>
+          </div>
+        )}
+
+        {/* Floating Button */}
+        <button
+          onClick={togglePopup}
+          className={`w-14 h-14 rounded-full flex items-center justify-center shadow-lg bg-primary transition-transform duration-300 ${
+            isOpen ? "rotate-90" : ""
+          }`}
+        >
+          <span className="text-white text-2xl font-extrabold">
+            {isOpen ? <IoClose /> : <IoNavigateCircle />}
+          </span>
+        </button>
       </div>
     </>
   );

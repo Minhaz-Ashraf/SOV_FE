@@ -57,7 +57,7 @@ const AgentForm2 = ({ hide, handleCancel, updateData, adminId, agentId }) => {
   const { countryOption } = useSelector((state) => state.general);
   const { agentData } = useSelector((state) => state.agent);
   const [resetProfilePic, setResetProfilePic] = useState(false);
-  const contactDetails = role === "0" ? agentProfile : agentData;
+  const contactDetails = role === "0" || role === "1" ? agentProfile : agentData;
   const [contactData, setContactData] = useState({
     primaryContact: { ...initialContactData },
     commissionContact: { ...initialcommissionContactData },
@@ -338,13 +338,13 @@ const AgentForm2 = ({ hide, handleCancel, updateData, adminId, agentId }) => {
 
         let res;
 
-        if (role === "0") {
+        if (role === "0" || role === "1") {
           await editAgentAdmin("/company/register-companyContact-admin", dataToSubmit, editForm);
         } else {
           res = await formTwoSubmit(dataToSubmit, editForm);
         }
       
-        if(role === "0"){
+        if(role === "0" || role === "1"){
           dispatch(agentDataProfile(agentId));
         }
         toast.success(res?.message || "Data added successfully");

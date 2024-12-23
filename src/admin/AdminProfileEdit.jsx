@@ -19,7 +19,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { adminProfileData } from "../features/adminSlice";
 
 const AdminProfileEdit = () => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const [profileEdit, setProfileEdit] = useState({
     profilePicture: "",
     firstName: "",
@@ -32,7 +32,7 @@ const AdminProfileEdit = () => {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [resetProfilePic, setResetProfilePic] = useState(false);
-const {getAdminProfile} = useSelector((state)=>state.admin)
+  const { getAdminProfile } = useSelector((state) => state.admin);
   // File upload handler
   const handleFileUpload = (files) => {
     if (!files || files.length === 0) return;
@@ -73,8 +73,8 @@ const {getAdminProfile} = useSelector((state)=>state.admin)
       ...prevData,
       profilePicture: "",
     }));
-setResetProfilePic(true)
-    toast.info("File has been marked for deletion.");
+    setResetProfilePic(true);
+    // toast.info("File has been marked for deletion.");
   };
 
   const handleInput = (e) => {
@@ -104,9 +104,8 @@ setResetProfilePic(true)
   const handlePhoneChange = (phoneData) => {
     setProfileEdit((prevData) => ({
       ...prevData,
- 
-        phone: phoneData.number,
-  
+
+      phone: phoneData.number,
     }));
   };
 
@@ -118,8 +117,7 @@ setResetProfilePic(true)
     if (!firstName) validationErrors.firstName = "First Name is required.";
     if (!lastName) validationErrors.lastName = "Last Name is required.";
     if (!dob) validationErrors.dob = "Date of Birth is required.";
-    if (!phone)
-      validationErrors.phone = "Phone number is required.";
+    if (!phone) validationErrors.phone = "Phone number is required.";
     if (!profilePicture)
       validationErrors.profilePicture = "Profile picture is required.";
 
@@ -132,7 +130,7 @@ setResetProfilePic(true)
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       toast.error("Form contains errors.");
-      console.log(errors)
+      console.log(errors);
       return;
     }
 
@@ -160,7 +158,7 @@ setResetProfilePic(true)
           profilePictureUrl = downloadURL;
           setProfileEdit((prevData) => ({
             ...prevData,
-            profilePicture: downloadURL, // Replace blob URL with Firebase URL
+            profilePicture: downloadURL,
           }));
         } catch (error) {
           toast.error(`Error uploading ${file.name}.`);
@@ -179,7 +177,7 @@ setResetProfilePic(true)
       const res = await editProfile(payload);
 
       if (res?.statusCode === 200) {
-        dispatch(adminProfileData())
+        dispatch(adminProfileData());
         toast.success("Profile updated successfully.");
         setNewFiles([]);
         setDeletedFiles([]);
@@ -194,20 +192,19 @@ setResetProfilePic(true)
     }
   };
 
-useEffect(() => {
-  if (getAdminProfile?.data) {
-    setProfileEdit((prevData) => ({
-      ...prevData,
-      profilePicture: getAdminProfile?.data.profilePicture || "",
-      dob: getAdminProfile?.data?.dob || "",
-      firstName: getAdminProfile?.data?.firstName || "",
-      lastName: getAdminProfile?.data?.lastName || "",
-      phone: getAdminProfile?.data?.phone || "",
-    }));
-  }
-
-}, [getAdminProfile?.data]);
-//  console.log(profileEdit.dob)
+  useEffect(() => {
+    if (getAdminProfile?.data) {
+      setProfileEdit((prevData) => ({
+        ...prevData,
+        profilePicture: getAdminProfile?.data.profilePicture || "",
+        dob: getAdminProfile?.data?.dob || "",
+        firstName: getAdminProfile?.data?.firstName || "",
+        lastName: getAdminProfile?.data?.lastName || "",
+        phone: getAdminProfile?.data?.phone || "",
+      }));
+    }
+  }, [getAdminProfile?.data]);
+  //  console.log(profileEdit.dob)
   return (
     <>
       <Header />
@@ -218,7 +215,7 @@ useEffect(() => {
       </div>
 
       <div className="font-poppins">
-      <span className="flex items-center pt-16 md:ml-[16.5%] bg-white pb-6 sm:ml-[22%]">
+        <span className="flex items-center pt-16 md:ml-[16.5%] bg-white pb-6 sm:ml-[22%]">
           <span>
             <p className="text-[28px] font-bold text-sidebar mt-6 ml-9">
               Update Profile
@@ -230,7 +227,9 @@ useEffect(() => {
         </span>
 
         <div className=" mb-2 md:ml-[31.5%] md:mr-[16%] sm:ml-[26%] md:mt-12 mt-6 text-[20px] sm:mx-[6%] text-secondary">
-          <span className="font-semibold text-secondary ">Personal Information</span>
+          <span className="font-semibold text-secondary ">
+            Personal Information
+          </span>
 
           <div className="bg-white px-9 py-9 text-[16px] mb-20">
             <FileUpload
@@ -247,11 +246,7 @@ useEffect(() => {
               customClass=" border-dashed text-[14px]"
               value={profileEdit.profilePicture}
             />
-            {errors.passportUpload && (
-              <p className="text-red-500 mt-1 text-sm">
-                {errors.passportUpload}
-              </p>
-            )}
+
             {profileEdit.profilePicture && (
               <div className="relative">
                 <ImageComponent
@@ -291,7 +286,11 @@ useEffect(() => {
                   type="date"
                   label="Date of Birth"
                   handleInput={handleInput}
-                  value={profileEdit.dob ? new Date(profileEdit.dob).toISOString().split('T')[0] : ""}
+                  value={
+                    profileEdit.dob
+                      ? new Date(profileEdit.dob).toISOString().split("T")[0]
+                      : ""
+                  }
                   errors={errors.dob}
                 />
               </span>
@@ -326,7 +325,7 @@ useEffect(() => {
                 onClick={handleSubmit}
                 className="bg-primary text-white px-6 py-2 rounded-md cursor-pointer"
               >
-              {isSubmitting ?  "Submitting" : "Submit"}
+                {isSubmitting ? "Submitting" : "Submit"}
               </span>
             </div>
           </div>

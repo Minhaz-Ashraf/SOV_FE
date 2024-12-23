@@ -302,7 +302,7 @@ const VisaWithdrawlForm = ({ choosedOption, studId, handleClose }) => {
             }  ${
               studentInfoData?.data?.studentInformation?.stId
             }  has requested for withdrawal `,
-            path: "/student/visa-update",
+            path: "/student-profile",
             pathData: {
               studentId: studentInfoData?.data?.studentInformation?._id,
             },

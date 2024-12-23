@@ -19,13 +19,13 @@ const Header = ({ icon, customLink, iconTwo }) => {
     <>
       <div
         className={`flex flex-row items-center w-[82.5vw]  py-2.5 z-10 bg-primary font-poppins pr-6 fixed md:ml-[17.5vw] sm:ml-[23.5vw] ${
-          role === "0" && "h-16"
+          role === "0" || role === "1" && "h-16"
         } `}
       >
         
         <span className="md:w-[85vw] sm:w-[60vw]">
           <span className="flex justify-end flex-row gap-6 sm:w-[120%] md:w-full">
-           {role !== "0" &&   <Link
+           {role !== "0" &&  role !== "1" && <Link
               to={customLink}
               className="bg-white rounded-full px-[11px] py-2 text-[27px] cursor-pointer "
             >
@@ -54,7 +54,7 @@ const Header = ({ icon, customLink, iconTwo }) => {
                     : role === "3"
                     ? studentInfoData?.data?.studentInformation
                         ?.personalInformation?.profilePicture
-                    : role === "0"
+                    : role === "0" || role === "1" 
                     ? getAdminProfile?.data?.profilePicture
                     : profileSkeleton
                 }
@@ -76,7 +76,7 @@ const Header = ({ icon, customLink, iconTwo }) => {
                       " " +
                       studentInfoData?.data?.studentInformation
                         ?.personalInformation?.lastName
-                    : role === "0"
+                    : role === "0" || role === "1" 
                     ? getAdminProfile?.data?.firstName +
                       " " +
                       getAdminProfile?.data?.lastName
@@ -88,7 +88,7 @@ const Header = ({ icon, customLink, iconTwo }) => {
                     : role === "3"
                     ? studentInfoData?.data?.studentInformation
                         ?.personalInformation?.email
-                    : role === "0"
+                    : role === "0" ||role === "1" 
                     ? getAdminProfile?.data?.email
                     : null}{" "}
                 </span>

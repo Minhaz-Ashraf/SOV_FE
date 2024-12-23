@@ -18,6 +18,7 @@ import ViewTicketPop from "./dashboardComp/ViewTicketPop";
 import ApplicationChoosePop from "./dashboardComp/ApplicationChoosePop";
 import {
   deleteApplication,
+  deleteInstitute,
   removeAgentorStudent,
   ticketResolve,
   uploadApplications,
@@ -31,12 +32,14 @@ import {
   getAllAgentList,
   getAllStudentList,
   getAllTickets,
+  getInstitutes,
 } from "../features/adminSlice";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { extractFileName, extractFileNames } from "../constant/commonfunction";
 import { FaRegEye } from "react-icons/fa";
 import { studentApplications } from "../features/agentSlice";
 import DocDeletePop from "./DocDeletePop";
+import DeletePop from "./reusable/DeletePop";
 
 export function CustomTable({
   tableHead = [],
@@ -235,7 +238,7 @@ export function CustomTableTwo({
               getStudentDataById?.studentInformation?.personalInformation
                 .lastName
             } ${getStudentDataById?.studentInformation?.stId} `,
-            path: "/student/visa-update",
+            path: "/student/document",
             pathData: {
               studentId: getStudentDataById?.studentInformation?._id,
             },
@@ -280,13 +283,13 @@ export function CustomTableTwo({
       toast.error("Error deleting file. Please try again.");
     }
   };
-  useEffect(() => {
-    customDataThree?.forEach((item) => {
-      dispatch(adminUrlData(item)); // Dispatch each item individually
-    });
-  }, [dispatch]);
+  // useEffect(() => {
+  //   customDataThree?.forEach((item) => {
+  //     dispatch(adminUrlData(item));
+  //   });
+  // }, [dispatch]);
 
-  console.log(customDataThree, "test");
+  // console.log(customDataThree, "test");
 
   return (
     <Card className="h-full w-full overflow-scroll scrollbar-hide font-poppins">
@@ -387,7 +390,11 @@ export function CustomTableTwo({
                         (row.type?.offerLetter?.status ||
                           row.type?.visa?.status ||
                           row.type?.courseFeeApplication?.status) ===
-                          "visagranted"
+                          "visagranted" ||
+                        (row.type?.offerLetter?.status ||
+                          row.type?.visa?.status ||
+                          row.type?.courseFeeApplication?.status) ===
+                          "deferment"
                       ? "bg-[#09985C]"
                       : (row.type?.offerLetter?.status ||
                           row.type?.visa?.status ||
@@ -420,6 +427,8 @@ export function CustomTableTwo({
                     ? "Approved"
                     : row.type?.visa?.status === "approvedbyembassy"
                     ? "Approved By Embassy"
+                    : row.type?.visa?.status === "deferment"
+                    ? "Deferment"
                     : row.type?.visa?.status === "rejectedbyembassy"
                     ? "Rejected By Embassy"
                     : row.type?.visa?.status === "visagranted"
@@ -854,7 +863,7 @@ export function CustomTableFive({
   const [isOpen, setIsOpen] = useState(false);
   const ticketData = useSelector((state) => state.admin.ticketById);
   const test = null;
-  
+
   console.log(ticketData);
   const [isticketId, setTicketId] = useState();
   const role = localStorage.getItem("role");
@@ -865,7 +874,7 @@ export function CustomTableFive({
   const closePopUp = () => {
     setIsOpen(false);
   };
-const updatedStatus = "pending"
+  const updatedStatus = "pending";
   const ticketStatusChange = async (
     status,
     isSolution,
@@ -873,13 +882,22 @@ const updatedStatus = "pending"
     ticketId
   ) => {
     try {
+      const path =
+        role === "0"
+          ? "/ticket/ticket"
+          : role === "1"
+          ? "/ticket/ticket-subadmin"
+          : null;
       const res = await ticketResolve(
+        path,
         status,
         isSolution,
         resolvedText,
         ticketId
       );
-      dispatch(getAllTickets({ test, test, test, test,test, updateTicketTab, test }));
+      dispatch(
+        getAllTickets({ test, test, test, test, test, updateTicketTab, test })
+      );
       toast.success(res?.message || "Status Updated Successfully");
       if (ticketData.createdById.startsWith("AG")) {
         if (socketServiceInstance.isConnected()) {
@@ -1190,28 +1208,28 @@ export function CustomTableSeven({
   actionTwo,
   tableType,
   icon,
-  studentId
+  studentId,
 }) {
   const dispatch = useDispatch();
   const role = localStorage.getItem("role");
-    const [isOpenPop, setIsOpenPop] = useState(false);
-    const [isDocId, setIsDocId] = useState(false);
-    const [isUrl, setIsUrl] = useState(false);
-    const path =
+  const [isOpenPop, setIsOpenPop] = useState(false);
+  const [isDocId, setIsDocId] = useState(false);
+  const [isUrl, setIsUrl] = useState(false);
+  const path =
     role === "0"
       ? `/document/all-admin/${studentId}`
       : role === "2" || role === "3"
       ? `/document/all/${studentId}`
       : null;
-    const openDeletePopup = (docId, url) => {
-      setIsUrl(url)
-      setIsDocId(docId)
-      setIsOpenPop(true);
-    };
-  
-    const closePop = () => {
-      setIsOpenPop(false);
-    };
+  const openDeletePopup = (docId, url) => {
+    setIsUrl(url);
+    setIsDocId(docId);
+    setIsOpenPop(true);
+  };
+
+  const closePop = () => {
+    setIsOpenPop(false);
+  };
   const handleRemoveFile = async (id, fileUrl) => {
     try {
       if (!fileUrl) {
@@ -1221,7 +1239,7 @@ export function CustomTableSeven({
       const fileRef = ref(storage, fileUrl);
       await deleteObject(fileRef);
       const res = await removeDocument(id);
-      dispatch(getDocumentAll({path}));
+      dispatch(getDocumentAll({ path }));
 
       toast.success(res.message || "Document removed successfully");
     } catch (error) {
@@ -1324,7 +1342,6 @@ export function CustomTableSeven({
                       className="font-medium"
                     >
                       <span
-                        
                         onClick={() => openDeletePopup(row.docId, row.url)}
                         className="flex flex-row items-center gap-2"
                       >
@@ -1366,6 +1383,7 @@ export function CustomTableEight({
   const [isOpen, setIsOpen] = useState(false);
   const [isId, setIsId] = useState();
   const [isStudentId, setIsStudentId] = useState();
+  const role = localStorage.getItem("role");
 
   const handleOpen = (id, studentId) => {
     setIsId(id);
@@ -1414,20 +1432,25 @@ export function CustomTableEight({
         <table className="w-full min-w-max table-auto text-left">
           <thead>
             <tr>
-              {tableHead.map((head) => (
-                <th
-                  key={head}
-                  className="border-b border-blue-gray-100 bg-input p-4"
-                >
-                  <Typography
-                    variant="small"
-                    color="sidebar"
-                    className="font-medium leading-none opacity-70"
+              {tableHead.map((head) => {
+                if (head === "Action" && role === "1") {
+                  return null;
+                }
+                return (
+                  <th
+                    key={head}
+                    className="border-b border-blue-gray-100 bg-input p-4"
                   >
-                    {head}
-                  </Typography>
-                </th>
-              ))}
+                    <Typography
+                      variant="small"
+                      color="sidebar"
+                      className="font-medium leading-none opacity-70"
+                    >
+                      {head}
+                    </Typography>
+                  </th>
+                );
+              })}
             </tr>
           </thead>
           {console.log(tableRows)}
@@ -1528,29 +1551,30 @@ export function CustomTableEight({
                     </Typography>
                   </td>
                 )}
-                {console.log(row, "check")}
-                <td className="">
-                  <Typography
-                    as="a"
-                    variant="small"
-                    color="blue-gray"
-                    className="font-medium"
-                  >
-                    <span
-                      onClick={() =>
-                        handleOpen(
-                          row.data?._id || row.data?.id,
-                          row?.data?.studentId || row?.data?.id
-                        )
-                      }
-                      className="flex flex-row items-center gap-2"
+                {role !== "1" && (
+                  <td className="">
+                    <Typography
+                      as="a"
+                      variant="small"
+                      color="blue-gray"
+                      className="font-medium"
                     >
-                      <span className="font-body border rounded-md border-primary cursor-pointer px-6 py-1">
-                        {actionTwo}
+                      <span
+                        onClick={() =>
+                          handleOpen(
+                            row.data?._id || row.data?.id,
+                            row?.data?.studentId || row?.data?.id
+                          )
+                        }
+                        className="flex flex-row items-center gap-2"
+                      >
+                        <span className="font-body border rounded-md border-primary cursor-pointer px-6 py-1">
+                          {actionTwo}
+                        </span>
                       </span>
-                    </span>
-                  </Typography>
-                </td>
+                    </Typography>
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>
@@ -1689,6 +1713,471 @@ export function CustomTableNine({
                       <span className="text-primary">{icon}</span>
                       <span className="font-body">{action}</span>
                     </Link>
+                  </Typography>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </Card>
+    </>
+  );
+}
+
+export function CustomTableTen({
+  tableHead = [],
+  tableRows = [],
+  linkOne,
+  icon,
+  iconTwo,
+  iconThree,
+  action,
+}) {
+  const [isOpenPop, setIsOpenPop] = useState(false);
+  const [isId, setIsId] = useState(false);
+  const dispatch = useDispatch();
+
+  const openDeletePopup = (id) => {
+    setIsOpenPop(true);
+    setIsId(id);
+  };
+
+  const closePop = () => {
+    setIsOpenPop(false);
+  };
+  const deleteInstituteById = async () => {
+    try {
+      const res = await deleteInstitute(isId);
+      dispatch(getInstitutes());
+
+      toast.success(res.message || "Account Deleted Successfully");
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message || "Something went wrong");
+    }
+  };
+
+  return (
+    <>
+      <Card className="h-full w-full overflow-scroll scrollbar-hide font-poppins">
+        <table className="w-full min-w-max table-auto text-left">
+          <thead>
+            <tr>
+              {tableHead.map((head) => (
+                <th
+                  key={head}
+                  className="border-b border-blue-gray-100 bg-input p-4 "
+                >
+                  <Typography
+                    variant="small"
+                    color="sidebar"
+                    className="font-medium leading-none opacity-70"
+                  >
+                    {head}
+                  </Typography>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {tableRows.map((row, index) => (
+              <tr key={index} className="even:bg-blue-gray-50/50">
+                {/* Render only the values you want to display */}
+                <td className="p-4">
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                  >
+                    {row.sno}
+                  </Typography>
+                </td>
+                <td className="p-4">
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                  >
+                    {row.name}
+                  </Typography>
+                </td>
+
+                <td className="p-4">
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                  >
+                    {row.data?.country}
+                  </Typography>
+                </td>
+                <td className="p-4">
+                  <Typography
+                    as="a"
+                    href="#"
+                    variant="small"
+                    color="blue-gray"
+                    className="font-medium"
+                  >
+                    <Link
+                      to={linkOne}
+                      state={{
+                        adminState: location.pathname,
+                        id: row.data?._id,
+                      }}
+                      className="flex flex-row items-center gap-2"
+                    >
+                      <span className="text-primary">{icon}</span>
+                      <span className="font-body">{action}</span>
+                    </Link>
+                  </Typography>
+                </td>
+                <td className="p-4">
+                  <Typography
+                    as="a"
+                    href="#"
+                    variant="small"
+                    color="blue-gray"
+                    className="font-medium"
+                  >
+                    <span className="flex flex-row items-center gap-5 text-[18px]">
+                      <Link
+                        to={"/add-institute"}
+                        state={{
+                          id: row.data?._id,
+                        }}
+                        className="text-primary"
+                      >
+                        {iconTwo}
+                      </Link>
+                      <span onClick={openDeletePopup} className="text-primary">
+                        {iconThree}
+                      </span>
+                    </span>
+                  </Typography>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </Card>
+      <DeletePop
+        closePop={closePop}
+        isOpenPop={isOpenPop}
+        handleFunc={deleteInstituteById}
+      />
+    </>
+  );
+}
+
+export function CustomTableEleven({ tableHead = [], tableRows = [] }) {
+  return (
+    <>
+      <Card className="h-full w-full overflow-scroll scrollbar-hide font-poppins">
+        <table className="w-full min-w-max table-auto text-left">
+          <thead>
+            <tr>
+              {tableHead.map((head) => (
+                <th
+                  key={head}
+                  className="border-b border-blue-gray-100 bg-input p-4 "
+                >
+                  <Typography
+                    variant="small"
+                    color="sidebar"
+                    className="font-medium leading-none opacity-70"
+                  >
+                    {head}
+                  </Typography>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {tableRows.map((row, index) => (
+              <tr key={index} className="even:bg-blue-gray-50/50">
+                {/* Render only the values you want to display */}
+                <td className="p-4">
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                  >
+                    {row.sno}
+                  </Typography>
+                </td>
+                <td className="p-4">
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                  >
+                    {row.ticketNo}
+                  </Typography>
+                </td>
+                <td className="p-4">
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                  >
+                    {row.name}
+                  </Typography>
+                </td>
+
+                <td className="p-4">
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                  >
+                    {row.id}
+                  </Typography>
+                </td>
+                <td className="p-4">
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                  >
+                    {row.date}
+                  </Typography>
+                </td>
+
+                <td className="p-4">
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className={`font-medium ${
+                      row?.priority === "Urgent"
+                        ? "text-red-500"
+                        : "text-green-500"
+                    } `}
+                  >
+                    {row.priority}
+                  </Typography>
+                </td>
+                <td className="p-4">
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-light bg-[#09985C] px-3 font-poppins  text-white text-center py-1 rounded-xl"
+                  >
+                    {row.status === "resolved" ? "Resolved" : row?.status}
+                  </Typography>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </Card>
+    </>
+  );
+}
+
+export function CustomTableTwelve({ tableHead = [], tableRows = [] }) {
+  return (
+    <>
+      <Card className="h-full w-full overflow-scroll scrollbar-hide font-poppins">
+        <table className="w-full min-w-max table-auto text-left">
+          <thead>
+            <tr>
+              {tableHead.map((head) => (
+                <th
+                  key={head}
+                  className="border-b border-blue-gray-100 bg-input p-4 "
+                >
+                  <Typography
+                    variant="small"
+                    color="sidebar"
+                    className="font-medium leading-none opacity-70"
+                  >
+                    {head}
+                  </Typography>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {tableRows.map((row, index) => (
+              <tr key={index} className="even:bg-blue-gray-50/50">
+                {/* Render only the values you want to display */}
+                <td className="p-4">
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                  >
+                    {row.sno}
+                  </Typography>
+                </td>
+
+                <td className="p-4">
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                  >
+                    {row.name}
+                  </Typography>
+                </td>
+
+                <td className="p-4">
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                  >
+                    {row.id}
+                  </Typography>
+                </td>
+                <td className="p-4">
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                  >
+                    {row.type === "offerLetter"
+                      ? "Offer Letter"
+                      : row.type === "visa"
+                      ? "Visa"
+                      : row.type === "courseFeeApplication"
+                      ? "Course Fee"
+                      : "NA"}
+                  </Typography>
+                </td>
+
+                <td className="p-4">
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className={`font-light px-3 font-poppins text-white text-center py-1 w-52 rounded-xl ${
+                      row.status === "underreview"
+                        ? "bg-[#096D98]"
+                        : [
+                            "approved",
+                            "withdrawalrequest",
+                            "approved by embassy",
+                            "withdrawalcomplete",
+                            "visagranted",
+                          ].includes(row.status)
+                        ? "bg-[#09985C]"
+                        : ["rejected", "rejectedbyembassy"].includes(row.status)
+                        ? "bg-[#D33131]"
+                        : "bg-primary"
+                    }`}
+                  >
+                    {row.status === "approved"
+                      ? "Approved"
+                      : row.status === "rejected"
+                      ? "Rejected"
+                      : row.status === "approved by embassy"
+                      ? "Approved By Embassy"
+                      : row.status === "visagranted"
+                      ? "Visa Granted"
+                      : row.status === "withdrawalcomplete"
+                      ? "Withdrawal Complete"
+                      : row.status === "withdrawalrequest"
+                      ? "Withdrawal Requested"
+                      : row.status}
+                  </Typography>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </Card>
+    </>
+  );
+}
+
+export function CustomTableThirteen({ tableHead = [], tableRows = [] }) {
+  return (
+    <>
+      <Card className="h-full w-full overflow-scroll scrollbar-hide font-poppins">
+        <table className="w-full min-w-max table-auto text-left">
+          <thead>
+            <tr>
+              {tableHead.map((head) => (
+                <th
+                  key={head}
+                  className="border-b border-blue-gray-100 bg-input p-4 "
+                >
+                  <Typography
+                    variant="small"
+                    color="sidebar"
+                    className="font-medium leading-none opacity-70"
+                  >
+                    {head}
+                  </Typography>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {tableRows.map((row, index) => (
+              <tr key={index} className="even:bg-blue-gray-50/50">
+                {/* Render only the values you want to display */}
+                <td className="p-4">
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                  >
+                    {row.sno}
+                  </Typography>
+                </td>
+
+                <td className="p-4">
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                  >
+                    {row.name}
+                  </Typography>
+                </td>
+
+                <td className="p-4">
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                  >
+                    {row.id}
+                  </Typography>
+                </td>
+
+                <td className="p-4">
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                  >
+                    {row.type === "agent"
+                      ? "Agent"
+                      : row.type === "student"
+                      ? "Student"
+                      : null}
+                  </Typography>
+                </td>
+                <td className="p-4">
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className={`font-light text-white text-center rounded-xl py-1 ${
+                      row.status === "completed"
+                        ? "bg-[#09985C]"
+                        : row.status === "rejected"
+                        ? "bg-[#D33131]"
+                        : "bg-primary"
+                    }`}
+                  >
+                    {row.status === "completed"
+                      ? "Approved"
+                      : row.status === "rejected"
+                      ? "Rejected"
+                      : "NA"}
                   </Typography>
                 </td>
               </tr>

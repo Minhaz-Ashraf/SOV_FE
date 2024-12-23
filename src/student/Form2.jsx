@@ -33,11 +33,11 @@ const Form2 = ({
   const studentData = useSelector((state) => state.student.studentInformation);
   const studentInformation = hide ? studentInfoData : studentData;
   const residenceAddress =
-    role === "0"
+    role === "0" || role === "1"
       ? getStudentDataById?.studentInformation?.residenceAddress
       : studentInformation?.data?.studentInformation?.residenceAddress;
   const mailingAddress =
-    role === "0"
+    role === "0" || role === "1"
       ? getStudentDataById?.studentInformation?.mailingAddress
       : studentInformation?.data?.studentInformation?.mailingAddress;
   const studentId = studentFormId || IdToAddStudent || localStorage.getItem("form") || localStorage.getItem('student')
@@ -159,12 +159,12 @@ const Form2 = ({
       let res;
       
 
-      if (role === "0") {
+      if (role === "0" || role === "1") {
         await editStudentAdmin(`/studentInformation/residence-address-admin/${studentId}`, payload, editForm);
       } else {
         res = await studentAddress(payload, studentId, editForm);
       }
-      if(role === "0"){
+      if(role === "0" || role === "1"){
         dispatch(getStudentById(studentId));
       }
       toast.success(res?.message || "Data submitted successfully");

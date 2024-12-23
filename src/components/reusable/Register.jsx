@@ -5,7 +5,7 @@ const Register = ({value,handleInput, errors, type, name, label, className, imp}
   return (
 <>
 <div className="mt-6 text-[14px] text-secondary font-poppins">
-          <span className="text-body-input ">{label} {imp}</span>
+          <span className="text-body-input ">{label} <span className='text-primary'>{imp}</span></span>
           <CustomInput
             className={`w-full h-12 bg-input  rounded-md mt-2 px-3 outline-none ${className}`}
             name={name}

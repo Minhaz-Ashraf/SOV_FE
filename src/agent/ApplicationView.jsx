@@ -238,7 +238,7 @@ console.log(location)
               tableHead={TABLE_HEAD}
               tableRows={TABLE_ROWS}
               SecondLink="/offerLetter-apply"
-              action={  role === "0" ? "View": "Edit/View"}
+              action={  role === "0" || role === "1"? "View": "Edit/View"}
               icon={<FaRegEye />}
               // link="/offerLetter/edit"
               customLinkState={TABLE_ROWS?.map((data) => data?._id)}

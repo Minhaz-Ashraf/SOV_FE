@@ -1,19 +1,17 @@
 import React from "react";
 import { waiting } from "../assets";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const WaitingPage = () => {
-
-  const role = localStorage.getItem('role');
+  const { agentData } = useSelector((state) => state.agent);
+  const { studentInfoData } = useSelector((state) => state.student);
+  const role = localStorage.getItem("role");
   return (
     <>
       <div
         className={`${
-         role === "2"
-            ? "bg-agent"
-            : role === "3"
-            ? "bg-student"
-            : "bg-agent"
+          role === "2" ? "bg-agent" : role === "3" ? "bg-student" : "bg-agent"
         } relative `}
       >
         <div className="  font-poppins popup-backdrop  pt-7">
@@ -27,8 +25,19 @@ const WaitingPage = () => {
               <p className="text-body font-normal text-[14px] mt-4">
                 {" "}
                 Thanks for your patience,{" "}
-                <span className="font-semibold"> Mark Peterson.</span> Our team
-                is currently <br />
+                <span className="font-semibold">
+                  {" "}
+                  {role === "2"
+                    ? agentData?.companyDetails?.businessName
+                    : role === "3"
+                    ? studentInfoData?.data?.studentInformation
+                        ?.personalInformation?.firstName +
+                      " " +
+                      studentInfoData?.data?.studentInformation
+                        ?.personalInformation?.lastName
+                    : null}
+                </span>{" "}
+                Our team is currently <br />
                 verifying the details you provided during registration.
               </p>
               <p className="text-body font-normal text-[14px] mt-4">

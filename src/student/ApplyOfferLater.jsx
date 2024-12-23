@@ -154,7 +154,6 @@ const ApplyOfferLater = () => {
   const [selectedEducation, setSelectedEducation] = useState("");
   const [errors, setErrors] = useState({});
   const [resetDoc, setResetDoc] = useState(false);
-  const [resetSecondDoc, setResetSecondDoc] = useState(false);
   const [newFiles, setNewFiles] = useState([]);
   const [deletedFiles, setDeletedFiles] = useState([]);
   useEffect(() => {
@@ -288,20 +287,25 @@ const ApplyOfferLater = () => {
     //   errors.prefOfferLetter = "Preferred offer Letter is required.";
     // }
 
-    const isTOEFLFilled = Object.values(offerLater.TOEFL).some(
-      (val) => val.trim() !== ""
-    );
-    const isIELTSFilled = Object.values(offerLater.IELTS).some(
-      (val) => val.trim() !== ""
-    );
-    const isPTEFilled = Object.values(offerLater.PTE).some(
-      (val) => val.trim() !== ""
-    );
+    // const isTOEFLFilled = Object.values(offerLater.TOEFL).some(
+    //   (val) => val.trim() !== ""
+    // );
+    // const isIELTSFilled = Object.values(offerLater.IELTS).some(
+    //   (val) => val.trim() !== ""
+    // );
+    // const isPTEFilled = Object.values(offerLater.PTE).some(
+    //   (val) => val.trim() !== ""
+    // );
 
-    if (!isTOEFLFilled && !isIELTSFilled && !isPTEFilled) {
-      errors.testScore =
-        "At least one test score (TOEFL, IELTS, or PTE) is required.";
-    }
+    // if (!isTOEFLFilled && !isIELTSFilled && !isPTEFilled) {
+    //   errors.testScore =
+    //     "At least one test score (TOEFL, IELTS, or PTE) is required.";
+    // }
+   // Certificate validation
+   if (!offerLater.certificate.urls || offerLater.certificate.urls.length === 0) {
+    errors.certificate =
+      "Please upload at least one document. If you do not have certificates for TOEFL, PTE, or IELTS, please upload an MOI certificate.";
+  }
     return errors;
   };
 
@@ -410,11 +414,9 @@ const ApplyOfferLater = () => {
     // toast.info("File marked for deletion. Changes will be applied upon saving.");
   };
 
-
-
   function startSprinkles() {
     const stopSprinkles = createSprinklesEffect();
-  
+
     // Stop the sprinkles after 10 seconds
     setTimeout(() => {
       stopSprinkles();
@@ -483,7 +485,6 @@ const ApplyOfferLater = () => {
 
               const snapshot = await uploadBytes(storageRef, blob);
               const downloadURL = await getDownloadURL(snapshot.ref);
-            
 
               // Add to education details certificate URLs
               if (!updatedEducationDetails.certificate?.url) {
@@ -492,7 +493,6 @@ const ApplyOfferLater = () => {
               updatedEducationDetails.certificate.url.push(downloadURL);
 
               // Upload document metadata
-          
 
               // toast.success(`${uniqueFileName} uploaded successfully.`);
             } catch (error) {
@@ -561,14 +561,17 @@ const ApplyOfferLater = () => {
             title: " AGENT_SUBMITTED_OFFER_LETTER",
             message: `${agentData?.companyDetails?.businessName} ${
               agentData?.agId
-            } has submitted the offer letter application ${response.data.applicationId} of ${
-              offerLater.preferences.institution
-            } ${offerLater.preferences.country}  for the student ${
+            } has submitted the offer letter application ${
+              response.data.applicationId
+            } of ${offerLater.preferences.institution} ${
+              offerLater.preferences.country
+            }  for the student ${
               studentData?.studentInformation?.personalInformation?.firstName +
               " " +
               studentData?.studentInformation?.personalInformation?.lastName
             } ${studentData?.studentInformation?.stId}
-`,           path: "/admin/applications-review",
+`,
+            path: "/admin/applications-review",
             agentId: agentData?._id,
             agId: agentData?.agId,
             agentName: agentData?.companyDetails?.businessName,
@@ -608,7 +611,9 @@ const ApplyOfferLater = () => {
                   ?.lastName || ""
             } ${
               studentInfoData?.data?.studentInformation?.stId || ""
-            } has submitted the offer letter application ${response.data.applicationId}.`,
+            } has submitted the offer letter application ${
+              response.data.applicationId
+            }.`,
             path: "/admin/applications-review",
             recieverId: "",
           };
@@ -621,9 +626,6 @@ const ApplyOfferLater = () => {
           console.error("Socket connection failed, cannot emit notification.");
         }
       }
-    
-    
-  
 
       // Clear temporary states
       setNewFiles([]);
@@ -967,7 +969,7 @@ const ApplyOfferLater = () => {
               Upload Documents
             </span>
             <p className="text-[15px] mt-3 text-body">
-              IELTS/PTE/TOEFL/Certificate*
+              IELTS/PTE/TOEFL/MOI/Certificate*
             </p>
             <div className="flex flex-col justify-center items-center border-2 border-dashed border-body rounded-md py-9 mt-9 mb-4">
               <button
@@ -1019,8 +1021,7 @@ const ApplyOfferLater = () => {
               onClick={handleSubmit}
               className="bg-primary text-white font-poppins rounded-md px-6 py-2 cursor-pointer"
             >
-                           {isSubmitting ? "Submitting..." : "Submit"}
-
+              {isSubmitting ? "Submitting..." : "Submit"}
             </span>
           </div>
         </div>

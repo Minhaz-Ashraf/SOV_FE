@@ -43,6 +43,7 @@ const AgentSidebar = () => {
       pathPage: "/agent/institution",
       icon: <BiSolidInstitution />,
       label: "Institutions",
+      otherPath: "/institute-view"
     },
     {
       pathPage: "/agent/student-lists",

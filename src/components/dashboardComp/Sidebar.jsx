@@ -68,6 +68,7 @@ const Sidebar = () => {
       pathPage: "/student/dashboard",
       icon: <BsPieChartFill />,
       label: "Dashboard",
+      otherPath: "/institute-view"
     },
     {
       pathPage: "/student/document",

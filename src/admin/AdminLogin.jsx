@@ -13,9 +13,12 @@ import { adminProfileData } from "../features/adminSlice";
 const AdminLogin = () => {
     const navigate = useNavigate();
   const dispatch = useDispatch();
+    const [activeTab, setActiveTab] = useState("0");
+  
   const [isLogin, setIsLogin] = useState({
     email: "",
-    password: ""
+    password: "",
+    role: ""
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -50,6 +53,16 @@ const AdminLogin = () => {
     return errors;
   };
 
+
+  
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setIsLogin((prevData) => ({
+      ...prevData,
+      role: tab,
+    }));
+  };
+
   // Toggle password visibility
   const togglePasswordVisibility = () => {
     setShowPassword((prevState) => !prevState);
@@ -67,8 +80,7 @@ const AdminLogin = () => {
     setLoading(true);
 
     try {
-      const role = "0";
-      const { email, password } = isLogin;
+      const { email, password, role } = isLogin;
       const res = await adminLogin(role, email, password);
       toast.success(res.message || "Login Successful");
       navigate("/admin/dashboard")
@@ -116,6 +128,28 @@ const AdminLogin = () => {
               </p>
               <div onKeyDown={handleKeyDown} className="login-container">
               <span className="font-poppins">
+              <div className="flex justify-center space-x-6 my-4">
+        <button
+          onClick={() => handleTabChange("0")}
+          className={`px-4 py-2 rounded-md w-36 ${
+            activeTab === "0"
+              ? "bg-primary text-white"
+              : "bg-gray-200 text-secondary"
+          }`}
+        >
+          Admin
+        </button>
+        <button
+          onClick={() => handleTabChange("1")}
+          className={`px-4 py-2 rounded-md w-52 ${
+            activeTab === "1"
+              ? "bg-primary text-white"
+              : "bg-gray-200 text-secondary"
+          }`}
+        >
+        Team Member
+        </button>
+      </div>
                 <div>
                   <div className="mt-6 text-secondary">Email Id</div>
                   <CustomInput

@@ -3,7 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation, Link } from "react-router-dom";
 import Pagination from "../components/dashboardComp/Pagination";
 import { CustomTableEight } from "../components/Table";
-import { getAllAgentList, setNullStudentDirectory } from "../features/adminSlice";
+import {
+  getAllAgentList,
+  setNullStudentDirectory,
+} from "../features/adminSlice";
 import AdminSidebar from "../components/dashboardComp/AdminSidebar";
 import Header from "../components/dashboardComp/Header";
 import { FaRegEye } from "react-icons/fa";
@@ -17,8 +20,9 @@ import Loader from "../components/Loader";
 const AgentDirectory = () => {
   const dispatch = useDispatch();
   const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1)
+  const [page, setPage] = useState(1);
   const [downloading, setDownloading] = useState(false);
+  const role = localStorage.getItem("role");
 
   const [loading, setLoading] = useState(true);
   const [perPage, setPerPage] = useState(10);
@@ -83,7 +87,7 @@ const AgentDirectory = () => {
 
   const downloadAll = async () => {
     try {
-      setDownloading(true)
+      setDownloading(true);
       await new Promise((resolve) => setTimeout(resolve, 2000));
       const res = await downloadFile({
         url: "/admin/total-agent-download",
@@ -93,18 +97,17 @@ const AgentDirectory = () => {
     } catch (error) {
       console.log(error);
       toast.error(error.message || "Error downloading");
-    }finally{
-      setDownloading(false)
-
+    } finally {
+      setDownloading(false);
     }
   };
   useEffect(() => {
-      const timer = setTimeout(() => {
-        setLoading(false);
-      }, 2000);
-  
-      return () => clearTimeout(timer);
-    }, []);
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
   return (
     <>
       <Header customLink="/agent/shortlist" />
@@ -117,7 +120,7 @@ const AgentDirectory = () => {
             Agent Directory ({totalUsersCount})
           </p>
           <p className="text-sidebar text-[15px]  md:ml-9  sm:ml-20">
-          Manage and view agent details in one place.
+            Manage and view agent details in one place.
           </p>
         </div>
       </div>
@@ -125,7 +128,6 @@ const AgentDirectory = () => {
         <span className="flex flex-row items-center mb-3 ml-[20%]">
           <span className="flex flex-row justify-between w-full items-center">
             <span className="flex flex-row items-center">
-             
               <span className="flex flex-row items-center  sm:ml-14 md:-ml-2 ">
                 <CustomInput
                   className="h-11 md:w-80 sm:w-60 rounded-md  text-body placeholder:px-3 pl-7 border border-[#E8E8E8] outline-none"
@@ -149,12 +151,14 @@ const AgentDirectory = () => {
               </Link>
             </span>
           </span>
-          <span
-            onClick={downloadAll}
-            className="bg-primary ml-5 text-white px-4 rounded-md py-2 cursor-pointer"
-          >
-            {downloading ? "Downloading...." : "Download"}
-          </span>
+          {role !== "1" && (
+            <span
+              onClick={downloadAll}
+              className="bg-primary ml-5 text-white px-4 rounded-md py-2 cursor-pointer"
+            >
+              {downloading ? "Downloading...." : "Download"}
+            </span>
+          )}
         </span>
       </div>
       {loading ? (
@@ -167,8 +171,7 @@ const AgentDirectory = () => {
         </div>
       ) : TABLE_ROWS?.length > 0 ? (
         <>
-        <div className="mt-3 mr-6 md:ml-[19%] sm:ml-[26%]">
-
+          <div className="mt-3 mr-6 md:ml-[19%] sm:ml-[26%]">
             <CustomTableEight
               tableHead={TABLE_HEAD}
               tableRows={TABLE_ROWS}

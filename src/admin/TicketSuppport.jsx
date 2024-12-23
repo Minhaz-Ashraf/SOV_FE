@@ -18,6 +18,8 @@ import { useSearchParams } from "react-router-dom";
 const TicketSupport = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const dispatch = useDispatch();
+  const role = localStorage.getItem('role');
+
   const { ticketAll } = useSelector((state) => state.admin);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -221,12 +223,13 @@ const TicketSupport = () => {
               </span>
             </span>
           </span>
+          {role !== "1" && 
           <span
             onClick={downloadAll}
             className="bg-primary px-6   rounded-md text-white cursor-pointer py-2"
           >
             {downloading ? "Downloading...." : "Download"}
-          </span>
+          </span>}
         </span>
       </div>
       {loading ? (

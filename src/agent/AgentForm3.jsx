@@ -19,7 +19,7 @@ const AgentForm3 = ({hide, handleCancel, updateData, adminId, agentId}) => {
   const { agentData } = useSelector((state) => state.agent);
   const { agentProfile } = useSelector((state) => state.admin);
 
-  const getData = role === "0" ? agentProfile?.bankDetails :agentData?.bankDetails;
+  const getData = role === "0" || role === "1" ? agentProfile?.bankDetails :agentData?.bankDetails;
 
   const [bankData, setBankData] = useState({
     bankName: "",
@@ -90,18 +90,18 @@ const AgentForm3 = ({hide, handleCancel, updateData, adminId, agentId}) => {
       );
       const payload = {
         ...filteredBankData,
-        ...(role === "0" && { companyId: adminId }),
+        ...(role === "0" || role === "1" && { companyId: adminId }),
       };
       
       try {
         let res;
 
-        if (role === "0") {
+        if (role === "0" || role === "1") {
           await editAgentAdmin("/company/register-bankDetails-admin", payload, editForm);
         } else {
           res = await formThreeSubmit(payload, editForm);
         }
-        if(role === "0"){
+        if(role === "0" || role === "1"){
           dispatch(agentDataProfile(agentId));
         }
 

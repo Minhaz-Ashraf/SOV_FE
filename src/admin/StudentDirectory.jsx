@@ -15,20 +15,20 @@ import { dnf } from "../assets";
 import Loader from "../components/Loader";
 
 const StudentDirectory = () => {
-
   const dispatch = useDispatch();
   const location = useLocation();
-  
+  const role = localStorage.getItem('role');
+
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState(false);
   const [perPage, setPerPage] = useState(10);
   const agentId = location?.state?.id;
-    const path =
-      location.pathname === "/admin/agent-student"
-        ? `/studentInformation/agent-student-admin`
-        : "/admin/student-directory";
+  const path =
+    location.pathname === "/admin/agent-student"
+      ? `/studentInformation/agent-student-admin`
+      : "/admin/student-directory";
   // Select data from Redux
   // console.log(location);
   const { getAllStudentData } = useSelector((state) => state.admin);
@@ -94,13 +94,12 @@ const StudentDirectory = () => {
         phone: personalInfo?.phone?.phone || "NA",
         data: data || "NA",
         studentId: data?.studentId?.toString() || "NA",
-
       };
     }) || [];
 
   const downloadAll = async () => {
     try {
-      setDownloading(true)
+      setDownloading(true);
       await new Promise((resolve) => setTimeout(resolve, 2000));
       await downloadFile({
         url: "/admin/total-student-download",
@@ -110,9 +109,8 @@ const StudentDirectory = () => {
     } catch (error) {
       console.log(error);
       toast.error(error.message || "Error downloading");
-    }finally{
-      setDownloading(false)
-      
+    } finally {
+      setDownloading(false);
     }
   };
   // console.log(getAllStudentData?.data?.data)
@@ -159,12 +157,14 @@ const StudentDirectory = () => {
               </Link>
             </span>
           </span>
-          <span
-            onClick={downloadAll}
-            className="bg-primary ml-5 text-white px-4 rounded-md py-2 cursor-pointer"
-          >
-          {downloading ? "Downloading...." : "Download"}
-          </span>
+          {role !== "1" && (
+            <span
+              onClick={downloadAll}
+              className="bg-primary ml-5 text-white px-4 rounded-md py-2 cursor-pointer"
+            >
+              {downloading ? "Downloading...." : "Download"}
+            </span>
+          )}
         </span>
       </div>
       {loading ? (

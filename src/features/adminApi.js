@@ -48,10 +48,18 @@ export const getAllApproval = async (tabType, search, page, perPage) => {
     }
   }
 };
-export const chngeApplicationStatus = async (id, status, section, message) => {
+export const chngeApplicationStatus = async ( id, status, section, message) => {
+  const role = localStorage.getItem("role");
   try {
+    
+     const path =
+          role !== "0"
+            ? "/admin/change-application-status"
+            : role === "1"
+            ? "/admin/change-application-status-subadmin"
+            : null;
     const response = await apiurl.patch(
-      `/admin/change-application-status/${id}`,
+      `${path}/${id}`,
       { status, section, message }
     );
     return response.data;
@@ -79,9 +87,9 @@ export const changeVisaStatus = async (id, payload) => {
     }
   }
 };
-export const changeApprovalStatus = async (id, status, type, message) => {
+export const changeApprovalStatus = async (path,id, status, type, message) => {
   try {
-    const response = await apiurl.patch(`/admin/change-page-status/${id}`, {
+    const response = await apiurl.patch(`${path}/${id}`, {
       status,
       type,
       message,
@@ -105,7 +113,7 @@ export const adminLogin = async (role, email, password) => {
       password,
     });
     localStorage.setItem("userAuthToken", response?.data?.data?.accessToken);
-    localStorage.setItem("role", "0");
+    localStorage.setItem("role", role);
     return response.data?.data;
   } catch (error) {
     if (error.response) {
@@ -225,13 +233,14 @@ export const getTicketsDataById = async (id) => {
   }
 };
 export const ticketResolve = async (
+  path,
   status,
   solution,
   resolvedText,
   ticketId
 ) => {
   try {
-    const response = await apiurl.patch(`/ticket/ticket-subadmin/${ticketId}`, {
+    const response = await apiurl.patch(`${path}/${ticketId}`, {
       status,
       solution,
       resolvedText,
@@ -562,6 +571,246 @@ export const editStudentAdmin = async (path, payload, edit) => {
       params: {
         edit,
       },
+    });
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw new Error(
+        error.response.data.message || "Error while fetching data"
+      );
+    } else if (error.request) {
+      throw new Error("No response from server. Please try again later.");
+    } else {
+      throw new Error("An unexpected error occurred");
+    }
+  }
+};
+export const getAllInstitutes = async (isTypeFilter, search, page, perPage) => {
+  try {
+    const response = await apiurl.get('/institute/all-institute',{
+      params:{
+        page: page,
+        perPage: perPage,
+        country: isTypeFilter,
+        instituteName: search
+
+      }
+    });
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw new Error(
+        error.response.data.message || "Error while fetching data"
+      );
+    } else if (error.request) {
+      throw new Error("No response from server. Please try again later.");
+    } else {
+      throw new Error("An unexpected error occurred");
+    }
+  }
+};
+
+
+export const getInstituteById = async (id) => {
+  try {
+    const response = await apiurl.get('/institute/one-institute',{
+      params:{
+        instituteId: id,
+      }
+    });
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw new Error(
+        error.response.data.message || "Error while fetching data"
+      );
+    } else if (error.request) {
+      throw new Error("No response from server. Please try again later.");
+    } else {
+      throw new Error("An unexpected error occurred");
+    }
+  }
+};
+export const addInstitute = async (payload) => {
+  try {
+    const response = await apiurl.post('/institute/add', payload);
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw new Error(
+        error.response.data.message || "Error while fetching data"
+      );
+    } else if (error.request) {
+      throw new Error("No response from server. Please try again later.");
+    } else {
+      throw new Error("An unexpected error occurred");
+    }
+  }
+};
+export const deleteInstitute = async (id) => {
+  try {
+    const response = await apiurl.patch(`/institute/delete/${id}`);
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw new Error(
+        error.response.data.message || "Error while fetching data"
+      );
+    } else if (error.request) {
+      throw new Error("No response from server. Please try again later.");
+    } else {
+      throw new Error("An unexpected error occurred");
+    }
+  }
+};
+
+
+export const addTeam = async (payload) => {
+  try {
+    const response = await apiurl.post('/auth/admin/add-team-member', payload);
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw new Error(
+        error.response.data.message || "Error while fetching data"
+      );
+    } else if (error.request) {
+      throw new Error("No response from server. Please try again later.");
+    } else {
+      throw new Error("An unexpected error occurred");
+    }
+  }
+};
+export const editTeam = async (payload, id) => {
+  try {
+    const response = await apiurl.put(`/auth/admin/edit-team-member/${id}`, payload);
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw new Error(
+        error.response.data.message || "Error while fetching data"
+      );
+    } else if (error.request) {
+      throw new Error("No response from server. Please try again later.");
+    } else {
+      throw new Error("An unexpected error occurred");
+    }
+  }
+};
+export const deleteTeam = async (id) => {
+  try {
+    const response = await apiurl.patch(`/auth/admin/delete-team-member/${id}`);
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw new Error(
+        error.response.data.message || "Error while fetching data"
+      );
+    } else if (error.request) {
+      throw new Error("No response from server. Please try again later.");
+    } else {
+      throw new Error("An unexpected error occurred");
+    }
+  }
+};
+
+export const getAllTeam = async ( perPage, page, search ) => {
+  try {
+    const response = await apiurl.get(`/auth/admin/get-team-members`,{
+    params:{
+      searchQuery:search,
+      page: page,
+      limit: perPage
+    }
+    });
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw new Error(
+        error.response.data.message || "Error while fetching data"
+      );
+    } else if (error.request) {
+      throw new Error("No response from server. Please try again later.");
+    } else {
+      throw new Error("An unexpected error occurred");
+    }
+  }
+};
+export const getTeamById = async (id) => {
+  try {
+    const response = await apiurl.get(`/auth/admin/team-profile/${id}`);
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw new Error(
+        error.response.data.message || "Error while fetching data"
+      );
+    } else if (error.request) {
+      throw new Error("No response from server. Please try again later.");
+    } else {
+      throw new Error("An unexpected error occurred");
+    }
+  }
+};
+export const getTicketActivity = async (id, page, perPage, dateObj,  search, isPriorityType ) => {
+  try {
+    const response = await apiurl.get(`/ticket/sub-admin-tickets/${id}`,{
+      params:{
+        page: page,
+        perPage: perPage,
+        date: dateObj,
+        searchData: search,
+        ticketType: isPriorityType
+      }
+    
+    });
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw new Error(
+        error.response.data.message || "Error while fetching data"
+      );
+    } else if (error.request) {
+      throw new Error("No response from server. Please try again later.");
+    } else {
+      throw new Error("An unexpected error occurred");
+    }
+  }
+};
+export const getApplicationActivity = async (id, page, perPage, isType, search ) => {
+  try {
+    const response = await apiurl.get(`/admin/sub-admin/applications/${id}`,{
+      params:{
+        page: page,
+        perPage: perPage,
+        status: isType,
+        searchData: search
+      }
+ 
+    });
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw new Error(
+        error.response.data.message || "Error while fetching data"
+      );
+    } else if (error.request) {
+      throw new Error("No response from server. Please try again later.");
+    } else {
+      throw new Error("An unexpected error occurred");
+    }
+  }
+};
+export const getApprovalActivity = async (id, page, perPage, isType, search) => {
+  try {
+    const response = await apiurl.get(`/admin/sub-admin/student-agent-data/${id}`,{
+      params:{
+        page: page,
+        perPage: perPage,
+        userType: isType,
+        searchData: search
+      }
+   
     });
     return response.data;
   } catch (error) {

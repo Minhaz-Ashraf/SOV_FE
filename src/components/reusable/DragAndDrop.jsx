@@ -140,7 +140,7 @@ const FileUpload = ({
     onDrop,
     accept: acceptedFormats,
     maxFiles: 1,
-    disabled: 
+    disabled:
       uploadedFile !== null ||
       (Array.isArray(value) && value.length > 0 && value[0] !== "") ||
       (typeof value === "string" && value.length > 0),
@@ -157,15 +157,17 @@ const FileUpload = ({
 
   return (
     <div className="file-upload-container w-full mt-3">
-      <span className="text-secondary">{label}*</span>
+      <span className="text-secondary">
+        {label} <span className="text-primary">*</span>{" "}
+      </span>
       <div
         {...getRootProps()}
         className={`dropzone border-2 p-6 rounded-md text-center mt-6 ${customClass} ${
           isDragActive ? "border-blue-500" : "border-gray-400"
         } ${
           uploadedFile ||
-     (Array.isArray(value) && value.length > 0 && value[0] !== "") ||
-          typeof value === "string" && value.length >0
+          (Array.isArray(value) && value.length > 0 && value[0] !== "") ||
+          (typeof value === "string" && value.length > 0)
             ? "cursor-not-allowed"
             : "cursor-pointer"
         }`}
@@ -175,7 +177,7 @@ const FileUpload = ({
           disabled={
             uploadedFile !== null ||
             (Array.isArray(value) && value.length > 0 && value[0] !== "") ||
-            typeof value === "string" && value.length>0 
+            (typeof value === "string" && value.length > 0)
           }
         />
         {isDragActive ? (
@@ -189,7 +191,7 @@ const FileUpload = ({
               {uploading ? "Uploading..." : `${uploadedFile.name} uploaded`}
             </span>
           </div>
-        ) : typeof value === "string" && value.length> 0 ? (
+        ) : typeof value === "string" && value.length > 0 ? (
           <div className="flex justify-center flex-col w-full items-center">
             <div className="p-6 w-20 text-[32px] bg-input rounded-full">
               <FiUpload />

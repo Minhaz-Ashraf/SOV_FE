@@ -209,7 +209,7 @@ export const applicationTypeOption = [
   { id: 1, option: "coursefeeApplication", label: "Course Fee Application" },
   { id: 2, option: "visa", label: "Visa" },
 ];
-export const statusOption = [
+export const  statusOption = [
   { id: 0, option: "underreview", label: "Under Review" },
   { id: 1, option: "approved", label: "Approved" },
   { id: 2, option: "rejected", label: "Rejected" },

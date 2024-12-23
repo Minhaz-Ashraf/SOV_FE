@@ -1,11 +1,15 @@
 import { io, Socket } from "socket.io-client";
 const role = localStorage.getItem("role");
-import {store} from "../features/store";
-import { addAllNotifications, addNewNotification, markNotificationAsRead, updateNotificationCount } from "../features/notificationSlice";
+import { store } from "../features/store";
+import {
+  addAllNotifications,
+  addNewNotification,
+  markNotificationAsRead,
+  updateNotificationCount,
+} from "../features/notificationSlice";
 import { Navigate, useNavigate } from "react-router-dom";
 
 class SocketService {
-
   constructor() {
     this.socket = null;
   }
@@ -14,7 +18,7 @@ class SocketService {
       console.log("Socket is already connected");
       return;
     }
-     
+
     const query = encryptData;
 
     console.log("Connecting to socket...", hostName, encryptData);
@@ -27,27 +31,27 @@ class SocketService {
     });
 
     // Handle connection success
- this.socket.on("connect", () => {
+    this.socket.on("connect", () => {
       if (role === "0" || role === "1") {
-        this.socket.emit("GET_UNREAD_COUNT", "emitForAdmin" );
+        this.socket.emit("GET_UNREAD_COUNT", "emitForAdmin");
         this.socket.emit("GET_NOTIFICATIONS_FOR_ADMIN", { page: 1, limit: 10 });
       } else {
-        this.socket.emit("GET_UNREAD_COUNT", "emitForUser" );
+        this.socket.emit("GET_UNREAD_COUNT", "emitForUser");
         this.socket.emit("GET_NOTIFICATIONS_FOR_USER", { page: 1, limit: 10 });
       }
-      
+
       console.log("Successfully connected to socket:", this.socket.id);
     });
 
     this.socket.on("onMessage", (message) => {
       console.log("Received message from server:", message);
-    })
+    });
 
     this.socket.on("GET_NOTIFICATIONS_FOR_USER", (data) => {
       console.log("GET_NOTIFICATIONS_FOR_USER:", data);
       store.dispatch(addAllNotifications(data));
     });
-    
+
     this.socket.on("GET_NOTIFICATIONS_FOR_ADMIN", (data) => {
       console.log("GET_NOTIFICATIONS_FOR_ADMIN:", data);
       store.dispatch(addAllNotifications(data));
@@ -56,32 +60,35 @@ class SocketService {
     //these three are for getting new notifications and appending them
     this.socket.on("GLOBAL_NOTIFICATION_STUDENT_ALERT", (data) => {
       console.log("GLOBAL_NOTIFICATION_STUDENT_ALERT:", data);
-      store.dispatch(addNewNotification(data))
+      store.dispatch(addNewNotification(data));
       this.socket.emit("GET_UNREAD_COUNT", "emitForUser");
     });
+
     this.socket.on("DELETE_AUTH_TOKEN", (data) => {
+      // console.log("mak");
+      const role = localStorage.getItem("role");
 
-      console.log("mak");
+      localStorage.removeItem("role");
+      localStorage.removeItem("student");
+      localStorage.removeItem("form");
+      localStorage.removeItem("userAuthToken");
 
-      localStorage.removeItem('role')
-      localStorage.removeItem('student')
-      localStorage.removeItem('form')
-      localStorage.removeItem('userAuthToken')
-
-      window.location.href = "/login";
-
-
+      if (role === "0") {
+        window.location.href = "/admin/role/auth/login";
+      } else {
+        window.location.href = "/login";
+      }
     });
 
     this.socket.on("GLOBAL_NOTIFICATION_AGENT_ALERT", (data) => {
       console.log("GLOBAL_NOTIFICATION_AGENT_ALERT:", data);
-      store.dispatch(addNewNotification(data))
+      store.dispatch(addNewNotification(data));
       this.socket.emit("GET_UNREAD_COUNT", "emitForUser");
     });
 
     this.socket.on("GLOBAL_NOTIFICATION_ADMIN_ALERT", (data) => {
       console.log("GLOBAL_NOTIFICATION_ADMIN_ALERT:", data);
-      store.dispatch(addNewNotification(data))
+      store.dispatch(addNewNotification(data));
       this.socket.emit("GET_UNREAD_COUNT", "emitForAdmin");
     });
 
@@ -106,9 +113,7 @@ class SocketService {
       console.log("Socket disconnected:", reason);
       this.socket = null;
     });
-
   }
-
 
   disconnectSocket() {
     if (this.socket) {
@@ -125,7 +130,7 @@ class SocketService {
     } else {
       console.log("Socket is not connected, message not sent");
     }
-  }
+  };
 
   isConnected() {
     return this.socket && this.socket.connected;

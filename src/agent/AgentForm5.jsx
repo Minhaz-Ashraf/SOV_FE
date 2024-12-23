@@ -18,7 +18,7 @@ const AgentForm5 = ({ hide, handleCancel, updateData, adminId, agentId }) => {
   const { agentData } = useSelector((state) => state.agent);
   const role = localStorage.getItem('role')
   const { agentProfile } = useSelector((state) => state.admin);
-  const getData = role === "0" ? agentProfile?.companyOperations :agentData?.companyOperations;
+  const getData = role === "0" || role === "1" ? agentProfile?.companyOperations :agentData?.companyOperations;
 
   const [operationsData, setOperationData] = useState({
     numberOfCounselors: "",
@@ -116,18 +116,18 @@ const AgentForm5 = ({ hide, handleCancel, updateData, adminId, agentId }) => {
       try {
         const payload = {
           ...operationsData,
-          ...(role === "0" && { companyId: adminId }),
+          ...(role === "0" || role === "1" && { companyId: adminId }),
         };
         
         let res;
 
-        if (role === "0") {
+        if (role === "0" || role === "1") {
           await editAgentAdmin("/company/register-companyOperations-admin", payload, editForm);
         } else {
           res = await formFiveSubmit(payload, editForm);
         }
       
-        if(role === "0"){
+        if(role === "0" || role === "1"){
           dispatch(agentDataProfile(agentId));
         }
        

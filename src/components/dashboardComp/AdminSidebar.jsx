@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  BsFillBuildingsFill,
   BsFillCollectionFill,
   BsFillTicketPerforatedFill,
   BsPieChartFill,
@@ -11,7 +12,7 @@ import { Link, useLocation } from "react-router-dom";
 import { CgProfile } from "react-icons/cg";
 import { MdDocumentScanner, MdOutlineHistory } from "react-icons/md";
 import { AiFillQuestionCircle } from "react-icons/ai";
-import { RiLogoutBoxRLine } from "react-icons/ri";
+import { RiLogoutBoxRLine, RiTeamFill } from "react-icons/ri";
 import LogoutPop from "../login/LogoutPop";
 import ImageComponent from "../reusable/Input";
 import { logo } from "../../assets";
@@ -22,6 +23,7 @@ import { useDispatch } from "react-redux";
 const AdminSidebar = () => {
   const dispatch = useDispatch();
   const location = useLocation();
+  const role = localStorage.getItem('role');
   const path = location.pathname;
   const [isOpen, setIsOpen] = useState(
     JSON.parse(localStorage.getItem("isOpen")) ?? true
@@ -40,6 +42,21 @@ const AdminSidebar = () => {
       pathPage: "/admin/dashboard",
       icon: <BsPieChartFill />,
       label: "Dashboard",
+    },
+    {
+      pathPage: "/admin/team-members",
+      icon: <RiTeamFill />,
+      label: "Team Members",
+      otherPath: "/admin/add-member",
+      otherPathTwo: "/admin/team-activity",
+
+    },
+    {
+      pathPage: "/admin/institute",
+      icon: <BsFillBuildingsFill />,
+      label: "Institutions",
+      otherPath: "/add-institute",
+
     },
     {
       pathPage: "/admin/student-directory",
@@ -77,6 +94,9 @@ const AdminSidebar = () => {
 
     },
   ];
+  const filteredSidebarList = sidebarList.filter(
+    (item) => !(role ==="1"  && item.label === "Team Members")
+  );
 
   const handleDispatch = () => {
     dispatch(setNullStudentDirectory());
@@ -94,15 +114,14 @@ const AdminSidebar = () => {
             className="md:w-44 sm:w-32 md:h-24 sm:h-16 ml-2 "
           />
         </span>
-        {sidebarList.map((item, index) => (
+        {filteredSidebarList.map((item, index) => (
           <div
             key={index}
             className={`cursor-pointer py-4 hover:bg-[#FBD5D5] hover:text-primary hover:border-l-4 hover:font-medium ${
               path === item.pathPage ||
               path === item?.otherPath ||
               path === item?.otherPathTwo ||
-              path === item?.otherPathThree ||
-              path === item?.otherPathFour
+              path === item?.otherPathThree 
                 ? "bg-[#FBD5D5] text-primary border-l-4 border-primary font-medium"
                 : "text-sidebar"
             }`}
@@ -132,6 +151,9 @@ const AdminSidebar = () => {
             <span>Ticket Support</span>
           </Link>
         </div>
+
+        {role === "0" && 
+        <>
         <div
           onClick={() => setIsOpen((prev) => !prev)}
           className="flex items-center mt-2 bg-transparent py-2 relative hover:text-primary hover:bg-[#FBD5D5] px-5 text-sidebar cursor-pointer"
@@ -197,7 +219,7 @@ const AdminSidebar = () => {
               </li>
             </Link> */}
           </ul>
-        </div>
+        </div></>}
         {/* <div
           className={`cursor-pointer py-4 hover:bg-[#f5ebeb] hover:text-primary hover:border-l-4 hover:font-medium ${
             path === "/student/payment-details"

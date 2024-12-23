@@ -6,8 +6,15 @@ import {
   getAllAgent,
   getAllApplicationforApproval,
   getAllApproval,
+  getAllInstitutes,
   getAllStudent,
+  getAllTeam,
+  getApplicationActivity,
+  getApprovalActivity,
+  getInstituteById,
   getStudentDataByAdmin,
+  getTeamById,
+  getTicketActivity,
   getTickets,
   getTicketsDataById,
   getUrlData,
@@ -88,10 +95,18 @@ export const getStudentById = createAsyncThunk(
 export const getAllTickets = createAsyncThunk(
   "admin/getAllTickets",
   async (
-    { page, perPage, isPriorityType, isStatusType, search, updateTicketTab, dateObj },
+    {
+      page,
+      perPage,
+      isPriorityType,
+      isStatusType,
+      search,
+      updateTicketTab,
+      dateObj,
+    },
     { rejectWithValue }
   ) => {
-    console.log(updateTicketTab)
+    console.log(updateTicketTab);
     try {
       const response = await getTickets(
         page,
@@ -127,9 +142,9 @@ export const getTicketById = createAsyncThunk(
 
 export const getAllAgentList = createAsyncThunk(
   "admin/getAllAgentList",
-  async ({page, perPage, search }, { rejectWithValue }) => {
+  async ({ page, perPage, search }, { rejectWithValue }) => {
     try {
-      const response = await getAllAgent(page, perPage, search );
+      const response = await getAllAgent(page, perPage, search);
       return response;
     } catch (error) {
       return rejectWithValue(
@@ -140,9 +155,15 @@ export const getAllAgentList = createAsyncThunk(
 );
 export const getAllStudentList = createAsyncThunk(
   "admin/getAllStudentList",
-  async ({path, page, perPage, search, agentId}, { rejectWithValue }) => {
+  async ({ path, page, perPage, search, agentId }, { rejectWithValue }) => {
     try {
-      const response = await getAllStudent(path, page, perPage, search, agentId);
+      const response = await getAllStudent(
+        path,
+        page,
+        perPage,
+        search,
+        agentId
+      );
       return response;
     } catch (error) {
       return rejectWithValue(
@@ -166,9 +187,14 @@ export const adminProfileData = createAsyncThunk(
 );
 export const adminApplicationOverview = createAsyncThunk(
   "admin/adminApplicationOverview",
-  async ({page, perPage, search, isTypeFilter }, { rejectWithValue }) => {
+  async ({ page, perPage, search, isTypeFilter }, { rejectWithValue }) => {
     try {
-      const response = await applicationOverviewData(page, perPage, search, isTypeFilter );
+      const response = await applicationOverviewData(
+        page,
+        perPage,
+        search,
+        isTypeFilter
+      );
       return response;
     } catch (error) {
       return rejectWithValue(
@@ -182,7 +208,104 @@ export const adminUrlData = createAsyncThunk(
   async (studentId, { rejectWithValue }) => {
     try {
       const response = await getUrlData(studentId);
-      console.log(response, "test")
+      console.log(response, "test");
+      return response;
+    } catch (error) {
+      return rejectWithValue(
+        error.response ? error.response.data : "Failed to fetch agent data"
+      );
+    }
+  }
+);
+export const getInstitutes = createAsyncThunk(
+  "admin/getInstitutes",
+  async ({isTypeFilter, search, page, perPage}, { rejectWithValue }) => {
+    try {
+      const response = await getAllInstitutes(isTypeFilter, search, page, perPage);
+      return response;
+    } catch (error) {
+      return rejectWithValue(
+        error.response ? error.response.data : "Failed to fetch agent data"
+      );
+    }
+  }
+);
+export const getSingleInstitute = createAsyncThunk(
+  "admin/getSingleInstitute",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await getInstituteById(
+       id
+      );
+      return response;
+    } catch (error) {
+      return rejectWithValue(
+        error.response ? error.response.data : "Failed to fetch agent data"
+      );
+    }
+  }
+);
+export const getAllTeamData = createAsyncThunk(
+  "admin/getAllTeamData",
+  async ({ perPage, page, search }, { rejectWithValue }) => {
+    try {
+      const response = await getAllTeam(perPage, page, search);
+      console.log(response, "test");
+      return response;
+    } catch (error) {
+      return rejectWithValue(
+        error.response ? error.response.data : "Failed to fetch agent data"
+      );
+    }
+  }
+);
+export const getMemberProfile = createAsyncThunk(
+  "admin/getMemberProfile",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await getTeamById(
+       id
+      );
+      console.log(response, "test");
+      return response;
+    } catch (error) {
+      return rejectWithValue(
+        error.response ? error.response.data : "Failed to fetch agent data"
+      );
+    }
+  }
+);
+export const getTeamTickets = createAsyncThunk(
+  "admin/getTeamTickets",
+  async ({id, page, perPage, dateObj,  search, isPriorityType }, { rejectWithValue }) => {
+    try {
+      const response = await getTicketActivity(id, page, perPage, dateObj,  search, isPriorityType );
+      return response;
+    } catch (error) {
+      return rejectWithValue(
+        error.response ? error.response.data : "Failed to fetch agent data"
+      );
+    }
+  }
+);
+export const getTeamApplication = createAsyncThunk(
+  "admin/getTeamApplication",
+  async ({id, page, perPage, isType, search  }, { rejectWithValue }) => {
+    try {
+      const response = await getApplicationActivity(id, page, perPage, isType, search );
+      return response;
+    } catch (error) {
+      return rejectWithValue(
+        error.response ? error.response.data : "Failed to fetch agent data"
+      );
+    }
+  }
+);
+export const getTeamApproval = createAsyncThunk(
+  "admin/getTeamApproval",
+  async ({id, page, perPage, isType, search }, { rejectWithValue }) => {
+    try {
+      const response = await getApprovalActivity(id, page, perPage, isType, search);
       return response;
     } catch (error) {
       return rejectWithValue(
@@ -210,24 +333,33 @@ const adminSlice = createSlice({
     getAdminProfile: null,
     getApplicationOverview: null,
     getUrlData: [],
+    allInstitutes: null,
+    instituteById: null,
+    getTeams:null,
+    getMember:null,
+    getApplicationActivityData: null,
+    getTicketActivityData: null,
+    getApprovalActivityData: null,  
+
   },
   reducers: {
     setTabType: (state, action) => {
       state.updateState = !state.updateState;
       state.tabType = action.payload;
-      state.applications = []
-
+      state.applications = [];
     },
-  
-  setUpdateTicket: (state, action) => {
-    state.updateState = !state.updateState;
-    state.updateTicketTab = action.payload;
 
+    setUpdateTicket: (state, action) => {
+      state.updateState = !state.updateState;
+      state.updateTicketTab = action.payload;
+    },
+    setNullStudentDirectory: (state) => {
+      state.getAllStudentData = [];
+    },
+    setEmptyInstitute: (state, action) => {
+      state.instituteById = [];
+    },
   },
-  setNullStudentDirectory :(state, action) => {
-    state.getAllStudentData = [];
-  },
-},
   extraReducers: (builder) => {
     builder
       .addCase(applicationForApproval.pending, (state) => {
@@ -288,7 +420,7 @@ const adminSlice = createSlice({
       .addCase(getAllTickets.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload || action.error.message;
-        state.ticketAll = []
+        state.ticketAll = [];
       })
       .addCase(getTicketById.pending, (state) => {
         state.status = "loading";
@@ -326,7 +458,6 @@ const adminSlice = createSlice({
         state.status = "failed";
         state.error = action.payload || action.error.message;
         state.getAllStudentData = [];
-
       })
       .addCase(adminProfileData.pending, (state) => {
         state.status = "loading";
@@ -351,21 +482,110 @@ const adminSlice = createSlice({
       .addCase(adminApplicationOverview.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload || action.error.message;
-      }) 
+      })
       .addCase(adminUrlData.pending, (state) => {
         state.status = "loading";
       })
       .addCase(adminUrlData.fulfilled, (state, action) => {
         state.status = "succeeded";
-        console.log(action)
+        console.log(action);
 
         state.getUrlData = action.payload;
       })
       .addCase(adminUrlData.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload || action.error.message;
+      })
+
+      .addCase(getInstitutes.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(getInstitutes.fulfilled, (state, action) => {
+        state.status = "succeeded";
+
+        state.allInstitutes = action.payload;
+      })
+      .addCase(getInstitutes.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload || action.error.message;
+      })
+      .addCase(getSingleInstitute.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(getSingleInstitute.fulfilled, (state, action) => {
+        state.status = "succeeded";
+
+        state.instituteById = action.payload;
+      })
+      .addCase(getSingleInstitute.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload || action.error.message;
+      })
+      .addCase(getAllTeamData.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(getAllTeamData.fulfilled, (state, action) => {
+        state.status = "succeeded";
+
+        state.getTeams = action.payload;
+      })
+      .addCase(getAllTeamData.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload || action.error.message;
+      })
+      .addCase(getMemberProfile.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(getMemberProfile.fulfilled, (state, action) => {
+        state.status = "succeeded";
+
+        state.getMember = action.payload;
+      })
+      .addCase(getMemberProfile.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload || action.error.message;
+      })
+      .addCase(getTeamTickets.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(getTeamTickets.fulfilled, (state, action) => {
+        state.status = "succeeded";
+
+        state.getTicketActivityData = action.payload;
+      })
+      .addCase(getTeamTickets.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload || action.error.message;
+        state.getTicketActivityData =[]
+      })
+      .addCase(getTeamApplication.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(getTeamApplication.fulfilled, (state, action) => {
+        state.status = "succeeded";
+
+        state.getApplicationActivityData = action.payload;
+      })
+      .addCase(getTeamApplication.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload || action.error.message;
+        state.getApplicationActivityData =[]
+      })
+      .addCase(getTeamApproval.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(getTeamApproval.fulfilled, (state, action) => {
+        state.status = "succeeded";
+
+        state.getApprovalActivityData = action.payload;
+      })
+      .addCase(getTeamApproval.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload || action.error.message;
+        state.getApprovalActivityData = []
       });
   },
 });
-export const { setTabType, setUpdateTicket, setNullStudentDirectory } = adminSlice.actions;
+export const { setTabType, setUpdateTicket, setNullStudentDirectory, setEmptyInstitute } =
+  adminSlice.actions;
 export default adminSlice.reducer;

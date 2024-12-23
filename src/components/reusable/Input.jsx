@@ -169,7 +169,7 @@ const CountrySelect = ({ name, label, options, value, handleChange, notImp, cust
   return (
     <div className="flex flex-col mb-4 mt-6 font-poppins">
       <label className="font-normal text-secondary mb-2 text-[14px]">
-        {label} {notImp === true ? "" : "*"}
+        {label} <span className="text-primary">{notImp === true ? "" : "*"}</span>
       </label>
       <select
         name={name}
@@ -177,7 +177,7 @@ const CountrySelect = ({ name, label, options, value, handleChange, notImp, cust
         onChange={handleChange}
         className={`border border-gray-300 rounded-lg text-secondary px-3 py-2 outline-none ${customClass}`}
       >
-        <option className="text-secondary font-poppins" value="">
+        <option className="text-secondary font-poppins " value="">
           Select Options
         </option>
         {options?.map((option) => (

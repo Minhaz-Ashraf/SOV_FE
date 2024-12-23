@@ -27,7 +27,7 @@ const StudentProfile = () => {
   const { studentInfoData } = useSelector((state) => state.student);
 
   const studentData =
-    role === "0"
+    role === "0" || role === "1"
       ? useSelector((state) => state.admin.getStudentDataById)
       : role === "3"
       ? studentInfoData?.data
@@ -45,7 +45,7 @@ const StudentProfile = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [profileUpdated, setProfileUpdated] = useState(false);
   useEffect(() => {
-    if (role === "0") {
+    if (role === "0" || role === "1") {
       dispatch(getStudentById(studentId));
     }
     if (role === "3") {
@@ -170,7 +170,7 @@ const StudentProfile = () => {
                 <Sidebar />
               ) : role === "2" ? (
                 <AgentSidebar />
-              ) : role === "0" ? (
+              ) : role === "0" || role === "1" ? (
                 <AdminSidebar />
               ) : null}
             </span>
@@ -186,7 +186,7 @@ const StudentProfile = () => {
           <div>
             {profileView === "/admin/approvals" ||
             profileView === "/admin/applications-review" ||
-            role === "0" ||
+            role === "0" ||  role === "1" ||
             location?.state?.adminState ||
             role === "3" ? (
               ""
@@ -225,7 +225,7 @@ const StudentProfile = () => {
                   ? "pt-20  pl-[19.5%] pb-6"
                   : location?.state?.adminState
                   ? " pl-[19.5%] pt-20 pb-6"
-                  : `pl-[19.5%] ${role === "0" ? "pt-[75px] " : "pt-[25px]"} pb-6`
+                  : `pl-[19.5%] ${role === "0" || role === "1" ? "pt-[75px] " : "pt-[25px]"} pb-6`
               }`}
             >
               <span>

@@ -18,13 +18,13 @@ const ProtectedAdmin = ({ children }) => {
 
   if (loading) {
     return (
-      <div className="flex justify-center md:ml-9 sm:ml-20 md:mt-48 mt-60 sm:mt-80">
+      <div className="flex justify-center md:ml-32 sm:ml-20 md:mt-48 mt-60 sm:mt-80">
         <Loader />
       </div>
     );
   }
 
-  const isAuthorizedRole = roleType === "0";
+  const isAuthorizedRole = roleType === "0" || roleType === "1";
 
   if (!isAuthorizedRole || !authToken) {
     return <Navigate to="/admin/role/auth/login" replace={true} />;

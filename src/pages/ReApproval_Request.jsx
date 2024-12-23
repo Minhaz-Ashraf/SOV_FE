@@ -74,7 +74,7 @@ const ReApproval_Request = () => {
                 .lastName
             }  ${
               studentInfoData?.data?.studentInformation?.stId
-            } has deleted the profile and registered again as an agent on the portal. Request for reapproval`,
+            } has deleted the profile and registered again as an student on the portal. Request for reapproval`,
             path: "/admin/approvals",
             recieverId: "",
           };

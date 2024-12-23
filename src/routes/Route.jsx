@@ -60,6 +60,12 @@ import ApplicationList from "../admin/ApplicationList";
 import StudentApplicationView from "../admin/StudentApplicationView";
 import NoAccess from "./../components/NoAccess";
 import DeleteAccount from "../pages/DeleteAccount";
+import AdminInstitute from "../admin/AdminInstitute";
+import AddInstitute from "../admin/AddInstitute";
+import InstituteView from "../pages/InstituteView";
+import TeamList from "../admin/TeamList";
+import AddMember from "../admin/AddMember";
+import TeamActivity from "../admin/TeamActivity";
 
 export const router = createBrowserRouter([
   {
@@ -487,10 +493,58 @@ export const router = createBrowserRouter([
     ),
   },
   {
+    path: "/admin/institute",
+    element: (
+      <ProtectedAdmin>
+        <AdminInstitute></AdminInstitute>{" "}
+      </ProtectedAdmin>
+    ),
+  },
+  {
+    path: "/add-institute",
+    element: (
+      <ProtectedAdmin>
+        <AddInstitute></AddInstitute>{" "}
+      </ProtectedAdmin>
+    ),
+  },
+  {
+    path: "/institute-view",
+    element: (
+      <CommonRoleProtected>
+        <InstituteView></InstituteView>{" "}
+      </CommonRoleProtected>
+    ),
+  },
+  {
     path: "/admin/student-directory",
     element: (
       <ProtectedAdmin>
         <StudentDirectory></StudentDirectory>{" "}
+      </ProtectedAdmin>
+    ),
+  },
+  {
+    path: "/admin/team-members",
+    element: (
+      <ProtectedAdmin>
+        <TeamList></TeamList>{" "}
+      </ProtectedAdmin>
+    ),
+  },
+  {
+    path: "/admin/add-member",
+    element: (
+      <ProtectedAdmin>
+        <AddMember></AddMember>{" "}
+      </ProtectedAdmin>
+    ),
+  },
+  {
+    path: "/admin/team-activity",
+    element: (
+      <ProtectedAdmin>
+        <TeamActivity></TeamActivity>{" "}
       </ProtectedAdmin>
     ),
   },

@@ -29,17 +29,17 @@ const InstituteCard = ({
   // )
 
   const closeOpt = () => {
-    setIsOpenOpt(false); // Close the popup
+    setIsOpenOpt(false); 
   };
 
   const handleOpenOpt = () => {
-    setIsOpenOpt(true); // Open the popup
+    setIsOpenOpt(true); 
   };
 
   return (
     <>
       <div className="bg-white rounded-md px-6 py-6 font-poppins border border-[#E8E8E8] flex flex-col h-full ">
-        <div className="flex-grow">
+        <Link state={{id: instituteId}} to = "/institute-view" className="flex-grow">
           <p
             className={`font-semibold text-[16px] text-sidebar leading-snug"
             }`} // Apply different style when hovered
@@ -56,7 +56,7 @@ const InstituteCard = ({
             </div>
           )}
           <p className="font-normal text-[14px] text-body">{country}</p>
-        </div>
+        </Link>
         <div className="mt-7 flex items-center justify-between gap-4 w-full">
           <span
             onClick={() => {

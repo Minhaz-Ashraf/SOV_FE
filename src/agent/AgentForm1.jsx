@@ -21,7 +21,7 @@ const AgentForm1 = ({ hide, handleCancel, updateData, adminId, agentId}) => {
   const { agentData } = useSelector((state) => state.agent);
   const { agentProfile } = useSelector((state) => state.admin);
 
-  const getData = role === "0" ? agentProfile?.companyDetails :agentData?.companyDetails;
+  const getData = role === "0" || role === "1" ? agentProfile?.companyDetails :agentData?.companyDetails;
   const [companyData, setCompanyData] = useState({
     businessName: "",
     address: "",
@@ -168,12 +168,12 @@ const AgentForm1 = ({ hide, handleCancel, updateData, adminId, agentId}) => {
       };
       try {
         let res
-        if (role === "0") {
+        if (role === "0" || role === "1") {
           await editAgentAdmin("/company/register-company-admin", payload, editForm, adminId);
         } else {
           res = await formOneSubmit(payload, editForm);
         }
-        if(role === "0"){
+        if(role === "0" || role === "1"){
           dispatch(agentDataProfile(agentId));
         }
         toast.success(res?.data?.message || "Data added successfully");

@@ -29,7 +29,7 @@ const Institution = () => {
   const [filterData, setFilterData] = useState({
     country: "",
     institutes: "",
-    search: "", // Search term for both country and institute
+    search: "", 
   });
   const [filteredInstitutes, setFilteredInstitutes] = useState([]);
   const [filteredInstituteOptions, setFilteredInstituteOptions] = useState([]); // Filtered institutes for dropdown

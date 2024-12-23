@@ -38,7 +38,7 @@ const Form3 = ({
   const studentInformation = hide ? studentInfoData : studentData;
   const dispatch = useDispatch();
   const formId = studentInformation?.data?.studentInformation?._id;
-  const preference = role === "0" ? getStudentDataById?.studentInformation?.preferences : studentInformation?.data?.studentInformation?.preferences;
+  const preference = role === "0" || role === "1" ? getStudentDataById?.studentInformation?.preferences : studentInformation?.data?.studentInformation?.preferences;
   const studentId = localStorage.getItem("form") || studentFormId || IdToAddStudent
   const [isPopUp, setIsPopUp] = useState(false);
   const editForm = hide === true ? "edit" : null;
@@ -126,12 +126,12 @@ const Form3 = ({
         let res;
       
 
-        if (role === "0") {
+        if (role === "0" || role === "1") {
           await editStudentAdmin(`/studentInformation/preference-admin/${studentId}`, preferenceData, editForm);
         } else {
           res = await studentPreference(preferenceData, studentId, editForm);
         }
-        if(role === "0"){
+        if(role === "0" || role === "1"){
           dispatch(getStudentById(studentId));
         }
 

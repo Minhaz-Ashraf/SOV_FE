@@ -239,7 +239,7 @@ const CertificateEdit = ({ appId, updatedData, profileViewPath, userId }) => {
         </div>
         <div className="flex flex-row w-full justify-between mt-6">
           <span className="w-1/2 flex flex-col text-[15px]">
-            <span className="font-light">IELTS/PTE/TOEFL/Certificate*</span>
+            <span className="font-light">IELTS/PTE/TOEFL/MOI/Certificate*</span>
             <span className="font-medium mt-2">
             {applicationDataById?.offerLetter?.certificate?.url?.length > 0 ? (
   applicationDataById.offerLetter.certificate.url.map((url, index) => (

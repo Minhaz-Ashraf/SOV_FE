@@ -29,6 +29,9 @@ const initialStudentDocument = {
   pcc: "",
   pal: "",
   certificate: "",
+  lor: "",
+  sop: "",
+  blockedaccount: "",
 };
 const VisaUploadEdit = ({ appId, updatedData, profileViewPath, userId }) => {
   const { applicationDataById } = useSelector((state) => state.agent);
@@ -136,14 +139,23 @@ const VisaUploadEdit = ({ appId, updatedData, profileViewPath, userId }) => {
     const errors = {};
 
     Object.keys(initialStudentDocument).forEach((docType) => {
-      if (
-        docType === "pal" &&
-        applicationDataById?.visa?.country !== "Germany"
-      ) {
+      // Skip validation for 'lop' and 'sop'
+      if (["lop", "sop"].includes(docType)) {
         return;
       }
 
-      if (!visaLetter.studentDocument[docType]) {
+      // Require 'blockedaccount' and 'pal' only for Germany
+      if (
+        (docType === "blockedaccount" || docType === "pal") &&
+        countryName === "Germany" &&
+        !studentDocument[docType]
+      ) {
+        errors[docType] = `${docType.replace(/([A-Z])/g, " $1")} is required.`;
+        return;
+      }
+
+      // General validation for other required documents
+      if (!studentDocument[docType]) {
         errors[docType] = `${docType.replace(/([A-Z])/g, " $1")} is required.`;
       }
     });
@@ -182,6 +194,9 @@ const VisaUploadEdit = ({ appId, updatedData, profileViewPath, userId }) => {
         pcc: visaLetter.studentDocument.pcc,
         pal: visaLetter.studentDocument.pal,
         loa: visaLetter.studentDocument.loa,
+        lor: visaLetter.studentDocument.lor,
+        sop: visaLetter.studentDocument.sop,
+        blockedaccount: visaLetter.studentDocument.blockedaccount,
         certificate: certificateArray, // Start with existing array
       };
 
@@ -360,6 +375,42 @@ const VisaUploadEdit = ({ appId, updatedData, profileViewPath, userId }) => {
                 "NA"
               )}
             </span>
+            <span className="font-light mt-4">SOP</span>
+            <span className="font-medium">
+              {applicationDataById?.visa?.sop ? (
+                <a
+                  className="flex items-center gap-3 text-primary font-medium"
+                  href={applicationDataById?.visa?.sop}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Uploaded
+                  <span>
+                    <FaRegEye />
+                  </span>
+                </a>
+              ) : (
+                "NA"
+              )}
+            </span>
+            <span className="font-light mt-4">Blocked Account</span>
+            <span className="font-medium">
+              {applicationDataById?.visa?.blockedaccount ? (
+                <a
+                  className="flex items-center gap-3 text-primary font-medium"
+                  href={applicationDataById?.visa?.blockedaccount}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Uploaded
+                  <span>
+                    <FaRegEye />
+                  </span>
+                </a>
+              ) : (
+                "NA"
+              )}
+            </span>
           </span>
           <span className="w-1/2 flex flex-col text-[15px]">
             <span className="font-light mt-4">Offer Letter</span>
@@ -416,6 +467,25 @@ const VisaUploadEdit = ({ appId, updatedData, profileViewPath, userId }) => {
                 "NA"
               )}
             </span>
+
+            <span className="font-light mt-4">LOR</span>
+            <span className="font-medium">
+              {applicationDataById?.visa?.lor ? (
+                <a
+                  className="flex items-center gap-3 text-primary font-medium"
+                  href={applicationDataById?.visa?.lor}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Uploaded
+                  <span>
+                    <FaRegEye />
+                  </span>
+                </a>
+              ) : (
+                "NA"
+              )}
+            </span>
           </span>
         </div>
         <div
@@ -451,11 +521,13 @@ const VisaUploadEdit = ({ appId, updatedData, profileViewPath, userId }) => {
                       );
                     })()}
                     {docType === "pal" &&
-                    applicationDataById?.visa?.country === "Germany"
-                      ? "*"
-                      : docType === "pal"
-                      ? ""
-                      : "*"}
+                    applicationDataById?.visa?.country === "Germany" ? (
+                      <span className="text-primary">*</span>
+                    ) : docType === "pal" ? (
+                      ""
+                    ) : (
+                      <span className="text-primary">*</span>
+                    )}
                   </p>
 
                   <div className="flex flex-col justify-center items-center border-2 border-dashed border-body rounded-md py-9 mt-2 mb-4">

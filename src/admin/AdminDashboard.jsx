@@ -14,7 +14,7 @@ import {
   fetchAdminDashboardData,
   totalAgentStudent,
 } from "../features/adminApi";
-import { appType, donoughtFilter, userType } from "../constant/data";
+import { appType,  userType } from "../constant/data";
 import Loader from "../components/Loader";
 
 const AdminDashboard = () => {
@@ -41,7 +41,6 @@ const [userDataType, setUserDataType]  = useState('');
   const [selectedDateDoughnut, setSelectedDateDoughnut] = useState(
     new Date().toISOString().substring(0, 10)
   ); // Date picker state
-  const [years] = useState([2024, 2025, 2026, 2027]);
   const handleDonoughtChange = (e) => {
     const selectedValue = e.target.value; 
     setSelectedDateDoughnut(selectedValue);
@@ -51,7 +50,17 @@ const [userDataType, setUserDataType]  = useState('');
     setMonth(selectedMonth); 
     setYear(selectedYear);   
   };
-  
+  const baseYear = 2024; 
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth(); 
+  const startDonoughtYear = currentMonth >= 8 ? currentYear : currentYear - 1; // Start from September or earlier year
+  const yearRange = 10;  
+  const startYear = Math.max(currentYear, baseYear); 
+
+  const dynamicYears = Array.from(
+    { length: startYear - baseYear + 1 },
+    (_, index) => startYear - index
+  );
   const handleUserChange = (e) => {
     setUserType(e.target.value);
   };
@@ -59,6 +68,22 @@ const [userDataType, setUserDataType]  = useState('');
     setUserDataType(e.target.value);
   };
 
+
+const monthShortNames = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+  ];
+
+  const donoughtFilter = [];
+  for (let year = startDonoughtYear; year >= baseYear; year--) {
+    for (let month = 1; month <= 12; month++) {
+      donoughtFilter.push({
+        id: `${month} ${year}`, 
+        option: `${month} ${year}`,
+        label: `${monthShortNames[month - 1]} ${year}`, 
+      });
+    }
+  }
   const agentLineData = userCount?.data?.agents ?? [];
   const studentData = userCount?.data?.students ?? [];
 
@@ -447,7 +472,7 @@ const [userDataType, setUserDataType]  = useState('');
                     }
                     className="border p-2 rounded-md ml-2 outline-none"
                   >
-                    {years.map((year) => (
+                    {dynamicYears.map((year) => (
                       <option key={year} value={year}>
                         {year}
                       </option>
@@ -496,7 +521,7 @@ const [userDataType, setUserDataType]  = useState('');
                   onChange={(e) => setSelectedYearBar(Number(e.target.value))}
                   className="border p-2 rounded-md outline-none"
                 >
-                  {years.map((year) => (
+                  {dynamicYears.map((year) => (
                     <option key={year} value={year}>
                       {year}
                     </option>

@@ -21,28 +21,34 @@ const NotificationPage = () => {
   const role = localStorage.getItem("role");
   const { agentData } = useSelector((state) => state.agent);
   const { studentInfoData } = useSelector((state) => state.student);
-    const { getAdminProfile } = useSelector((state) => state.admin);
-  console.log(agentData?._id)
-  console.log(studentInfoData?.data?.studentInformation?._id)
-
+  const { getAdminProfile } = useSelector((state) => state.admin);
+  console.log(agentData?._id);
+  console.log(studentInfoData?.data?.studentInformation?._id);
 
   const [deletingNotification, setDeletingNotification] = useState(null);
   const studentId = studentInfoData?.data?.studentInformation?.studentId;
-  const agentId = agentData?.agentId
-  const adminId  =  getAdminProfile?.data?._id
-  const clearAllId =  role === "3" ? studentId : role === "2" ? agentId : role === "0" || role === "1" ? adminId : null
+  const agentId = agentData?.agentId;
+  const adminId = getAdminProfile?.data?._id;
+  const clearAllId =
+    role === "3"
+      ? studentId
+      : role === "2"
+      ? agentId
+      : role === "0" || role === "1"
+      ? adminId
+      : null;
   const type = role == 3 || role == 2 ? "emitForUser" : "";
 
   // const [deletingAllNotification, setDeletingAllNotification] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [noMoreNotifications, setNoMoreNotifications] = useState(false);
-  console.log(clearAllId)
+  console.log(clearAllId);
 
   const { notifications, currentPage, nextPage, totalNotification, totalPage } =
     useSelector((state) => state.notifications);
 
   const handleNotificationClick = (notification) => {
-    if (!notification.isRead) {
+    if (!notification?.isRead) {
       let byAdmin = false;
       if (role === "0" || role === "1") {
         byAdmin = true;
@@ -60,7 +66,7 @@ const NotificationPage = () => {
       socketServiceInstance.socket?.on("DELETE_NOTIFICATION", (response) => {
         setDeletingNotification(notificationId);
         setTimeout(() => {
-          dispatch(removeNotification(notificationId))
+          dispatch(removeNotification(notificationId));
         }, 300);
       });
     }
@@ -68,16 +74,22 @@ const NotificationPage = () => {
 
   const handleDeleteAllNotification = (recieverId) => {
     if (socketServiceInstance.socket) {
-      socketServiceInstance.socket?.emit("DELETE_ALL_NOTIFICATION", recieverId, type);
-      socketServiceInstance.socket?.on("DELETE_ALL_NOTIFICATION", (response) => {
-        console.log(response)
-        setTimeout(() => {
-          dispatch(removeAllNotification()); 
-        }, 300);
-      });
+      socketServiceInstance.socket?.emit(
+        "DELETE_ALL_NOTIFICATION",
+        recieverId,
+        type
+      );
+      socketServiceInstance.socket?.on(
+        "DELETE_ALL_NOTIFICATION",
+        (response) => {
+          console.log(response);
+          setTimeout(() => {
+            dispatch(removeAllNotification());
+          }, 300);
+        }
+      );
     }
   };
-
 
   const fetchNotifications = useCallback(() => {
     if (isLoading || !nextPage || noMoreNotifications) return;
@@ -158,6 +170,12 @@ const NotificationPage = () => {
         <p className="text-sidebar font-semibold">
           {notification.title === "RECEIVED_OFFER_LETTER_AGENT"
             ? "RECIEVED DOCUMENT"
+            : notification.title === "DEFERMATION_BY_AGENT" ||
+              "DEFERMATION_BY_STUDENT"
+            ? "DEFERMENT"
+            : notification.title === "RECEIVED_OFFER_LETTER_STUDENT" ||
+              notification.title === "RECEIVED_OFFER_LETTER_AGENT"
+            ? "RECIEVED_DOCUMENT"
             : notification.title
                 .replace(/_/g, " ")
                 .replace(/\b(AGENT|STUDENT|ADMIN)\b/g, "")
@@ -173,24 +191,24 @@ const NotificationPage = () => {
           <Link
             onClick={() => handleNotificationClick(notification)}
             to={notification.routePath}
-            state={{ notifyId: notification.pathData?.studentId, notify: notification?.pathData?.notify }}
+            state={{
+              notifyId: notification.pathData?.studentId,
+              notify: notification?.pathData?.notify,
+            }}
             className="text-primary hover:underline text-sm mt-2"
           >
             Click to view{" "}
-            {notification.title === "RECEIVED_OFFER_LETTER_AGENT"
+            {notification.title === "RECEIVED_OFFER_LETTER_AGENT" ||
+            notification.title === "RECEIVED_OFFER_LETTER_STUDENT"
               ? "> Go to Received document"
               : notification.title === "VISA_REJECTED_BY_EMBASSY_AGENT" ||
                 notification.title === "VISA_APPROVED_BY_EMBASSY_AGENT" ||
-                notification.title === "STUDENT_REQUESTED_AMOUNT_WITHDRAWAL"||
-                notification.title === "AGENT_REQUESTED_AMOUNT_WITHDRAWAL"||
-                notification.title === "AGENT_WITHDRAWAL_COMPLETE"||
-                notification.title === "AGENT_STUDENT_VISA_STAMP"||
-                notification.title === "STUDENT_STUDENT_VISA_STAMP"
-
-
-
-
-
+                notification.title === "STUDENT_REQUESTED_AMOUNT_WITHDRAWAL" ||
+                notification.title === "AGENT_REQUESTED_AMOUNT_WITHDRAWAL" ||
+                notification.title === "AGENT_WITHDRAWAL_COMPLETE" ||
+                notification.title === "AGENT_STUDENT_VISA_STAMP" ||
+                notification.title === "STUDENT_STUDENT_VISA_STAMP" ||
+                notification.title === "DEFERMATION_BY_AGENT"
               ? "> Go to Visa Status"
               : null}
           </Link>

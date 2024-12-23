@@ -39,7 +39,7 @@ const AgentForm4 = ({ hide, handleCancel, updateData, adminId, agentId }) => {
   const { countryOption } = useSelector((state) => state.general);
   const { agentData } = useSelector((state) => state.agent);
   const { agentProfile } = useSelector((state) => state.admin);
-  const getData = role === "0" ? agentProfile?.companyOverview :agentData?.companyOverview;
+  const getData = role === "0" || role === "1" ? agentProfile?.companyOverview :agentData?.companyOverview;
 
   const navigate = useNavigate();
 
@@ -266,17 +266,17 @@ const AgentForm4 = ({ hide, handleCancel, updateData, adminId, agentId }) => {
         console.log("Submitting data:", overviewData);
         const payload = {
           ...overviewData,
-          ...(role === "0" && { companyId: adminId }),
+          ...(role === "0" || role === "1" && { companyId: adminId }),
         };
         
         let res;
 
-        if (role === "0") {
+        if (role === "0" || role === "1") {
           await editAgentAdmin("/company/register-companyOverview-admin", payload, editForm);
         } else {
           res = await formFourSubmit(payload, editForm);
         }
-        if(role === "0"){
+        if(role === "0" || role === "1"){
           dispatch(agentDataProfile(agentId));
         }
       

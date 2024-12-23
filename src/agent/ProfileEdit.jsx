@@ -14,7 +14,7 @@ const ProfileEdit = () => {
   const { agentData } = useSelector((state) => state.agent);
   const { agentProfile } = useSelector((state) => state.admin);
   const role = localStorage.getItem("role");
-  const agentProfileData = role === "0" ? agentProfile : agentData;
+  const agentProfileData = role === "0" || role === "1" ? agentProfile : agentData;
   const location = useLocation();
   const id = location?.state?.id;
   console.log(location);
@@ -31,7 +31,7 @@ const ProfileEdit = () => {
   }, [dispatch, profileUpdated]);
 
   useEffect(() => {
-    if (role === "0") {
+    if (role === "0" || role === "1") {
       dispatch(agentDataProfile(id));
     }
   }, [dispatch]);
@@ -68,7 +68,7 @@ const ProfileEdit = () => {
       {loading ? ( // Display loading indicator
         <div
           className={`w-full ml-[50%] mt-52 ${
-            role === "0" ? "ml-[50%]" : "ml-[55%]"
+            role === "0" || role === "1" ? "ml-[50%]" : "ml-[55%]"
           }`}
         >
           <Loader />

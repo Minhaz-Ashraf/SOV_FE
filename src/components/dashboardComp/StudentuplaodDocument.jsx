@@ -30,7 +30,7 @@ console.log(studentId)
   const [isLoading, setIsLoading] = useState(true);
   const [perPage, setPerPage] = useState(10);
   const path =
-    role === "0"
+    role === "0" || role === "1"
       ? `/document/all-admin/${studentId}`
       : role === "2" || role === "3"
       ? `/document/all/${studentId}`
