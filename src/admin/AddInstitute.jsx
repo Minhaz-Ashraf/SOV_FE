@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Header from "../components/dashboardComp/Header";
 import AdminSidebar from "../components/dashboardComp/AdminSidebar";
-import ImageComponent, { CustomInput } from "../components/reusable/Input";
+import ImageComponent, { CustomInput, SelectComponent } from "../components/reusable/Input";
 import { ImBin } from "react-icons/im";
 import { addInstitute, editInstitute } from "../features/adminApi";
 import { useDispatch, useSelector } from "react-redux";
@@ -226,6 +226,7 @@ const AddInstitute = () => {
         popularCourses: instituteData.popularCourse,
         admissionAndFacilities: instituteData.facilities,
         inTake: instituteData.inTake,
+        status: instituteData.status,
       };
 
       // Submit the data
@@ -260,6 +261,7 @@ const AddInstitute = () => {
         facilities: instituteById.data.admissionAndFacilities || "",
         offerLetterPrice: instituteById.data.offerLetterPrice || "",
         inTake: instituteById.data.inTake || "",
+        status: instituteById?.data?.status || "",
       });
     }
   }, [instituteById]);
@@ -359,7 +361,7 @@ const AddInstitute = () => {
                   <p className="text-red-500 mt-1">{errors.country}</p>
                 )} */}
               </div>
-              <div className="flex items-center justify-between w-full">
+              <div className="flex items-center gap-3 justify-between w-full">
               <span className=" w-1/2">
               <Register
                 // imp="*"
@@ -370,12 +372,13 @@ const AddInstitute = () => {
                 value={instituteData.instituteName}
                 // errors={errors.instituteName}
               /></span>
-              <span className=" w-1/2">
+              <span className=" w-1/2 ">
               <SelectComponent
+              notImp={true}
                   name="status"
                   label="Institute Status"
                   options={statusOptionData}
-                  value={memberData.status}
+                  value={instituteData.status}
                   handleChange={handleInput}
                 />
               </span>
