@@ -67,7 +67,7 @@ const TicketActivity = ({id}) => {
     "Ticket No.",
     "User Name",
     "User Id",
-    "Date",
+    "Action Date",
     "Priority",
     "Status",
   ];

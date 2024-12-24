@@ -46,7 +46,7 @@ const InstituteCard = ({
 console.log(data);
   return (
     <>
-      <div className="bg-[#FAFAFA] rounded-md  font-poppins border border-[#E8E8E8] flex flex-col h-full ">
+      <div className="bg-[#FFF7F7] rounded-md  font-poppins border border-[#E8E8E8] flex flex-col h-full ">
         <span
           className="flex-grow flex flex-col pt-6 px-4 pb-3 bg-white"
         

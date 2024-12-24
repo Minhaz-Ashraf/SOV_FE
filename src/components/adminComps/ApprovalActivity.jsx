@@ -3,8 +3,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { FaRegEye } from "react-icons/fa";
 import { IoSearchOutline } from "react-icons/io5";
 
-import { getTeamApplication, getTeamApproval, getTeamTickets } from "../../features/adminSlice";
-import { CustomTableTen, CustomTableThirteen, CustomTableTwelve } from "../Table";
+import {
+  getTeamApplication,
+  getTeamApproval,
+  getTeamTickets,
+} from "../../features/adminSlice";
+import {
+  CustomTableTen,
+  CustomTableThirteen,
+  CustomTableTwelve,
+} from "../Table";
 import Dnf from "../Dnf";
 import Pagination from "../dashboardComp/Pagination";
 import { CustomInput } from "../reusable/Input";
@@ -13,7 +21,7 @@ import { formatDate } from "./../../constant/commonfunction";
 import { dnf } from "../../assets";
 import Loader from "../Loader";
 
-const ApprovalActivity = ({id}) => {
+const ApprovalActivity = ({ id }) => {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [isType, setIsType] = useState("");
@@ -25,9 +33,8 @@ const ApprovalActivity = ({id}) => {
   const [isLoading, setIsLoading] = useState(true);
   const [perPage, setPerPage] = useState(10);
   const totalUsersCount = getApprovalActivityData?.totalUsers || 0;
-  const currentPage = getApprovalActivityData?.currentPage  || 1;
-  const totalPagesCount =
-    getApprovalActivityData?.totalPages || 1;
+  const currentPage = getApprovalActivityData?.currentPage || 1;
+  const totalPagesCount = getApprovalActivityData?.totalPages || 1;
   const dispatch = useDispatch();
 
   const handleDateChange = (e) => {
@@ -53,8 +60,8 @@ const ApprovalActivity = ({id}) => {
   };
 
   useEffect(() => {
-    dispatch(getTeamApproval({id, page, perPage, isType, search }));
-  }, [id, page, perPage, isType, search]);
+    dispatch(getTeamApproval({ id, page, perPage, isType, search, dateObj }));
+  }, [id, page, perPage, isType, search, dateObj]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -68,25 +75,31 @@ const ApprovalActivity = ({id}) => {
     "User Name",
     "User Id",
     "User Type",
+    "Action Date",
     "Status",
   ];
 
-  const TABLE_ROWS = getApprovalActivityData?.data?.map(
-    (data, index) => ({
-      sno: (currentPage - 1) * perPage + index + 1,
-      id: data?.agId || data?.stId || "NA",
-      name: data?.firstName + " " + data?.lastName || "NA",
-      type: data?.type || "NA",
-      status: data?.status || "NA",
-    })
-  );
+  const TABLE_ROWS = getApprovalActivityData?.data?.map((data, index) => ({
+    sno: (currentPage - 1) * perPage + index + 1,
+    id: data?.agId || data?.stId || "NA",
+    name: data?.firstName + " " + data?.lastName || "NA",
+    type: data?.type || "NA",
+    status: data?.status || "NA",
+    date: formatDate(data?.createdAt) || "NA",
+  }));
 
   return (
     <>
       <div>
         <div className=" ml-6 mt-6 ">
           <span className="flex flex-row w-full items-center">
-          
+            <CustomInput
+              type="date"
+              placeHodler="Date"
+              className="ml-3 border px-2 py-1 w-36 h-11 rounded outline-none"
+              value={isDate}
+              onChange={handleDateChange}
+            />
             <select
               className="ml-3 border px-2 py-1 md:w-40 sm:w-24 h-11 rounded outline-none"
               value={isType}
@@ -99,6 +112,7 @@ const ApprovalActivity = ({id}) => {
                 </option>
               ))}
             </select>
+
             <span className="flex flex-row items-center sm:ml-3">
               <CustomInput
                 className="h-11 md:w-80 sm:w-44  rounded-md text-body placeholder:px-3 pl-7 border border-[#E8E8E8] outline-none"
@@ -115,38 +129,37 @@ const ApprovalActivity = ({id}) => {
           </span>
         </div>
         {isLoading ? (
-  <div className="ml-[50%]">
-    <Loader/>
-  </div>
-) : Array.isArray(getApprovalActivityData?.data) &&
-  getApprovalActivityData?.data?.length > 0 ? (
-  <>
-    <div className="md:mx-6 mt-6 sm:ml-6">
-      <CustomTableThirteen
-        tableHead={TABLE_HEAD}
-        tableRows={TABLE_ROWS}
-      />
-    </div>
-    <div className="mt-16 mb-10 ml-20">
-      <Pagination
-        currentPage={currentPage}
-        hasNextPage={currentPage * perPage < totalUsersCount}
-        hasPreviousPage={currentPage > 1}
-        onPageChange={handlePageChange}
-        totalPagesCount={totalPagesCount}
-      />
-    </div>
-  </>
-) : (
-  <div className="mt-8 font-medium text-body ml-[15%] md:mr-[15%]">
-    <Dnf
-      dnfImg={dnf}
-      headingText="No Data Available!"
-      bodyText="No Activity Available to show"
-    />
-  </div>
-)}
-
+          <div className="ml-[50%]">
+            <Loader />
+          </div>
+        ) : Array.isArray(getApprovalActivityData?.data) &&
+          getApprovalActivityData?.data?.length > 0 ? (
+          <>
+            <div className="md:mx-6 mt-6 sm:ml-6">
+              <CustomTableThirteen
+                tableHead={TABLE_HEAD}
+                tableRows={TABLE_ROWS}
+              />
+            </div>
+            <div className="mt-16 mb-10 ml-20">
+              <Pagination
+                currentPage={currentPage}
+                hasNextPage={currentPage * perPage < totalUsersCount}
+                hasPreviousPage={currentPage > 1}
+                onPageChange={handlePageChange}
+                totalPagesCount={totalPagesCount}
+              />
+            </div>
+          </>
+        ) : (
+          <div className="mt-8 font-medium text-body ml-[15%] md:mr-[15%]">
+            <Dnf
+              dnfImg={dnf}
+              headingText="No Data Available!"
+              bodyText="No Activity Available to show"
+            />
+          </div>
+        )}
       </div>
     </>
   );

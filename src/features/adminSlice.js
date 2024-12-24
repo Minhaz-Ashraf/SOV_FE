@@ -290,9 +290,9 @@ export const getTeamTickets = createAsyncThunk(
 );
 export const getTeamApplication = createAsyncThunk(
   "admin/getTeamApplication",
-  async ({id, page, perPage, isType, search  }, { rejectWithValue }) => {
+  async ({id, page, perPage, isType, search, dateObj}, { rejectWithValue }) => {
     try {
-      const response = await getApplicationActivity(id, page, perPage, isType, search );
+      const response = await getApplicationActivity(id, page, perPage, isType, search, dateObj );
       return response;
     } catch (error) {
       return rejectWithValue(

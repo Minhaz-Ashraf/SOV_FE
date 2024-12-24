@@ -305,6 +305,7 @@ const AddInstitute = () => {
             customClass=" border-dashed text-[14px]"
             value={instituteData.instituteImage}
           />
+
           {/* {errors.instituteImage && (
             <p className="text-red-500 mt-1 text-sm">{errors.instituteImage}</p>
           )} */}
@@ -324,6 +325,7 @@ const AddInstitute = () => {
               </span>
             </div>
           )}
+          <p className="text-primary pt-2 text-[14px]">Upload the college or institute picture in x*y size. For better Visiblity</p>
           <div className=" mt-6  text-[14px] w-full">
             <span className="flex flex-col">
               <span className="text-[15px] text-secondary "> Country </span>{" "}

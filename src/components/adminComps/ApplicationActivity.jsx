@@ -52,8 +52,8 @@ const ApplicationActivity = ({ id }) => {
   };
 
   useEffect(() => {
-    dispatch(getTeamApplication({ id, page, perPage, isType, search }));
-  }, [id, page, perPage, isType, search]);
+    dispatch(getTeamApplication({ id, page, perPage, isType, search, dateObj }));
+  }, [id, page, perPage, isType, search, dateObj]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -68,6 +68,7 @@ const ApplicationActivity = ({ id }) => {
     "Application No.",
     "Submitted By",
     "Application Type",
+    "Action Date",
     "Status",
   ];
 
@@ -77,8 +78,8 @@ const ApplicationActivity = ({ id }) => {
       id: data?.applicationId || "NA",
       name: data?.agentName || "Self",
       type: data?.type || "NA",
-      studentName:data?.fullName || "NA",
-      // time: data?.time || "NA",
+      studentName: data?.fullName || "NA",
+      date: formatDate(data?.createdAt) || "NA",
       status: data?.status || "NA",
     })
   );
@@ -100,13 +101,13 @@ const ApplicationActivity = ({ id }) => {
                 </option>
               ))}
             </select> */}
-            {/* <CustomInput
+            <CustomInput
               type="date"
               placeHodler="Date"
               className="ml-3 border px-2 py-1 w-36 h-11 rounded outline-none"
               value={isDate}
               onChange={handleDateChange}
-            /> */}
+            />
             <select
               className="ml-3 border px-2 py-1 md:w-40 sm:w-24 h-11 rounded outline-none"
               value={isType}
@@ -139,35 +140,34 @@ const ApplicationActivity = ({ id }) => {
           <div className=" ml-[50%] ">
             <Loader />
           </div>
-) : Array.isArray(getApplicationActivityData?.applications) &&
-  getApplicationActivityData?.applications?.length > 0 ? (
-  <>
-    <div className="md:mx-6 mt-6 sm:ml-6">
-      <CustomTableTwelve
-        tableHead={TABLE_HEAD}
-        tableRows={TABLE_ROWS}
-      />
-    </div>
-    <div className="mt-16 mb-10 ml-20">
-      <Pagination
-        currentPage={currentPage}
-        hasNextPage={currentPage * perPage < totalUsersCount}
-        hasPreviousPage={currentPage > 1}
-        onPageChange={handlePageChange}
-        totalPagesCount={totalPagesCount}
-      />
-    </div>
-  </>
-) : (
-  <div className="mt-8 font-medium text-body ml-[15%] md:mr-[15%]">
-    <Dnf
-      dnfImg={dnf}
-      headingText="No Data Available!"
-      bodyText="No Activity Available to show"
-    />
-  </div>
-)}
-
+        ) : Array.isArray(getApplicationActivityData?.applications) &&
+          getApplicationActivityData?.applications?.length > 0 ? (
+          <>
+            <div className="md:mx-6 mt-6 sm:ml-6">
+              <CustomTableTwelve
+                tableHead={TABLE_HEAD}
+                tableRows={TABLE_ROWS}
+              />
+            </div>
+            <div className="mt-16 mb-10 ml-20">
+              <Pagination
+                currentPage={currentPage}
+                hasNextPage={currentPage * perPage < totalUsersCount}
+                hasPreviousPage={currentPage > 1}
+                onPageChange={handlePageChange}
+                totalPagesCount={totalPagesCount}
+              />
+            </div>
+          </>
+        ) : (
+          <div className="mt-8 font-medium text-body ml-[15%] md:mr-[15%]">
+            <Dnf
+              dnfImg={dnf}
+              headingText="No Data Available!"
+              bodyText="No Activity Available to show"
+            />
+          </div>
+        )}
       </div>
     </>
   );

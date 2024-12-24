@@ -1741,7 +1741,7 @@ export function CustomTableTen({
     setIsOpenPop(true);
     setIsId(id);
   };
-
+  // console.log(isOpenPop)
   const closePop = () => {
     setIsOpenPop(false);
   };
@@ -1920,7 +1920,7 @@ export function CustomTableEleven({ tableHead = [], tableRows = [] }) {
                     color="blue-gray"
                     className="font-normal"
                   >
-                    {row.name || "Self"}
+                    {row.name}
                   </Typography>
                 </td>
 
@@ -2054,7 +2054,15 @@ export function CustomTableTwelve({ tableHead = [], tableRows = [] }) {
                       : "NA"}
                   </Typography>
                 </td>
-
+                <td className="p-4">
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                  >
+                    {row.date}
+                  </Typography>
+                </td>
                 <td className="p-4">
                   <Typography
                     variant="small"
@@ -2090,6 +2098,7 @@ export function CustomTableTwelve({ tableHead = [], tableRows = [] }) {
                       : row.status}
                   </Typography>
                 </td>
+               
               </tr>
             ))}
           </tbody>
@@ -2173,6 +2182,15 @@ export function CustomTableThirteen({ tableHead = [], tableRows = [] }) {
                   <Typography
                     variant="small"
                     color="blue-gray"
+                    className="font-normal"
+                  >
+                    {row.date}
+                  </Typography>
+                </td>
+                <td className="p-4">
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
                     className={`font-light text-white text-center rounded-xl py-1 ${
                       row.status === "completed"
                         ? "bg-[#09985C]"
@@ -2188,6 +2206,7 @@ export function CustomTableThirteen({ tableHead = [], tableRows = [] }) {
                       : "NA"}
                   </Typography>
                 </td>
+                
               </tr>
             ))}
           </tbody>
