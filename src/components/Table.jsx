@@ -1849,7 +1849,7 @@ export function CustomTableTen({
                       >
                         {iconTwo}
                       </Link>
-                      <span onClick={()=> openDeletePopup(row.data?._id)} className="text-primary">
+                      <span onClick={()=> openDeletePopup(row.data?._id)} className="text-primary cursor-pointer">
                         {iconThree}
                       </span>
                     </span>
