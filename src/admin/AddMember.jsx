@@ -39,7 +39,6 @@ const AddMember = () => {
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
-  console.log(location);
   const id = location?.state?.id;
   const [memberData, setMemberData] = useState({
     profilePicture: "",
@@ -336,6 +335,35 @@ const AddMember = () => {
       }));
     }
   }, [getMember?.data]);
+  useEffect(() => {
+    console.log("Checking getMember?.Data:", getMember?.Data);
+  
+    if (!getMember?.Data || getMember?.Data.length === 0) {
+      console.log("Resetting to add mode as getMember?.Data is empty");
+  
+      setMemberData({
+        profilePicture: "",
+        dob: "",
+        doj: "",
+        firstName: "",
+        lastName: "",
+        phone: "",
+        maritalStatus: "",
+        gender: "",
+        email: "",
+        address: "",
+        country: "",
+        state: "",
+        city: "",
+        zipcode: "",
+        password: "",
+      });
+  
+      dispatch(setEmptyMemberInput());
+    }
+  }, [getMember?.Data, dispatch]);
+  
+  
   return (
     <>
       <Header />

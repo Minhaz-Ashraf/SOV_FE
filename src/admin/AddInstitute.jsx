@@ -15,19 +15,23 @@ import {
   deleteObject,
 } from "firebase/storage";
 import { storage } from "../utils/fireBase";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { getSingleInstitute } from "../features/adminSlice";
 import PopUp from "../components/reusable/PopUp";
 import { greenTick } from "../assets";
-import { Select} from 'antd';
+import { Select } from "antd";
+// import { intakeOptions } from "../constant/data";
+import { useNavigate } from "react-router-dom";
 import { intakeOption } from "../constant/data";
+
 const AddInstitute = () => {
   const location = useLocation();
   const dispatch = useDispatch();
-  const navigate =useNavigate();
-   const id = location?.state?.id
-   console.log(id)
-   const {instituteById} = useSelector((state)=>state.admin)
+  const navigate = useNavigate();
+  const id = location?.state?.id;
+  console.log(id);
+  const { instituteById } = useSelector((state) => state.admin);
+  const { prefCountryOption } = useSelector((state) => state.general);
   const [instituteData, setInstituteData] = useState({
     instituteImage: "",
     country: "",
@@ -37,15 +41,15 @@ const AddInstitute = () => {
     highlights: "",
     popularCourse: "",
     facilities: "",
-    inTake:""
+    inTake: [],
   });
+  const [isCustomCountry, setIsCustomCountry] = useState(false);
   const [newFiles, setNewFiles] = useState([]);
   const [deletedFiles, setDeletedFiles] = useState([]);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [reset, setReset] = useState(false);
   const [isConfirmPopUp, setIsConfirmPopUp] = useState(false);
-
 
   const confirmPopUpOpen = () => {
     setIsConfirmPopUp(true);
@@ -59,7 +63,6 @@ const AddInstitute = () => {
 
     // setLoading(false);
   }, [id]);
-
 
   const handleFileUpload = (files) => {
     if (!files || files.length === 0) return;
@@ -86,6 +89,31 @@ const AddInstitute = () => {
     }));
   };
 
+  const handleCountryChange = (e) => {
+    const selectedValue = e.target.value;
+
+    if (selectedValue === "Other") {
+      setIsCustomCountry(true);
+      setInstituteData((prev) => ({
+        ...prev,
+        country: "",
+      }));
+    } else {
+      setIsCustomCountry(false);
+      setInstituteData((prev) => ({
+        ...prev,
+        country: selectedValue,
+      }));
+    }
+  };
+
+  const handleCustomCountryChange = (e) => {
+    const customValue = e.target.value;
+    setInstituteData((prev) => ({
+      ...prev,
+      country: customValue,
+    }));
+  };
   // File deletion handler
   const deleteFile = (fileUrl) => {
     if (!fileUrl) return;
@@ -112,7 +140,13 @@ const AddInstitute = () => {
       [name]: value,
     }));
   };
-
+  const handleInputSelect = (field, selectedValues) => {
+    // console.log(field, selectedValues)
+    setInstituteData((prevState) => ({
+      ...prevState,
+      [field]: selectedValues,
+    }));
+  };
   // Validation logic
   const validateFields = () => {
     const validationErrors = {};
@@ -123,7 +157,7 @@ const AddInstitute = () => {
       highlights,
       about,
       popularCourse,
-      inTake
+      inTake,
     } = instituteData;
 
     if (!country) validationErrors.country = "Country is required.";
@@ -135,8 +169,7 @@ const AddInstitute = () => {
     if (!highlights) validationErrors.highlights = "Highlights is required.";
     if (!popularCourse)
       validationErrors.popularCourse = "Popular courses is required.";
-    if (!inTake)
-      validationErrors.inTake = "InTake is required.";
+    if (!inTake) validationErrors.inTake = "InTake is required.";
 
     return validationErrors;
   };
@@ -191,17 +224,17 @@ const AddInstitute = () => {
         keyHighlights: instituteData.highlights,
         popularCourses: instituteData.popularCourse,
         admissionAndFacilities: instituteData.facilities,
-        inTake: instituteData.inTake
+        inTake: instituteData.inTake,
       };
 
       // Submit the data
       const res = await addInstitute(payload);
 
-        //   dispatch(adminProfileData())
-        toast.success(res.message || "Institute added successfully.");
-        setNewFiles([]);
-        setDeletedFiles([]);
-    navigate("/admin/institute");
+      //   dispatch(adminProfileData())
+      toast.success(res.message || "Institute added successfully.");
+      setNewFiles([]);
+      setDeletedFiles([]);
+      navigate("/admin/institute");
     } catch (error) {
       console.error("Error during submission:", error);
       toast.error(error?.message || "Something went wrong.");
@@ -222,11 +255,9 @@ const AddInstitute = () => {
         facilities: instituteById.data.admissionAndFacilities || "",
         offerLetterPrice: instituteById.data.offerLetterPrice || "",
         inTake: instituteById.data.inTake || "",
-
       });
     }
   }, [instituteById]);
-  
 
   return (
     <>
@@ -286,18 +317,45 @@ const AddInstitute = () => {
           )}
           <div className=" mt-6  text-[14px] w-full">
             <span className="flex flex-col">
-              <span className="text-[15px] text-secondary "> Country <span className="text-primary">*</span> </span>{" "}
-              <CustomInput
-                name="country"
-                type="text"
-                className="mt-2 outline-none h-11 w-full rounded-md px-4 font-poppins text-body bg-input"
-                placeHodler="Country"
-                onChange={handleInput}
-                value={instituteData.country}
-                errors={errors.country}
-              />
+              <span className="text-[15px] text-secondary ">
+                {" "}
+                Country {" "}
+              </span>{" "}
+              <div>
+                <select
+                  name="country"
+                  value={isCustomCountry ? "Other" : instituteData.country}
+                  onChange={handleCountryChange}
+                  className="mt-2 outline-none h-11 w-full rounded-md px-4 font-poppins text-body bg-input"
+                >
+                  <option value="" disabled>
+                    Select a country
+                  </option>
+                  {prefCountryOption.map((country) => (
+                    <option key={country?._id} value={country}>
+                      {country}
+                    </option>
+                  ))}
+                  <option value="Other">Other</option>
+                </select>
+
+                {isCustomCountry && (
+                  <input
+                    type="text"
+                    name="country"
+                    value={instituteData.country}
+                    onChange={handleCustomCountryChange}
+                    placeholder="Enter country"
+                    className="mt-2 outline-none h-11 w-full rounded-md px-4 font-poppins text-body bg-input"
+                  />
+                )}
+
+                {errors.country && (
+                  <p className="text-red-500 mt-1">{errors.country}</p>
+                )}
+              </div>
               <Register
-                imp="*"
+                // imp="*"
                 name="instituteName"
                 type="text"
                 label="Institute Name"
@@ -306,7 +364,7 @@ const AddInstitute = () => {
                 errors={errors.instituteName}
               />
               <Register
-                imp="*"
+                // imp="*"
                 name="offerLetterPrice"
                 type="number"
                 label="Offer Letter Price"
@@ -314,29 +372,31 @@ const AddInstitute = () => {
                 value={instituteData.offerLetterPrice}
                 errors={errors.offerLetterPrice}
               />
-                 <Register
-                imp="*"
-                name="inTake"
-                type="number"
-                label="Intake"
-                handleInput={handleInput}
+              <div className="mt-6">
+              <span className="text-[15px]  text-secondary ">
+                {" "}
+                Intake {" "}
+              </span>
+              <Select
+                mode="multiple"
+                allowClear
+                className="mt-2  "
                 value={instituteData.inTake}
-                errors={errors.inTake}
+                style={{ width: "100%",  background: "#F2F5F7",
+                  height: "40px", }}
+                placeholder="Please select intake"
+                onChange={(selectedValues) =>
+                  handleInputSelect("inTake", selectedValues)
+                } 
+                options={intakeOption.map((data) => ({
+                value: data.option,
+                label: data.lablel,
+              }))}
               />
-<Select
-  mode="multiple"
-  allowClear
-  value={instituteData.inTake} 
-  style={{ width: '100%' }}
-  placeholder="Please select intake"
-  onChange={(selectedValues) => handleInput("inTake", selectedValues)} 
-  options={intakeOption} 
-/>
-
-
+              </div>
               <span className="text-[15px] text-secondary mt-6 ">
                 {" "}
-                About the institute <span className="text-primary">*</span> 
+                About the institute 
               </span>{" "}
               <textarea
                 name="about"
@@ -349,10 +409,9 @@ const AddInstitute = () => {
               {errors.about && (
                 <p className="text-red-500 mt-1 text-sm">{errors.about}</p>
               )}
-
               <span className="text-[15px] text-secondary mt-6 ">
                 {" "}
-               Key Highlights <span className="text-primary">*</span> 
+                Key Highlights 
               </span>{" "}
               <textarea
                 name="highlights"
@@ -365,10 +424,9 @@ const AddInstitute = () => {
               {errors.highlights && (
                 <p className="text-red-500 mt-1 text-sm">{errors.highlights}</p>
               )}
-              
               <span className="text-[15px] text-secondary mt-6 ">
                 {" "}
-                Popular Courses <span className="text-primary">*</span> 
+                Popular Courses 
               </span>{" "}
               <textarea
                 name="popularCourse"
@@ -379,11 +437,14 @@ const AddInstitute = () => {
                 value={instituteData.popularCourse}
               />
               {errors.popularCourse && (
-                <p className="text-red-500 mt-1 text-sm">{errors.popularCourse}</p>
+                <p className="text-red-500 mt-1 text-sm">
+                  {errors.popularCourse}
+                </p>
               )}
               <span className="text-[15px] text-secondary mt-6 ">
                 {" "}
-                Admission Facilitities and Charges <span className="text-primary">*</span> 
+                Admission Facilitities and Charges{" "}
+                
               </span>{" "}
               <textarea
                 name="facilities"
@@ -397,7 +458,6 @@ const AddInstitute = () => {
                 <p className="text-red-500 mt-1 text-sm">{errors.facilities}</p>
               )}
             </span>
-            
           </div>
 
           <div className="flex justify-end mt-12 text-[14px]">

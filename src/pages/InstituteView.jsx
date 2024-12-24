@@ -114,7 +114,7 @@ const InstituteView = () => {
                   ? instituteById?.data.instituteImg
                   : noImage
               }
-              className="md:ml-60 sm:ml-20   h-96 pt-16 w-full  object-contain"
+              className=" md:ml-60 sm:ml-20  h-96 pt-16 w-[85%]  object-cover"
             />
             <div className="md:ml-[17%] sm:ml-[22%] pt-6 pb-8 bg-white border-b-2 border-[#E8E8E8]">
               <span className="flex items-start gap-6">
@@ -180,17 +180,6 @@ const InstituteView = () => {
               </div>
             </div>
             <div className="md:ml-[19%] sm:ml-[26%] mr-6 mt-6 pl-[2%] rounded-md pt-6 pb-8 bg-white border-b-2 border-[#E8E8E8]">
-              <span className="flex flex-col mb-3">
-                <span className="flex items-center gap-2">
-                  <span className="text-[20px]">
-                    <RiPriceTag2Fill />
-                  </span>
-                  <span className="font-medium">Intake Price</span>
-                </span>
-                <span className="font-normal text-[14px] ml-7">
-                  {instituteById?.data?.inTake || "NA"}
-                </span>
-              </span>
               <span className="flex items-center gap-2">
                 <span className="text-[20px]">
                   <MdInfoOutline />
@@ -200,7 +189,33 @@ const InstituteView = () => {
                 </span>
               </span>
               <span className="font-normal text-[14px] ml-7">
-                {instituteById?.data?.aboutCollegeOrInstitute || "NA"}
+                {instituteById?.data?.aboutCollegeOrInstitute ? (
+                  <ul>
+                    {instituteById.data.aboutCollegeOrInstitute
+                      .split("\n")
+                      .flatMap((line, index) => {
+                        if (line.trim().endsWith("&")) {
+                          return line
+                            .trim()
+                            .slice(0, -1)
+                            .split("&")
+                            .map(
+                              (item, subIndex) =>
+                                item.trim() && (
+                                  <li key={`${index}-${subIndex}`}>
+                                    {item.trim()}
+                                  </li>
+                                )
+                            );
+                        }
+                        return (
+                          line.trim() && <li key={index}>{line.trim()}</li>
+                        );
+                      })}
+                  </ul>
+                ) : (
+                  "NA"
+                )}
               </span>
             </div>
             <div className="md:ml-[19%] sm:ml-[26%] mr-6 mt-6 pl-[2%] rounded-md pt-6 pb-8 bg-white border-b-2 border-[#E8E8E8]">
@@ -211,7 +226,35 @@ const InstituteView = () => {
                 <span className="font-medium">Key Highlights</span>
               </span>
               <span className="font-normal text-[14px] ml-7">
-                {instituteById?.data?.keyHighlights || "NA"}
+                <span className="font-normal text-[14px] ml-7">
+                  {instituteById?.data?.keyHighlights ? (
+                    <ul>
+                      {instituteById.data.keyHighlights
+                        .split("\n")
+                        .flatMap((line, index) => {
+                          if (line.trim().endsWith("&")) {
+                            return line
+                              .trim()
+                              .slice(0, -1)
+                              .split("&")
+                              .map(
+                                (item, subIndex) =>
+                                  item.trim() && (
+                                    <li key={`${index}-${subIndex}`}>
+                                      {item.trim()}
+                                    </li>
+                                  )
+                              );
+                          }
+                          return (
+                            line.trim() && <li key={index}>{line.trim()}</li>
+                          );
+                        })}
+                    </ul>
+                  ) : (
+                    "NA"
+                  )}
+                </span>
               </span>
             </div>
             <div className="md:ml-[19%] sm:ml-[26%] mr-6 mt-6 pl-[2%] rounded-md pt-6 pb-8 bg-white border-b-2 border-[#E8E8E8]">
@@ -222,11 +265,39 @@ const InstituteView = () => {
                 <span className="font-medium">Popular Courses</span>
               </span>
               <span className="font-normal text-[14px] ml-7">
-                {instituteById?.data?.popularCourses || "NA"}
+                <span className="font-normal text-[14px] ml-7">
+                  {instituteById?.data?.popularCourses ? (
+                    <ul>
+                      {instituteById.data.popularCourses
+                        .split("\n")
+                        .flatMap((line, index) => {
+                          if (line.trim().endsWith("&")) {
+                            return line
+                              .trim()
+                              .slice(0, -1)
+                              .split("&")
+                              .map(
+                                (item, subIndex) =>
+                                  item.trim() && (
+                                    <li key={`${index}-${subIndex}`}>
+                                      {item.trim()}
+                                    </li>
+                                  )
+                              );
+                          }
+                          return (
+                            line.trim() && <li key={index}>{line.trim()}</li>
+                          );
+                        })}
+                    </ul>
+                  ) : (
+                    "NA"
+                  )}
+                </span>
               </span>
             </div>
 
-            <div className="md:ml-[19%] sm:ml-[26%] mr-6 mt-6 pl-[2%] rounded-md pt-6 pb-8 bg-white border-b-2 border-[#E8E8E8]">
+            <div className="md:ml-[19%] sm:ml-[26%] mb-20 mr-6 mt-6 pl-[2%] rounded-md pt-6 pb-8 bg-white border-b-2 border-[#E8E8E8]">
               <span className="flex items-center gap-2">
                 <span className="text-[20px]">
                   <FaBuildingFlag />
@@ -236,7 +307,35 @@ const InstituteView = () => {
                 </span>
               </span>
               <span className="font-normal text-[14px]">
-                {instituteById?.data?.admissionAndFacilities}
+                <span className="font-normal text-[14px] ml-7">
+                  {instituteById?.data?.admissionAndFacilities ? (
+                    <ul>
+                      {instituteById.data.admissionAndFacilities
+                        .split("\n")
+                        .flatMap((line, index) => {
+                          if (line.trim().endsWith("&")) {
+                            return line
+                              .trim()
+                              .slice(0, -1)
+                              .split("&")
+                              .map(
+                                (item, subIndex) =>
+                                  item.trim() && (
+                                    <li key={`${index}-${subIndex}`}>
+                                      {item.trim()}
+                                    </li>
+                                  )
+                              );
+                          }
+                          return (
+                            line.trim() && <li key={index}>{line.trim()}</li>
+                          );
+                        })}
+                    </ul>
+                  ) : (
+                    "NA"
+                  )}
+                </span>
               </span>
             </div>
           </>
