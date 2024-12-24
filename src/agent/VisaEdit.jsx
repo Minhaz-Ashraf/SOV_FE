@@ -40,7 +40,7 @@ const VisaEdit = () => {
           //from agent to admin
           const notificationData = {
             title: " AGENT_RESUBMITTED_VISA_LODGEMENT",
-            message: `${agentData?.companyDetails?.businessName} ${agentData?.agId}  has resubmitted the Visa lodgment application ${applicationDataById?.applicationId} of ${applicationDataById?.visa?.country} for the student ${applicationDataById?.visa?.personalInformation?.fullName} ${studentData?.studentInformation?.stId}`,
+            message: `${agentData?.companyDetails?.businessName} ${agentData?.agId}  has resubmitted the Visa lodgment application ${applicationDataById?.applicationId} of ${applicationDataById?.visa?.country} for the student ${studentData?.studentInformation?.personalInformation?.firstName + studentData?.studentInformation?.personalInformation?.lastName} ${studentData?.studentInformation?.stId}`,
             path: "/admin/applications-review",
             recieverId: "",
           };

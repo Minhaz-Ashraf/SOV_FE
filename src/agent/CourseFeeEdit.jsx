@@ -46,7 +46,7 @@ const CourseFeeEdit = () => {
           //from agent to admin
           const notificationData = {
             title: " AGENT_RESUBMITTED_COURSE_FEE",
-            message: `${agentData?.companyDetails?.businessName} ${agentData?.agId}  has resubmitted the Course fee application  ${applicationDataById?.applicationId} for the student ${applicationDataById?.courseFeeApplication?.personalDetails?.fullName} ${studentData?.studentInformation?.stId}  `,
+            message: `${agentData?.companyDetails?.businessName} ${agentData?.agId}  has resubmitted the Course fee application  ${applicationDataById?.applicationId} for the student ${studentData?.studentInformation?.personalInformation?.firstName + studentData?.studentInformation?.personalInformation?.lastName} ${studentData?.studentInformation?.stId}  `,
             path: "/admin/applications-review",
             recieverId: "",
           };
