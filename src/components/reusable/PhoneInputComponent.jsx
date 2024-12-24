@@ -85,7 +85,7 @@ const PhoneInputSignup = ({ phoneData, onPhoneChange }) => {
 
   return (
     <div className="relative font-poppins text-secondary text-[14px]">
-      <div className="mb-2">Phone Number *</div>
+      <div className="mb-2">Phone Number <span className="text-primary">*</span></div>
       <label>
         <PhoneInput
           country={"in"} 

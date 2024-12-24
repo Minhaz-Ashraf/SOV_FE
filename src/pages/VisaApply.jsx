@@ -166,7 +166,13 @@ const VisaApply = () => {
     Object.keys(initialStudentDocument).forEach((docType) => {
       // Documents specific to Germany
       const germanyRequiredDocs = ["blockedaccount", "pal"];
-
+      const skipValidationDocs = ["sop", "lor"]; // Documents to skip validation
+    
+      // Skip validation for specific documents
+      if (skipValidationDocs.includes(docType)) {
+        return;
+      }
+    
       // Require these documents only for Germany
       if (germanyRequiredDocs.includes(docType)) {
         if (countryName === "Germany" && !studentDocument[docType]) {
@@ -185,6 +191,7 @@ const VisaApply = () => {
         }
       }
     });
+    
 
     return errors;
   };
@@ -668,7 +675,7 @@ const VisaApply = () => {
                       .trim()
                       .replace(/^./, (str) => str.toUpperCase())}{" "}
                 {countryName === "Germany" &&
-                ["pal", "sop", "blockedaccount", "lor"].includes(docType) ? (
+                ["pal", "blockedaccount",].includes(docType) ? (
                   <span className="text-primary">*</span>
                 ) : !["pal", "sop", "blockedaccount", "lor"].includes(
                     docType

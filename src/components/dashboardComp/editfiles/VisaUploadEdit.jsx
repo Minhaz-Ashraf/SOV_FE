@@ -139,26 +139,34 @@ const VisaUploadEdit = ({ appId, updatedData, profileViewPath, userId }) => {
     const errors = {};
 
     Object.keys(initialStudentDocument).forEach((docType) => {
-      // Skip validation for 'lop' and 'sop'
-      if (["lop", "sop"].includes(docType)) {
+      // Documents specific to Germany
+      const germanyRequiredDocs = ["blockedaccount", "pal"];
+      const skipValidationDocs = ["sop", "lor"]; // Documents to skip validation
+    
+      // Skip validation for specific documents
+      if (skipValidationDocs.includes(docType)) {
         return;
       }
-
-      // Require 'blockedaccount' and 'pal' only for Germany
-      if (
-        (docType === "blockedaccount" || docType === "pal") &&
-        countryName === "Germany" &&
-        !studentDocument[docType]
-      ) {
-        errors[docType] = `${docType.replace(/([A-Z])/g, " $1")} is required.`;
-        return;
-      }
-
-      // General validation for other required documents
-      if (!studentDocument[docType]) {
-        errors[docType] = `${docType.replace(/([A-Z])/g, " $1")} is required.`;
+    
+      // Require these documents only for Germany
+      if (germanyRequiredDocs.includes(docType)) {
+        if (applicationDataById?.visa?.country === "Germany" && !visaLetter?.studentDocument[docType]) {
+          errors[docType] = `${docType.replace(
+            /([A-Z])/g,
+            " $1"
+          )} is required for Germany.`;
+        }
+      } else {
+        // General validation for other documents
+        if (!visaLetter?.studentDocument[docType]) {
+          errors[docType] = `${docType.replace(
+            /([A-Z])/g,
+            " $1"
+          )} is required.`;
+        }
       }
     });
+    
 
     return errors;
   };
@@ -273,6 +281,9 @@ const VisaUploadEdit = ({ appId, updatedData, profileViewPath, userId }) => {
           pal: applicationDataById?.visa?.pal || "",
           certificate: applicationDataById?.visa?.certificate || "",
           medical: applicationDataById?.visa?.medical || "",
+          blockedaccount: applicationDataById?.visa?.blockedaccount || "",
+          sop: applicationDataById?.visa?.sop || "",
+          lor: applicationDataById?.visa?.lor || "",
         },
       }));
     }
@@ -497,7 +508,7 @@ const VisaUploadEdit = ({ appId, updatedData, profileViewPath, userId }) => {
         >
           {isOne && (
             <>
-              {Object.keys(visaLetter.studentDocument)?.map((docType) => (
+              {Object.keys(visaLetter?.studentDocument)?.map((docType) => (
                 <div
                   className="bg-white rounded-xl px-8 py-4 pb- "
                   key={docType}
@@ -507,27 +518,31 @@ const VisaUploadEdit = ({ appId, updatedData, profileViewPath, userId }) => {
                     {(() => {
                       // Define a mapping for docType values
                       const typeMapping = {
-                        certificate: "IELTS/PTE/TOEFL/Certificate",
+                        certificate: "IELTS/PTE/TOEFL/MOI/Certificate",
                         loa: "LOA/Fee Receipt",
                       };
 
                       // Check if the docType is in the mapping, else apply the original transformation
                       return (
                         typeMapping[docType] ||
-                        docType
-                          .replace(/([A-Z])/g, " $1")
-                          .trim()
-                          .replace(/^./, (str) => str.toUpperCase())
+                        (docType === "blockedaccount"
+                          ? "Blocked Account"
+                          : docType
+                              .replace(/([A-Z])/g, " $1")
+                              .trim()
+                              .replace(/^./, (str) => str.toUpperCase()))
                       );
                     })()}
-                    {docType === "pal" &&
-                    applicationDataById?.visa?.country === "Germany" ? (
+                    {applicationDataById?.visa?.country === "Germany" &&
+                    ["pal", "blockedaccount"].includes(
+                      docType
+                    ) ? (
                       <span className="text-primary">*</span>
-                    ) : docType === "pal" ? (
-                      ""
-                    ) : (
+                    ) : !["pal", "sop", "blockedaccount", "lor"].includes(
+                        docType
+                      ) ? (
                       <span className="text-primary">*</span>
-                    )}
+                    ) : null}
                   </p>
 
                   <div className="flex flex-col justify-center items-center border-2 border-dashed border-body rounded-md py-9 mt-2 mb-4">
@@ -549,10 +564,12 @@ const VisaUploadEdit = ({ appId, updatedData, profileViewPath, userId }) => {
                         // Check if the docType is in the mapping, else apply the original transformation
                         return (
                           typeMapping[docType] ||
-                          docType
-                            .replace(/([A-Z])/g, " $1")
-                            .trim()
-                            .replace(/^./, (str) => str.toUpperCase())
+                          (docType === "blockedaccount"
+                            ? "Blocked Account"
+                            : docType
+                                .replace(/([A-Z])/g, " $1")
+                                .trim()
+                                .replace(/^./, (str) => str.toUpperCase()))
                         );
                       })()}
                     </p>
