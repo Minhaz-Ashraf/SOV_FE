@@ -53,7 +53,7 @@ const TeamList = () => {
   const deleteMember = async (id) => {
     try {
       const res = await deleteTeam(id);
-      dispatch(getAllTeamData());
+      dispatch(getAllTeamData({}));
 
       toast.success(res.message || "Member Deleted Successfully");
   

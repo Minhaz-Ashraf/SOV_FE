@@ -102,15 +102,18 @@ const Form1 = ({
     const { personalInformation, passportDetails } = personalData;
 
     // Email validation: ensure it's required and formatted correctly
-    if (!personalInformation.email) {
-      newErrors["personalInformation.email"] = "Email is required";
-    } else if (!emailRegex.test(personalInformation.email)) {
+    if (!personalInformation.firstLanguage) {
+      newErrors["personalInformation.firstLanguage"] = "First Language is required";
+    } if (!emailRegex.test(personalInformation.email)) {
       newErrors["personalInformation.email"] = "Invalid email format";
     }
 
     // Other field validations...
+
     if (!personalInformation.title)
       newErrors["personalInformation.title"] = "Title is required";
+    if (!personalInformation.phone.phone)
+      newErrors["personalInformation.phone.phone"] = "Phone is required";
     if (!personalInformation.firstName)
       newErrors["personalInformation.firstName"] = "First Name is required";
     if (!personalInformation.lastName)
@@ -125,6 +128,9 @@ const Form1 = ({
     if (!passportDetails.passportNumber)
       newErrors["passportDetails.passportNumber"] =
         "Passport Number is required";
+        if (!personalInformation.maritalStatus)
+          newErrors["personalInformation.maritalStatus"] =
+            "Marital Status is required";
     if (!passportDetails.expireDate)
       newErrors["passportDetails.expireDate"] =
         "Passport Expiry Date is required";
@@ -512,7 +518,7 @@ const Form1 = ({
               <span className="flex flex-col">
                 <span className="text-[14px] text-secondary ">
                   {" "}
-                  First Name *
+                  First Name <span className="text-primary">*</span>
                 </span>{" "}
                 <CustomInput
                   name="personalInformation.firstName"
@@ -528,7 +534,7 @@ const Form1 = ({
             <span className="w-[50%]">
               <div className="relative">
                 <span className="flex text-secondary items-center gap-2">
-                  <span className="text-[14px]">Last Name *</span>
+                  <span className="text-[14px]">Last Name <span className="text-primary">*</span></span>
                   <span className="text-[20px] cursor-pointer relative group">
                     <CiCircleInfo />
                     {/* Tooltip */}
@@ -584,6 +590,7 @@ const Form1 = ({
             </p>
           )}
           <Register
+                imp="*"
             name="personalInformation.firstLanguage"
             type="text"
             label="First Language"
@@ -606,6 +613,11 @@ const Form1 = ({
               phoneData={personalData.personalInformation.phone}
               onPhoneChange={handlePhoneChange}
             />
+               {errors["personalInformation.phone.phone"] && (
+            <p className="text-red-500 mt-1 text-sm">
+              {errors["personalInformation.phone.phone"]}
+            </p>
+          )}
           </div>
         </div>
         <FormSection
