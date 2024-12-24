@@ -49,12 +49,14 @@ export const getAllApproval = async (tabType, search, page, perPage) => {
   }
 };
 export const chngeApplicationStatus = async (id, status, section, message) => {
+  const role = localStorage.getItem("role");
   try {
     const path =
-     
-      "/admin/change-application-status"
-     
-
+      role === "0"
+        ? "/admin/change-application-status"
+        : role === "1"
+        ? "/admin/change-application-status-subadmin"
+        : null;
     const response = await apiurl.patch(`${path}/${id}`, {
       status,
       section,

@@ -37,11 +37,9 @@ const Pending = ({ data }) => {
   const updateStatus = async (id, status, type, message) => {
     try {
       const path =
-      role === "0"
-        ? "/admin/change-page-status"
-        : role === "1"
-        ? "/admin/change-student-information-status-subadmin"
-        : null;
+      
+         "/admin/change-page-status"
+     
       const res = await changeApprovalStatus(path, id, status, type, message);
       handleApprovalUpdate();
 
