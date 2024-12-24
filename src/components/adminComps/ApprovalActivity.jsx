@@ -60,8 +60,8 @@ const ApprovalActivity = ({ id }) => {
   };
 
   useEffect(() => {
-    dispatch(getTeamApproval({ id, page, perPage, isType, search, dateObj }));
-  }, [id, page, perPage, isType, search, dateObj]);
+    dispatch(getTeamApproval({ id, page, perPage, isType, search, isDate }));
+  }, [id, page, perPage, isType, search, isDate]);
 
   useEffect(() => {
     const timer = setTimeout(() => {

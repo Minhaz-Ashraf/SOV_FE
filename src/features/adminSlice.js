@@ -290,9 +290,9 @@ export const getTeamTickets = createAsyncThunk(
 );
 export const getTeamApplication = createAsyncThunk(
   "admin/getTeamApplication",
-  async ({id, page, perPage, isType, search, dateObj}, { rejectWithValue }) => {
+  async ({id, page, perPage, isType, search, isDate}, { rejectWithValue }) => {
     try {
-      const response = await getApplicationActivity(id, page, perPage, isType, search, dateObj );
+      const response = await getApplicationActivity(id, page, perPage, isType, search, isDate );
       return response;
     } catch (error) {
       return rejectWithValue(
@@ -303,9 +303,9 @@ export const getTeamApplication = createAsyncThunk(
 );
 export const getTeamApproval = createAsyncThunk(
   "admin/getTeamApproval",
-  async ({id, page, perPage, isType, search, dateObj }, { rejectWithValue }) => {
+  async ({id, page, perPage, isType, search, isDate }, { rejectWithValue }) => {
     try {
-      const response = await getApprovalActivity(id, page, perPage, isType, search, dateObj);
+      const response = await getApprovalActivity(id, page, perPage, isType, search, isDate);
       return response;
     } catch (error) {
       return rejectWithValue(

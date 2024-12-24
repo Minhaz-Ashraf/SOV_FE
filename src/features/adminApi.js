@@ -797,7 +797,7 @@ export const getApplicationActivity = async (
   perPage,
   isType,
   search,
-  dateObj
+  isDate
 ) => {
   try {
     const response = await apiurl.get(`/admin/sub-admin/applications/${id}`, {
@@ -806,7 +806,7 @@ export const getApplicationActivity = async (
         perPage: perPage,
         status: isType,
         searchData: search,
-        date: dateObj
+        date: isDate
       },
     });
     return response.data;
@@ -828,7 +828,7 @@ export const getApprovalActivity = async (
   perPage,
   isType,
   search,
-  dateObj
+  isDate
 ) => {
   try {
     const response = await apiurl.get(
@@ -839,7 +839,7 @@ export const getApprovalActivity = async (
           perPage: perPage,
           userType: isType,
           searchData: search,
-          date: dateObj
+          date: isDate
         },
       }
     );
