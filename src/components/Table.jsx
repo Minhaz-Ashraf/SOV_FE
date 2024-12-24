@@ -1920,7 +1920,7 @@ export function CustomTableEleven({ tableHead = [], tableRows = [] }) {
                     color="blue-gray"
                     className="font-normal"
                   >
-                    {row.name}
+                    {row.name || "Self"}
                   </Typography>
                 </td>
 

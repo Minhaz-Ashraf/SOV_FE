@@ -74,9 +74,9 @@ const ApplicationActivity = ({ id }) => {
     (data, index) => ({
       sno: (currentPage - 1) * perPage + index + 1,
       id: data?.applicationId || "NA",
-      name: data?.agentName || "NA",
+      name: data?.agentName || "Self",
       type: data?.type || "NA",
-      studentName:data?.fullName || "Self",
+      studentName:data?.fullName || "NA",
       // time: data?.time || "NA",
       status: data?.status || "NA",
     })
