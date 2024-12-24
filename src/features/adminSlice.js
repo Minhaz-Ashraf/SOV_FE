@@ -303,9 +303,9 @@ export const getTeamApplication = createAsyncThunk(
 );
 export const getTeamApproval = createAsyncThunk(
   "admin/getTeamApproval",
-  async ({id, page, perPage, isType, search }, { rejectWithValue }) => {
+  async ({id, page, perPage, isType, search, dateObj }, { rejectWithValue }) => {
     try {
-      const response = await getApprovalActivity(id, page, perPage, isType, search);
+      const response = await getApprovalActivity(id, page, perPage, isType, search, dateObj);
       return response;
     } catch (error) {
       return rejectWithValue(
