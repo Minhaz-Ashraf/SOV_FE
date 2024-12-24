@@ -46,12 +46,10 @@ const InstituteCard = ({
 console.log(data);
   return (
     <>
-      <div className="bg-white rounded-md  font-poppins border border-[#E8E8E8] flex flex-col h-full ">
+      <div className="bg-[#FAFAFA] rounded-md  font-poppins border border-[#E8E8E8] flex flex-col h-full ">
         <span
-          className="flex-grow flex flex-col pt-6 px-4 pb-3"
-          style={{
-            background: "linear-gradient(to right, #FFFAE0, #FFFDF3)",
-          }}
+          className="flex-grow flex flex-col pt-6 px-4 pb-3 bg-white"
+        
         >
           <span className="flex flex-row items-start justify-between ">
             <span>
@@ -86,7 +84,7 @@ console.log(data);
             <FaGraduationCap />
             <span>Primary Courses</span>
           </span>
-          <p className="text-sidebar pl-4 text-[14px] font-normal">
+          <p className="text-black pl-4 text-[14px] font-normal">
             {" "}
             {data.popularCourses
               ?.split("\n")
@@ -110,12 +108,12 @@ console.log(data);
               ?.filter(Boolean)
               ?.slice(0, 3)
               ?.map((item) => (
-                <p key={item.key}>{item.text}</p>
+                <p  key={item.key}>{item.text}</p>
               ))}
           </p>
-          <span className="text-[#6E7170] pl-4 text-[14px]">
+          <p className="text-[#6E7170] pl-4 text-[16px] pt-2">
             Next Three Intakes
-          </span>
+          </p>
           <span className="flex flex-row items-center px-4 pt-2 gap-3">
             <span className="bg-[#EFFFEC] border border-[#389527] px-3 py-1 rounded-md text-[#389527] text-[13px]">
               <span>
@@ -143,7 +141,7 @@ console.log(data);
             <AiOutlineBulb />
             <span>Key Details</span>
           </span>
-          <p className="text-sidebar pl-4 text-[14px] font-normal">
+          <p className="text-black pl-4 text-[14px] font-normal">
             {data?.keyHighlights ? (
               <ul>
                 {data.keyHighlights
