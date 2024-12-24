@@ -57,7 +57,7 @@ const AddMember = () => {
     maritalStatus: "",
     password: "",
   });
-  
+
   const [newFiles, setNewFiles] = useState([]);
   const [deletedFiles, setDeletedFiles] = useState([]);
   const [errors, setErrors] = useState({});
@@ -66,7 +66,9 @@ const AddMember = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const { countryOption } = useSelector((state) => state.general);
   const { getMember } = useSelector((state) => state.admin);
-  const [isEdit, setEdit] = useState(location?.state?.edit)
+  const [isEdit, setEdit] = useState(location?.state?.edit);
+  const [isEmailEdit, setEmailEdit] = useState(location?.state?.edit);
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -158,8 +160,11 @@ const AddMember = () => {
       phone: phoneData.number,
     }));
   };
-  const handleEdit= () => {
-   setEdit("noEdit")
+  const handleEdit = () => {
+    setEdit("noEdit");
+  };
+  const handleEmailEdit = () => {
+    setEmailEdit("noEdit");
   };
   // Validation logic
   const validateFields = () => {
@@ -212,14 +217,14 @@ const AddMember = () => {
     if (isEdit !== "edit") {
       const passwordRegex =
         /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{10,16}$/;
-  
+
       if (!password) {
         validationErrors.password = "Password is required.";
       } else if (!passwordRegex.test(password)) {
         validationErrors.password =
           "Password must be 10-16 characters long and include at least 1 letter, 1 number, and 1 special character.";
       }
-  
+
       // Confirm password validation
       if (password !== confirmPassword) {
         validationErrors.confirmPassword = "Passwords do not match.";
@@ -270,26 +275,26 @@ const AddMember = () => {
         }
       }
 
-     const payload = {
-  profilePicture: profilePictureUrl,
-  firstName: memberData.firstName,
-  lastName: memberData.lastName,
-  dob: memberData.dob,
-  phone: memberData.phone,
-  gender: memberData.gender,
-  maritalStatus: memberData.maritalStatus,
-  dateOfJoining: memberData.doj,
-  email: memberData.email,
-  residenceAddress: {
-    address: memberData.address,
-    country: memberData.country,
-    state: memberData.state,
-    city: memberData.city,
-    zipcode: memberData.zipcode,
-  },
-  // Add password only if not in edit mode
-  ...(isEdit !== "edit" && { password: memberData.password }),
-};
+      const payload = {
+        profilePicture: profilePictureUrl,
+        firstName: memberData.firstName,
+        lastName: memberData.lastName,
+        dob: memberData.dob,
+        phone: memberData.phone,
+        gender: memberData.gender,
+        maritalStatus: memberData.maritalStatus,
+        dateOfJoining: memberData.doj,
+        residenceAddress: {
+          address: memberData.address,
+          country: memberData.country,
+          state: memberData.state,
+          city: memberData.city,
+          zipcode: memberData.zipcode,
+        },
+        // Add password only if not in edit mode
+        ...(isEdit !== "edit" && { password: memberData.password }),
+        ...(isEmailEdit !== "edit" && { email: memberData.email }),
+      };
 
       // Submit the data
       const res =
@@ -302,7 +307,7 @@ const AddMember = () => {
       setNewFiles([]);
       setDeletedFiles([]);
       dispatch(setEmptyMemberInput());
-     navigate("/admin/team-members")
+      navigate("/admin/team-members");
     } catch (error) {
       console.error("Error during submission:", error);
       toast.error(error?.message || "Something went wrong.");
@@ -337,10 +342,10 @@ const AddMember = () => {
   }, [getMember?.data]);
   useEffect(() => {
     console.log("Checking getMember?.Data:", getMember?.Data);
-  
+
     if (!getMember?.Data || getMember?.Data.length === 0) {
       console.log("Resetting to add mode as getMember?.Data is empty");
-  
+
       setMemberData({
         profilePicture: "",
         dob: "",
@@ -358,12 +363,11 @@ const AddMember = () => {
         zipcode: "",
         password: "",
       });
-  
+
       dispatch(setEmptyMemberInput());
     }
   }, [getMember?.Data, dispatch]);
-  
-  
+
   return (
     <>
       <Header />
@@ -481,16 +485,30 @@ const AddMember = () => {
                     errors={errors.lastName}
                   />
                 </span>
-                <Register
-                  imp="*"
-                  name="email"
-                  type="text"
-                  label="Email"
-                  handleInput={handleInput}
-                  value={memberData.email}
-                  errors={errors.email}
-                />
-
+                <div>
+                  {isEmailEdit !== "edit" && (
+                    <>
+                      <Register
+                        imp="*"
+                        name="email"
+                        type="text"
+                        label="Email"
+                        handleInput={handleInput}
+                        value={memberData.email}
+                        errors={errors.email}
+                      />
+                    </>
+                  )}
+                  {isEmailEdit === "edit" && (
+                    <div
+                      onClick={handleEmailEdit}
+                      className=" border rounded-md text-primary px-3 mt-14 py-2 text-[14px] cursor-pointer border-primary"
+                    >
+                      {" "}
+                      Edit Email
+                    </div>
+                  )}
+                </div>
                 <SelectComponent
                   name="gender"
                   label="Gender"
@@ -584,39 +602,49 @@ const AddMember = () => {
               errors={errors.zipcode}
             />
           </div>
-        <div className="flex items-center">
-          <FormSection
-            icon={<BsKey />}
-            title="Password Information"
-            customClass="-mt-14"
-          />
-          {isEdit === "edit"  &&
-            <span onClick={handleEdit} className="-mt-14 border rounded-md text-primary px-3 py-2 text-[14px] cursor-pointer border-primary"> Edit Password</span>}
+          <div className="flex items-center">
+            <FormSection
+              icon={<BsKey />}
+              title="Password Information"
+              customClass="-mt-14"
+            />
+            {isEdit === "edit" && (
+              <span
+                onClick={handleEdit}
+                className="-mt-14 border rounded-md text-primary px-3 py-2 text-[14px] cursor-pointer border-primary"
+              >
+                {" "}
+                Edit Password
+              </span>
+            )}
           </div>
 
-          {isEdit !== "edit" && <>
-          <div className="bg-white rounded-xl px-8 py-8 pb-12  -mt-9  mb-16">
-            <PasswordField
-              name="password"
-              value={memberData.password}
-              handleInput={handleInput}
-              label="Password"
-              showPassword={showPassword}
-              toggleVisibility={togglePasswordVisibility}
-              error={errors.password}
-            />
-            <div className="mt-6">
-              <PasswordField
-                name="confirmPassword"
-                label="Confirm Password"
-                value={confirmPassword}
-                handleInput={handleInput}
-                showPassword={showConfirmPassword}
-                toggleVisibility={toggleConfirmPasswordVisibility}
-                error={errors.confirmPassword}
-              />
-            </div>
-          </div></>}
+          {isEdit !== "edit" && (
+            <>
+              <div className="bg-white rounded-xl px-8 py-8 pb-12  -mt-9  mb-16">
+                <PasswordField
+                  name="password"
+                  value={memberData.password}
+                  handleInput={handleInput}
+                  label="Password"
+                  showPassword={showPassword}
+                  toggleVisibility={togglePasswordVisibility}
+                  error={errors.password}
+                />
+                <div className="mt-6">
+                  <PasswordField
+                    name="confirmPassword"
+                    label="Confirm Password"
+                    value={confirmPassword}
+                    handleInput={handleInput}
+                    showPassword={showConfirmPassword}
+                    toggleVisibility={toggleConfirmPasswordVisibility}
+                    error={errors.confirmPassword}
+                  />
+                </div>
+              </div>
+            </>
+          )}
 
           <div className="flex justify-end mt-12 text-[14px] mb-20">
             <span
