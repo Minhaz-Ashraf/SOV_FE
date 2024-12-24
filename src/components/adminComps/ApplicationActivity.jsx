@@ -65,6 +65,7 @@ const ApplicationActivity = ({ id }) => {
     "S.No.",
     "User Name",
     "Application No.",
+    "Submitted By",
     "Application Type",
     "Status",
   ];
@@ -75,6 +76,7 @@ const ApplicationActivity = ({ id }) => {
       id: data?.applicationId || "NA",
       name: data?.agentName || "NA",
       type: data?.type || "NA",
+      studentName:data?.fullName || "NA",
       // time: data?.time || "NA",
       status: data?.status || "NA",
     })

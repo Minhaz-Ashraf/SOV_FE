@@ -2017,7 +2017,7 @@ export function CustomTableTwelve({ tableHead = [], tableRows = [] }) {
                     color="blue-gray"
                     className="font-normal"
                   >
-                    {row.name}
+                    {row.studentName}
                   </Typography>
                 </td>
 
@@ -2028,6 +2028,15 @@ export function CustomTableTwelve({ tableHead = [], tableRows = [] }) {
                     className="font-normal"
                   >
                     {row.id}
+                  </Typography>
+                </td>
+                <td className="p-4">
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal"
+                  >
+                    {row.name}
                   </Typography>
                 </td>
                 <td className="p-4">
