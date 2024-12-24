@@ -70,7 +70,7 @@ const InstituteCard = ({
             onMouseLeave={handleMouseLeave}
           >
             {institutename?.length > 55
-              ? `${institutename.slice(0, 55)}...`
+              ? `${institutename?.slice(0, 55)}...`
               : institutename}
           </p>
           {isHovered && (
@@ -87,24 +87,24 @@ const InstituteCard = ({
           </span>
           <p className="text-sidebar pl-4 text-[14px] font-normal">
             {" "}
-            {data.popularCourses
+            {data?.popularCourses
               ?.split("\n")
               ?.flatMap((line, index) => {
                 // Split line by "&" if it ends with "&"
-                if (line.trim().endsWith("&")) {
+                if (line?.trim().endsWith("&")) {
                   return line
                     ?.trim()
                     ?.slice(0, -1)
                     ?.split("&")
                     ?.map(
                       (item, subIndex) =>
-                        item.trim() && {
+                        item?.trim() && {
                           text: item.trim(),
                           key: `${index}-${subIndex}`,
                         }
                     );
                 }
-                return line.trim() && { text: line.trim(), key: index };
+                return line?.trim() && { text: line.trim(), key: index };
               })
               ?.filter(Boolean)
               ?.slice(0, 3)
@@ -119,21 +119,21 @@ const InstituteCard = ({
             <span className="bg-[#EFFFEC] border border-[#389527] px-3 py-1 rounded-md text-[#389527] text-[13px]">
               <span>
                 {Array.isArray(data?.inTake) && data?.inTake?.length > 0
-                  ? data.inTake[0]
+                  ? data?.inTake[0]
                   : "NA"}
               </span>
             </span>
             <span className="bg-[#ECFEFF] border border-[#007C83] px-3 py-1 rounded-md text-[#007C83] text-[13px]">
               <span>
                 {Array.isArray(data?.inTake) && data?.inTake?.length > 0
-                  ? data.inTake[1]
+                  ? data?.inTake[1]
                   : "NA"}
               </span>
             </span>
             <span className="bg-[#F5ECFF] border border-[#5F2F95] px-3 py-1 rounded-md text-[#5F2F95] text-[13px]">
               <span>
                 {Array.isArray(data?.inTake) && data?.inTake?.length > 0
-                  ? data.inTake[2]
+                  ? data?.inTake[2]
                   : "NA"}
               </span>
             </span>
@@ -145,11 +145,11 @@ const InstituteCard = ({
           <p className="text-sidebar pl-4 text-[14px] font-normal">
             {data?.keyHighlights ? (
               <ul>
-                {data.keyHighlights
+                {data?.keyHighlights
                   ?.split("\n")
                   ?.flatMap((line, index) => {
                     // Split line by "&" if it ends with "&"
-                    if (line.trim().endsWith("&")) {
+                    if (line?.trim().endsWith("&")) {
                       return line
                         ?.trim()
                         ?.slice(0, -1)
