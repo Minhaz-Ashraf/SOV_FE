@@ -298,7 +298,7 @@ const AddMember = () => {
 
       // Submit the data
       const res =
-        isEdit === "edit"
+        location?.state?.edit === "edit"
           ? await editTeam(payload, id)
           : await addTeam(payload);
 

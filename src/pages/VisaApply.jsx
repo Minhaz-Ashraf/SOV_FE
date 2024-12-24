@@ -165,7 +165,7 @@ const VisaApply = () => {
     // Student Document Validation
     Object.keys(initialStudentDocument).forEach((docType) => {
       // Documents specific to Germany
-      const germanyRequiredDocs = ["blockedaccount", "lor", "pal", "sop"];
+      const germanyRequiredDocs = ["blockedaccount", "pal"];
 
       // Require these documents only for Germany
       if (germanyRequiredDocs.includes(docType)) {
