@@ -76,7 +76,7 @@ const ApplicationActivity = ({ id }) => {
       id: data?.applicationId || "NA",
       name: data?.agentName || "NA",
       type: data?.type || "NA",
-      studentName:data?.fullName || "NA",
+      studentName:data?.fullName || "Self",
       // time: data?.time || "NA",
       status: data?.status || "NA",
     })
