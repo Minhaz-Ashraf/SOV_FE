@@ -11,6 +11,7 @@ import { CustomInput } from "../reusable/Input";
 import { priorityOption, statusOpt, statusOption } from "../../constant/data";
 import { formatDate } from "./../../constant/commonfunction";
 import { dnf } from "../../assets";
+import Loader from "../Loader";
 
 const ApplicationActivity = ({ id }) => {
   const [search, setSearch] = useState("");
@@ -133,34 +134,40 @@ const ApplicationActivity = ({ id }) => {
             </span>
           </span>
         </div>
-        {Array.isArray(getApplicationActivityData?.applications) &&
-        getApplicationActivityData?.applications?.length > 0 ? (
-          <>
-            <div className=" md:mx-6 mt-6 sm:ml-6  ">
-              <CustomTableTwelve
-                tableHead={TABLE_HEAD}
-                tableRows={TABLE_ROWS}
-              />
-            </div>
-            <div className="mt-16 mb-10 ml-20">
-              <Pagination
-                currentPage={currentPage}
-                hasNextPage={currentPage * perPage < totalUsersCount}
-                hasPreviousPage={currentPage > 1}
-                onPageChange={handlePageChange}
-                totalPagesCount={totalPagesCount}
-              />
-            </div>
-          </>
-        ) : (
-          <div className="mt-8 font-medium text-body ml-[15%] md:mr-[15%]">
-            <Dnf
-              dnfImg={dnf}
-              headingText="No Data Available!"
-              bodyText="No Activity Available to show"
-            />
+
+        {isLoading ? (
+          <div className=" ml-[50%] ">
+            <Loader />
           </div>
-        )}
+) : Array.isArray(getApplicationActivityData?.applications) &&
+  getApplicationActivityData?.applications?.length > 0 ? (
+  <>
+    <div className="md:mx-6 mt-6 sm:ml-6">
+      <CustomTableTwelve
+        tableHead={TABLE_HEAD}
+        tableRows={TABLE_ROWS}
+      />
+    </div>
+    <div className="mt-16 mb-10 ml-20">
+      <Pagination
+        currentPage={currentPage}
+        hasNextPage={currentPage * perPage < totalUsersCount}
+        hasPreviousPage={currentPage > 1}
+        onPageChange={handlePageChange}
+        totalPagesCount={totalPagesCount}
+      />
+    </div>
+  </>
+) : (
+  <div className="mt-8 font-medium text-body ml-[15%] md:mr-[15%]">
+    <Dnf
+      dnfImg={dnf}
+      headingText="No Data Available!"
+      bodyText="No Activity Available to show"
+    />
+  </div>
+)}
+
       </div>
     </>
   );
