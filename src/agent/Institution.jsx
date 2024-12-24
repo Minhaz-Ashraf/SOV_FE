@@ -214,6 +214,7 @@ const Institution = () => {
                   country: data.country,
                   institute: data.instituteName,
                 }}
+                data={data}
               />
             ))}
           </div>

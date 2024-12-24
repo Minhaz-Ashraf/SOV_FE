@@ -22,7 +22,7 @@ import { greenTick } from "../assets";
 import { Select } from "antd";
 // import { intakeOptions } from "../constant/data";
 import { useNavigate } from "react-router-dom";
-import { intakeOption } from "../constant/data";
+import { intakeOption, statusOptionData } from "../constant/data";
 
 const AddInstitute = () => {
   const location = useLocation();
@@ -42,6 +42,7 @@ const AddInstitute = () => {
     popularCourse: "",
     facilities: "",
     inTake: [],
+    status: ""
   });
   const [isCustomCountry, setIsCustomCountry] = useState(false);
   const [newFiles, setNewFiles] = useState([]);
@@ -358,6 +359,8 @@ const AddInstitute = () => {
                   <p className="text-red-500 mt-1">{errors.country}</p>
                 )} */}
               </div>
+              <div className="flex items-center justify-between w-full">
+              <span className=" w-1/2">
               <Register
                 // imp="*"
                 name="instituteName"
@@ -366,7 +369,17 @@ const AddInstitute = () => {
                 handleInput={handleInput}
                 value={instituteData.instituteName}
                 // errors={errors.instituteName}
-              />
+              /></span>
+              <span className=" w-1/2">
+              <SelectComponent
+                  name="status"
+                  label="Institute Status"
+                  options={statusOptionData}
+                  value={memberData.status}
+                  handleChange={handleInput}
+                />
+              </span>
+              </div>
               <Register
                 // imp="*"
                 name="offerLetterPrice"

@@ -43,11 +43,10 @@ const ShortlistComponent = ({
               status={institute.status}
               link="/institute-view"
               customState={{
-                id:institute.instituteId._id,
+                id: data?._id,
                 country: institute.instituteId.country,
                 institute: institute.instituteId.instituteName,
               }}
-              data={institute.instituteId}
             />
           ))}
         </div>

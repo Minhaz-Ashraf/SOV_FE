@@ -17,7 +17,7 @@ const LogoutPop = ({ isLogoutOpen, closeLogout }) => {
     localStorage.removeItem("role");
 
 
-    if (role === "0" || role === "1") {
+    if (role === "0") {
       navigate("/admin/role/auth/login");
     } else {
       navigate("/login");

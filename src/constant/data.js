@@ -237,6 +237,10 @@ export const userType = [
   { id: 0, option: "agent", label: "Agent" },
   { id: 0, option: "student", label: "Student" },
 ];
+export const statusOptionData = [
+  { id: 0, option: "open", label: "Open" },
+  { id: 0, option: "close", label: "Close" },
+];
 export const intakeOption = [
   { id: 0, option: "Jan 2025", label: "Jan 2025" },
   { id: 1, option: "May 2025", label: "May 2025" },

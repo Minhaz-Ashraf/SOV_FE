@@ -111,6 +111,7 @@ const FileUpload = ({
   setReset,
   customClass,
   value,
+  imp
 }) => {
   const [uploadedFile, setUploadedFile] = useState(null);
   const [uploading, setUploading] = useState(false);
@@ -158,7 +159,7 @@ const FileUpload = ({
   return (
     <div className="file-upload-container w-full mt-3">
       <span className="text-secondary">
-        {label} <span className="text-primary">*</span>{" "}
+        {label} {imp ?  <span className="text-primary">*</span> : ""}{" "}
       </span>
       <div
         {...getRootProps()}

@@ -1845,6 +1845,7 @@ export function CustomTableTen({
                         to={"/add-institute"}
                         state={{
                           id: row.data?._id,
+                          edit: "edit"
                         }}
                         className="text-primary"
                       >

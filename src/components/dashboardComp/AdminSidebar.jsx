@@ -56,6 +56,7 @@ const AdminSidebar = () => {
       icon: <BsFillBuildingsFill />,
       label: "Institutions",
       otherPath: "/add-institute",
+      otherPathTwo: "/institute-view"
 
     },
     {

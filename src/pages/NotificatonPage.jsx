@@ -37,7 +37,7 @@ const NotificationPage = () => {
       : role === "0" || role === "1"
       ? adminId
       : null;
-  const type = role == 3 || role == 2 ? "emitForUser" : "";
+  const type = role == "3" || role == "2" ? "emitForUser" : "";
 
   // const [deletingAllNotification, setDeletingAllNotification] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -170,12 +170,8 @@ const NotificationPage = () => {
         <p className="text-sidebar font-semibold">
           {notification.title === "RECEIVED_OFFER_LETTER_AGENT"
             ? "RECEIVED DOCUMENT"
-            : notification.title === "DEFERMATION_BY_AGENT" ||
-              notification.title === "DEFERMATION_BY_STUDENT"
-            ? "DEFERMENT"
-            : notification.title === "RECEIVED_OFFER_LETTER_STUDENT" ||
-              notification.title === "RECEIVED_OFFER_LETTER_AGENT"
-            ? "RECEIVED DOCUMENT"
+           
+          
             : notification.title
                 .replace(/_/g, " ")
                 .replace(/\b(AGENT|STUDENT|ADMIN)\b/g, "")
@@ -207,10 +203,8 @@ const NotificationPage = () => {
                 notification.title === "AGENT_REQUESTED_AMOUNT_WITHDRAWAL" ||
                 notification.title === "AGENT_WITHDRAWAL_COMPLETE" ||
                 notification.title === "AGENT_STUDENT_VISA_STAMP" ||
-                notification.title === "STUDENT_STUDENT_VISA_STAMP" ||
-                notification.title === "DEFERMATION_BY_AGENT"
-              ? "> Go to Visa Status"
-              : null}
+                notification.title === "STUDENT_STUDENT_VISA_STAMP" 
+             }
           </Link>
         ) : (
           <a

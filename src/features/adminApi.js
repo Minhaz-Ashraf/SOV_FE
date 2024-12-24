@@ -48,20 +48,20 @@ export const getAllApproval = async (tabType, search, page, perPage) => {
     }
   }
 };
-export const chngeApplicationStatus = async ( id, status, section, message) => {
+export const chngeApplicationStatus = async (id, status, section, message) => {
   const role = localStorage.getItem("role");
   try {
-    
-     const path =
-          role === "0"
-            ? "/admin/change-application-status"
-            : role === "1"
-            ? "/admin/change-application-status-subadmin"
-            : null;
-    const response = await apiurl.patch(
-      `${path}/${id}`,
-      { status, section, message }
-    );
+    const path =
+      role === "0"
+        ? "/admin/change-application-status"
+        : role === "1"
+        ? "/admin/change-application-status-subadmin"
+        : null;
+    const response = await apiurl.patch(`${path}/${id}`, {
+      status,
+      section,
+      message,
+    });
     return response.data;
   } catch (error) {
     if (error.response) {
@@ -87,7 +87,7 @@ export const changeVisaStatus = async (id, payload) => {
     }
   }
 };
-export const changeApprovalStatus = async (path,id, status, type, message) => {
+export const changeApprovalStatus = async (path, id, status, type, message) => {
   try {
     const response = await apiurl.patch(`${path}/${id}`, {
       status,
@@ -359,7 +359,12 @@ export const getAllStudent = async (path, page, perPage, search, agentId) => {
   }
 };
 
-export const fetchAdminDashboardData = async (endpoint, type, year, userType) => {
+export const fetchAdminDashboardData = async (
+  endpoint,
+  type,
+  year,
+  userType
+) => {
   try {
     const params = { year }; // Always include year
     if (type && type !== null) {
@@ -468,7 +473,10 @@ export const uploadApplications = async (payload) => {
 };
 export const deleteApplication = async (payload) => {
   try {
-    const response = await apiurl.patch(`/admin/delete-admin-document`, payload);
+    const response = await apiurl.patch(
+      `/admin/delete-admin-document`,
+      payload
+    );
     return response.data;
   } catch (error) {
     if (error.response) {
@@ -502,12 +510,12 @@ export const removeAgentorStudent = async (path) => {
 export const totalAgentStudent = async (path, month, year, type) => {
   try {
     const response = await apiurl.get(path, {
-      params:{
-       month: month,
-       year: year,
+      params: {
+        month: month,
+        year: year,
         applicationType: type,
-      //  type: type
-      }
+        //  type: type
+      },
     });
     return response.data;
   } catch (error) {
@@ -587,14 +595,13 @@ export const editStudentAdmin = async (path, payload, edit) => {
 };
 export const getAllInstitutes = async (isTypeFilter, search, page, perPage) => {
   try {
-    const response = await apiurl.get('/institute/all-institute',{
-      params:{
+    const response = await apiurl.get("/institute/all-institute", {
+      params: {
         page: page,
         perPage: perPage,
         country: isTypeFilter,
-        instituteName: search
-
-      }
+        instituteName: search,
+      },
     });
     return response.data;
   } catch (error) {
@@ -610,13 +617,12 @@ export const getAllInstitutes = async (isTypeFilter, search, page, perPage) => {
   }
 };
 
-
 export const getInstituteById = async (id) => {
   try {
-    const response = await apiurl.get('/institute/one-institute',{
-      params:{
+    const response = await apiurl.get("/institute/one-institute", {
+      params: {
         instituteId: id,
-      }
+      },
     });
     return response.data;
   } catch (error) {
@@ -633,7 +639,7 @@ export const getInstituteById = async (id) => {
 };
 export const addInstitute = async (payload) => {
   try {
-    const response = await apiurl.post('/institute/add', payload);
+    const response = await apiurl.post("/institute/add", payload);
     return response.data;
   } catch (error) {
     if (error.response) {
@@ -664,10 +670,9 @@ export const deleteInstitute = async (id) => {
   }
 };
 
-
 export const addTeam = async (payload) => {
   try {
-    const response = await apiurl.post('/auth/admin/add-team-member', payload);
+    const response = await apiurl.post("/auth/admin/add-team-member", payload);
     return response.data;
   } catch (error) {
     if (error.response) {
@@ -683,7 +688,10 @@ export const addTeam = async (payload) => {
 };
 export const editTeam = async (payload, id) => {
   try {
-    const response = await apiurl.put(`/auth/admin/edit-team-member/${id}`, payload);
+    const response = await apiurl.put(
+      `/auth/admin/edit-team-member/${id}`,
+      payload
+    );
     return response.data;
   } catch (error) {
     if (error.response) {
@@ -714,14 +722,14 @@ export const deleteTeam = async (id) => {
   }
 };
 
-export const getAllTeam = async ( perPage, page, search ) => {
+export const getAllTeam = async (perPage, page, search) => {
   try {
-    const response = await apiurl.get(`/auth/admin/get-team-members`,{
-    params:{
-      searchQuery:search,
-      page: page,
-      limit: perPage
-    }
+    const response = await apiurl.get(`/auth/admin/get-team-members`, {
+      params: {
+        searchQuery: search,
+        page: page,
+        limit: perPage,
+      },
     });
     return response.data;
   } catch (error) {
@@ -752,17 +760,23 @@ export const getTeamById = async (id) => {
     }
   }
 };
-export const getTicketActivity = async (id, page, perPage, dateObj,  search, isPriorityType ) => {
+export const getTicketActivity = async (
+  id,
+  page,
+  perPage,
+  dateObj,
+  search,
+  isPriorityType
+) => {
   try {
-    const response = await apiurl.get(`/ticket/sub-admin-tickets/${id}`,{
-      params:{
+    const response = await apiurl.get(`/ticket/sub-admin-tickets/${id}`, {
+      params: {
         page: page,
         perPage: perPage,
         date: dateObj,
         searchData: search,
-        priorityStatus: isPriorityType
-      }
-    
+        ticketType: isPriorityType,
+      },
     });
     return response.data;
   } catch (error) {
@@ -777,16 +791,21 @@ export const getTicketActivity = async (id, page, perPage, dateObj,  search, isP
     }
   }
 };
-export const getApplicationActivity = async (id, page, perPage, isType, search ) => {
+export const getApplicationActivity = async (
+  id,
+  page,
+  perPage,
+  isType,
+  search
+) => {
   try {
-    const response = await apiurl.get(`/admin/sub-admin/applications/${id}`,{
-      params:{
+    const response = await apiurl.get(`/admin/sub-admin/applications/${id}`, {
+      params: {
         page: page,
         perPage: perPage,
         status: isType,
-        searchQuery: search
-      }
- 
+        searchData: search,
+      },
     });
     return response.data;
   } catch (error) {
@@ -801,17 +820,25 @@ export const getApplicationActivity = async (id, page, perPage, isType, search )
     }
   }
 };
-export const getApprovalActivity = async (id, page, perPage, isType, search) => {
+export const getApprovalActivity = async (
+  id,
+  page,
+  perPage,
+  isType,
+  search
+) => {
   try {
-    const response = await apiurl.get(`/admin/sub-admin/student-agent-data/${id}`,{
-      params:{
-        page: page,
-        perPage: perPage,
-        userType: isType,
-        search: search
+    const response = await apiurl.get(
+      `/admin/sub-admin/student-agent-data/${id}`,
+      {
+        params: {
+          page: page,
+          perPage: perPage,
+          userType: isType,
+          searchData: search,
+        },
       }
-   
-    });
+    );
     return response.data;
   } catch (error) {
     if (error.response) {
