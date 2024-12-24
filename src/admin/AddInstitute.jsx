@@ -3,7 +3,7 @@ import Header from "../components/dashboardComp/Header";
 import AdminSidebar from "../components/dashboardComp/AdminSidebar";
 import ImageComponent, { CustomInput } from "../components/reusable/Input";
 import { ImBin } from "react-icons/im";
-import { addInstitute } from "../features/adminApi";
+import { addInstitute, editInstitute } from "../features/adminApi";
 import { useDispatch, useSelector } from "react-redux";
 import Register from "../components/reusable/Register";
 import FileUpload from "../components/reusable/DragAndDrop";
@@ -29,7 +29,7 @@ const AddInstitute = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const id = location?.state?.id;
-  console.log(id);
+  // console.log(id);
   const { instituteById } = useSelector((state) => state.admin);
   const { prefCountryOption } = useSelector((state) => state.general);
   const [instituteData, setInstituteData] = useState({
@@ -148,41 +148,41 @@ const AddInstitute = () => {
     }));
   };
   // Validation logic
-  const validateFields = () => {
-    const validationErrors = {};
-    const {
-      instituteName,
-      offerLetterPrice,
-      country,
-      highlights,
-      about,
-      popularCourse,
-      inTake,
-    } = instituteData;
+  // const validateFields = () => {
+  //   const validationErrors = {};
+  //   const {
+  //     instituteName,
+  //     offerLetterPrice,
+  //     country,
+  //     highlights,
+  //     about,
+  //     popularCourse,
+  //     inTake,
+  //   } = instituteData;
 
-    if (!country) validationErrors.country = "Country is required.";
-    if (!instituteName)
-      validationErrors.instituteName = "Institute name is required.";
-    if (!offerLetterPrice)
-      validationErrors.offerLetterPrice = "Offer letter price is required.";
-    if (!about) validationErrors.about = "About is required.";
-    if (!highlights) validationErrors.highlights = "Highlights is required.";
-    if (!popularCourse)
-      validationErrors.popularCourse = "Popular courses is required.";
-    if (!inTake) validationErrors.inTake = "InTake is required.";
+  //   if (!country) validationErrors.country = "Country is required.";
+  //   if (!instituteName)
+  //     validationErrors.instituteName = "Institute name is required.";
+  //   if (!offerLetterPrice)
+  //     validationErrors.offerLetterPrice = "Offer letter price is required.";
+  //   if (!about) validationErrors.about = "About is required.";
+  //   if (!highlights) validationErrors.highlights = "Highlights is required.";
+  //   if (!popularCourse)
+  //     validationErrors.popularCourse = "Popular courses is required.";
+  //   if (!inTake) validationErrors.inTake = "InTake is required.";
 
-    return validationErrors;
-  };
+  //   return validationErrors;
+  // };
 
   const handleSubmit = async () => {
-    const validationErrors = validateFields();
+    // const validationErrors = validateFields();
 
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      toast.error("Please fill in all required fields.");
-      console.log(errors);
-      return;
-    }
+    // if (Object.keys(validationErrors).length > 0) {
+    //   setErrors(validationErrors);
+    //   toast.error("Please fill in all required fields.");
+    //   console.log(errors);
+    //   return;
+    // }
 
     try {
       setIsSubmitting(true);
@@ -228,7 +228,11 @@ const AddInstitute = () => {
       };
 
       // Submit the data
-      const res = await addInstitute(payload);
+      const isEditMode = location?.state?.edit === "edit";
+      const res = isEditMode 
+        ? await editInstitute(id, payload) 
+        : await addInstitute(payload);
+      
 
       //   dispatch(adminProfileData())
       toast.success(res.message || "Institute added successfully.");
@@ -296,9 +300,9 @@ const AddInstitute = () => {
             customClass=" border-dashed text-[14px]"
             value={instituteData.instituteImage}
           />
-          {errors.instituteImage && (
+          {/* {errors.instituteImage && (
             <p className="text-red-500 mt-1 text-sm">{errors.instituteImage}</p>
-          )}
+          )} */}
           {instituteData.instituteImage && (
             <div className="relative">
               <ImageComponent
@@ -350,9 +354,9 @@ const AddInstitute = () => {
                   />
                 )}
 
-                {errors.country && (
+                {/* {errors.country && (
                   <p className="text-red-500 mt-1">{errors.country}</p>
-                )}
+                )} */}
               </div>
               <Register
                 // imp="*"
@@ -361,7 +365,7 @@ const AddInstitute = () => {
                 label="Institute Name"
                 handleInput={handleInput}
                 value={instituteData.instituteName}
-                errors={errors.instituteName}
+                // errors={errors.instituteName}
               />
               <Register
                 // imp="*"
@@ -370,7 +374,7 @@ const AddInstitute = () => {
                 label="Offer Letter Price"
                 handleInput={handleInput}
                 value={instituteData.offerLetterPrice}
-                errors={errors.offerLetterPrice}
+                // errors={errors.offerLetterPrice}
               />
               <div className="mt-6">
               <span className="text-[15px]  text-secondary ">
@@ -406,9 +410,9 @@ const AddInstitute = () => {
                 onChange={handleInput}
                 value={instituteData.about}
               />
-              {errors.about && (
+              {/* {errors.about && (
                 <p className="text-red-500 mt-1 text-sm">{errors.about}</p>
-              )}
+              )} */}
               <span className="text-[15px] text-secondary mt-6 ">
                 {" "}
                 Key Highlights 
@@ -421,9 +425,9 @@ const AddInstitute = () => {
                 onChange={handleInput}
                 value={instituteData.highlights}
               />
-              {errors.highlights && (
+              {/* {errors.highlights && (
                 <p className="text-red-500 mt-1 text-sm">{errors.highlights}</p>
-              )}
+              )} */}
               <span className="text-[15px] text-secondary mt-6 ">
                 {" "}
                 Popular Courses 
@@ -436,11 +440,11 @@ const AddInstitute = () => {
                 onChange={handleInput}
                 value={instituteData.popularCourse}
               />
-              {errors.popularCourse && (
+              {/* {errors.popularCourse && (
                 <p className="text-red-500 mt-1 text-sm">
                   {errors.popularCourse}
                 </p>
-              )}
+              )} */}
               <span className="text-[15px] text-secondary mt-6 ">
                 {" "}
                 Admission Facilitities and Charges{" "}
@@ -454,9 +458,9 @@ const AddInstitute = () => {
                 onChange={handleInput}
                 value={instituteData.facilities}
               />
-              {errors.facilities && (
+              {/* {errors.facilities && (
                 <p className="text-red-500 mt-1 text-sm">{errors.facilities}</p>
-              )}
+              )} */}
             </span>
           </div>
 

@@ -547,6 +547,7 @@ const adminSlice = createSlice({
       .addCase(getMemberProfile.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload || action.error.message;
+        state.getMember =[]
       })
       .addCase(getTeamTickets.pending, (state) => {
         state.status = "loading";

@@ -47,7 +47,7 @@ const OfferLetterEdit = () => {
           //from agent to admin
           const notificationData = {
             title: " AGENT_RESUBMITTED_OFFER_LETTER",
-            message: `${agentData?.companyDetails?.businessName} ${agentData?.agId}    has resubmitted the offer letter application   ${applicationDataById?.applicationId} of    ${applicationDataById?.visa?.personalInformation?.fullName} ${studentData?.studentInformation?.stId}`,
+            message: `${agentData?.companyDetails?.businessName} ${agentData?.agId}    has resubmitted the offer letter application   ${applicationDataById?.applicationId} of    ${studentData?.studentInformation?.personalInformation?.firstName + studentData?.studentInformation?.personalInformation?.lastName} ${studentData?.studentInformation?.stId}`,
             path: "/admin/applications-review",
             recieverId: "",
           };

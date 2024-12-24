@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import { getSingleInstitute } from "../features/adminSlice";
 import ImageComponent from "../components/reusable/Input";
-import { dnf, noImage } from "../assets";
+import { dnf, nodata, noImage } from "../assets";
 import Header from "../components/dashboardComp/Header";
 import Sidebar from "../components/dashboardComp/Sidebar";
 import AgentSidebar from "../components/dashboardComp/AgentSidebar";
@@ -101,9 +101,9 @@ const InstituteView = () => {
         ) : !instituteById?.data?.aboutCollegeOrInstitute ? (
           <div className="ml-52 pt-36">
             <Dnf
-              dnfImg={dnf}
-              headingText="Start Your Journey!"
-              bodyText=" Institutte Data not available kindly contact our team"
+              dnfImg={nodata}
+              headingText="No Information Available!"
+              bodyText="The information for this section is currently not available, Please check back later or contact the support team for more details."
             />
           </div>
         ) : (
