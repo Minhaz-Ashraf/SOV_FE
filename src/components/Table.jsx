@@ -1747,8 +1747,8 @@ export function CustomTableTen({
   };
   const deleteInstituteById = async () => {
     try {
-      const res = await deleteInstitute(isId);
-      dispatch(getInstitutes());
+      const res = await deleteInstitute(isId)
+      dispatch(getInstitutes({}))
 
       toast.success(res.message || "Account Deleted Successfully");
     } catch (error) {
@@ -1814,7 +1814,6 @@ export function CustomTableTen({
                 <td className="p-4">
                   <Typography
                     as="a"
-                    href="#"
                     variant="small"
                     color="blue-gray"
                     className="font-medium"
@@ -1835,7 +1834,6 @@ export function CustomTableTen({
                 <td className="p-4">
                   <Typography
                     as="a"
-                    href="#"
                     variant="small"
                     color="blue-gray"
                     className="font-medium"
@@ -1851,7 +1849,7 @@ export function CustomTableTen({
                       >
                         {iconTwo}
                       </Link>
-                      <span onClick={openDeletePopup} className="text-primary">
+                      <span onClick={()=> openDeletePopup(row.data?._id)} className="text-primary">
                         {iconThree}
                       </span>
                     </span>
