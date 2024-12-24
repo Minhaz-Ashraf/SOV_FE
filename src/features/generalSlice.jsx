@@ -278,6 +278,7 @@ const generalSlice = createSlice({
         state.status = "failed";
      
         state.error = action.payload || action.error.message;
+        state.getAllDocuments =[]
       })
       .addCase(getRecievedDocument.pending, (state) => {
         state.status = "loading";
@@ -291,6 +292,7 @@ const generalSlice = createSlice({
         state.status = "failed";
      
         state.error = action.payload || action.error.message;
+        state.recieveDocs =[]
       })
       .addCase(withdrawalDataGet.pending, (state) => {
         state.status = "loading";
