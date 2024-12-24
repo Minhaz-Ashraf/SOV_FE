@@ -26,11 +26,13 @@ const DeletePop = ({ isOpenPop, closePop, handleFunc }) => {
         if (result.isConfirmed) {
           handleFunc();
         } else {
-          closePop(); // Use closePop to close the popup
+          closePop();
         }
+      }).finally(() => {
+        closePop(); // Ensure popup is reset after any action
       });
     }
-  }, [isOpenPop]);
+  }, [isOpenPop, closePop, handleFunc]); // Add all dependencies
 
   return null;
 };
