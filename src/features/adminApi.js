@@ -828,7 +828,7 @@ export const getApprovalActivity = async (id, page, perPage, isType, search) => 
 
 export const editInstitute = async (id, payload) => {
   try {
-    const response = await apiurl.get(`/institute/update/${id}`, payload);
+    const response = await apiurl.patch(`/institute/update/${id}`, payload);
     return response.data;
   } catch (error) {
     if (error.response) {
