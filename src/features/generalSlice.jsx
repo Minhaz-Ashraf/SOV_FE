@@ -85,9 +85,19 @@ export const studentById = createAsyncThunk(
 );
 export const allTicket = createAsyncThunk(
   "general/allTicket",
-  async ({page, perPage, isPriorityType, isStatusType, search, isDate}, { rejectWithValue }) => {
+  async (
+    { page, perPage, isPriorityType, isStatusType, search, isDate },
+    { rejectWithValue }
+  ) => {
     try {
-      const res = await getAllTicket(page, perPage, isPriorityType, isStatusType, search, isDate);
+      const res = await getAllTicket(
+        page,
+        perPage,
+        isPriorityType,
+        isStatusType,
+        search,
+        isDate
+      );
       // console.log(res);
       return res.data;
     } catch (error) {
@@ -113,9 +123,9 @@ export const visaStatusData = createAsyncThunk(
 );
 export const getDocumentAll = createAsyncThunk(
   "general/getDocumentAll",
-  async ({path, search, page, perPage}, { rejectWithValue }) => {
+  async ({ path, search, page, perPage }, { rejectWithValue }) => {
     try {
-      const res = await getAllDocument(path,search, page, perPage);
+      const res = await getAllDocument(path, search, page, perPage);
       // console.log(res);
       return res.data;
     } catch (error) {
@@ -127,9 +137,15 @@ export const getDocumentAll = createAsyncThunk(
 );
 export const getRecievedDocument = createAsyncThunk(
   "general/getRecievedDocument",
-  async ({studentId, page, perPage, search, isType }, { rejectWithValue }) => {
+  async ({ studentId, page, perPage, search, isType }, { rejectWithValue }) => {
     try {
-      const res = await recieveDocument(studentId, page, perPage, search, isType );
+      const res = await recieveDocument(
+        studentId,
+        page,
+        perPage,
+        search,
+        isType
+      );
       // console.log(res);
       return res.data;
     } catch (error) {
@@ -159,12 +175,12 @@ const generalSlice = createSlice({
     countryOption: [],
     prefCountryOption: [],
     instituteOption: [],
-    courses:[],
-    studentData:null,
+    courses: [],
+    studentData: null,
     getAllTicket: [],
-    visaStatus:[],
+    visaStatus: [],
     getAllDocuments: [],
-    recieveDocs:[],
+    recieveDocs: [],
     withdrawalData: "",
     status: "idle",
     error: null,
@@ -176,7 +192,6 @@ const generalSlice = createSlice({
         (institute) => institute.id !== action.pay
       );
     },
-
   },
 
   extraReducers: (builder) => {
@@ -203,7 +218,7 @@ const generalSlice = createSlice({
       })
       .addCase(getInstituteOption.rejected, (state, action) => {
         state.status = "failed";
-        state.instituteOption = []
+        state.instituteOption = [];
         state.error = action.payload || action.error.message;
       })
       .addCase(getPrefCountryOption.pending, (state) => {
@@ -229,7 +244,8 @@ const generalSlice = createSlice({
       .addCase(getCourses.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload || action.error.message;
-      })  .addCase(studentById.pending, (state) => {
+      })
+      .addCase(studentById.pending, (state) => {
         state.status = "loading";
         state.error = null;
       })
@@ -240,7 +256,8 @@ const generalSlice = createSlice({
       .addCase(studentById.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload || action.error.message;
-      }).addCase(allTicket.pending, (state) => {
+      })
+      .addCase(allTicket.pending, (state) => {
         state.status = "loading";
         state.error = null;
       })
@@ -250,7 +267,7 @@ const generalSlice = createSlice({
       })
       .addCase(allTicket.rejected, (state, action) => {
         state.status = "failed";
-        state.getAllTicket = []
+        state.getAllTicket = [];
         state.error = action.payload || action.error.message;
       })
       .addCase(visaStatusData.pending, (state) => {
@@ -263,8 +280,9 @@ const generalSlice = createSlice({
       })
       .addCase(visaStatusData.rejected, (state, action) => {
         state.status = "failed";
-     
+
         state.error = action.payload || action.error.message;
+        state.visaStatus = [];
       })
       .addCase(getDocumentAll.pending, (state) => {
         state.status = "loading";
@@ -276,9 +294,9 @@ const generalSlice = createSlice({
       })
       .addCase(getDocumentAll.rejected, (state, action) => {
         state.status = "failed";
-     
+
         state.error = action.payload || action.error.message;
-        state.getAllDocuments =[]
+        state.getAllDocuments = [];
       })
       .addCase(getRecievedDocument.pending, (state) => {
         state.status = "loading";
@@ -290,9 +308,9 @@ const generalSlice = createSlice({
       })
       .addCase(getRecievedDocument.rejected, (state, action) => {
         state.status = "failed";
-     
+
         state.error = action.payload || action.error.message;
-        state.recieveDocs =[]
+        state.recieveDocs = [];
       })
       .addCase(withdrawalDataGet.pending, (state) => {
         state.status = "loading";
@@ -304,7 +322,7 @@ const generalSlice = createSlice({
       })
       .addCase(withdrawalDataGet.rejected, (state, action) => {
         state.status = "failed";
-     
+
         state.error = action.payload || action.error.message;
       });
   },
