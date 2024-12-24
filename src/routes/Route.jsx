@@ -66,6 +66,7 @@ import InstituteView from "../pages/InstituteView";
 import TeamList from "../admin/TeamList";
 import AddMember from "../admin/AddMember";
 import TeamActivity from "../admin/TeamActivity";
+import StrictAdmin from "./StrictAdmin";
 
 export const router = createBrowserRouter([
   {
@@ -527,25 +528,25 @@ export const router = createBrowserRouter([
   {
     path: "/admin/team-members",
     element: (
-      <ProtectedAdmin>
+      <StrictAdmin>
         <TeamList></TeamList>{" "}
-      </ProtectedAdmin>
+      </StrictAdmin>
     ),
   },
   {
     path: "/admin/add-member",
     element: (
-      <ProtectedAdmin>
+      <StrictAdmin>
         <AddMember></AddMember>{" "}
-      </ProtectedAdmin>
+      </StrictAdmin>
     ),
   },
   {
     path: "/admin/team-activity",
     element: (
-      <ProtectedAdmin>
+      <StrictAdmin>
         <TeamActivity></TeamActivity>{" "}
-      </ProtectedAdmin>
+      </StrictAdmin>
     ),
   },
   {
