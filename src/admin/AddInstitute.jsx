@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Header from "../components/dashboardComp/Header";
 import AdminSidebar from "../components/dashboardComp/AdminSidebar";
-import ImageComponent, { CustomInput, SelectComponent } from "../components/reusable/Input";
+import ImageComponent, {
+  CustomInput,
+  SelectComponent,
+} from "../components/reusable/Input";
 import { ImBin } from "react-icons/im";
 import { addInstitute, editInstitute } from "../features/adminApi";
 import { useDispatch, useSelector } from "react-redux";
@@ -42,7 +45,7 @@ const AddInstitute = () => {
     popularCourse: "",
     facilities: "",
     inTake: [],
-    status: ""
+    instituteStatus: "",
   });
   const [isCustomCountry, setIsCustomCountry] = useState(false);
   const [newFiles, setNewFiles] = useState([]);
@@ -226,15 +229,14 @@ const AddInstitute = () => {
         popularCourses: instituteData.popularCourse,
         admissionAndFacilities: instituteData.facilities,
         inTake: instituteData.inTake,
-        status: instituteData.status,
+        instituteStatus: instituteData.instituteStatus,
       };
 
       // Submit the data
       const isEditMode = location?.state?.edit === "edit";
-      const res = isEditMode 
-        ? await editInstitute(id, payload) 
+      const res = isEditMode
+        ? await editInstitute(id, payload)
         : await addInstitute(payload);
-      
 
       //   dispatch(adminProfileData())
       toast.success(res.message || "Institute added successfully.");
@@ -261,7 +263,7 @@ const AddInstitute = () => {
         facilities: instituteById.data.admissionAndFacilities || "",
         offerLetterPrice: instituteById.data.offerLetterPrice || "",
         inTake: instituteById.data.inTake || "",
-        status: instituteById?.data?.status || "",
+        instituteStatus: instituteById?.data?.instituteStatus || "",
       });
     }
   }, [instituteById]);
@@ -324,10 +326,7 @@ const AddInstitute = () => {
           )}
           <div className=" mt-6  text-[14px] w-full">
             <span className="flex flex-col">
-              <span className="text-[15px] text-secondary ">
-                {" "}
-                Country {" "}
-              </span>{" "}
+              <span className="text-[15px] text-secondary "> Country </span>{" "}
               <div>
                 <select
                   name="country"
@@ -362,26 +361,27 @@ const AddInstitute = () => {
                 )} */}
               </div>
               <div className="flex items-center gap-3 justify-between w-full">
-              <span className=" w-1/2">
-              <Register
-                // imp="*"
-                name="instituteName"
-                type="text"
-                label="Institute Name"
-                handleInput={handleInput}
-                value={instituteData.instituteName}
-                // errors={errors.instituteName}
-              /></span>
-              <span className=" w-1/2 ">
-              <SelectComponent
-              notImp={true}
-                  name="status"
-                  label="Institute Status"
-                  options={statusOptionData}
-                  value={instituteData.status}
-                  handleChange={handleInput}
-                />
-              </span>
+                <span className=" w-1/2">
+                  <Register
+                    // imp="*"
+                    name="instituteName"
+                    type="text"
+                    label="Institute Name"
+                    handleInput={handleInput}
+                    value={instituteData.instituteName}
+                    // errors={errors.instituteName}
+                  />
+                </span>
+                <span className=" w-1/2 ">
+                  <SelectComponent
+                    notImp={true}
+                    name="instituteStatus"
+                    label="Institute instituteStatus"
+                    options={statusOptionData}
+                    value={instituteData.instituteStatus}
+                    handleChange={handleInput}
+                  />
+                </span>
               </div>
               <Register
                 // imp="*"
@@ -393,30 +393,30 @@ const AddInstitute = () => {
                 // errors={errors.offerLetterPrice}
               />
               <div className="mt-6">
-              <span className="text-[15px]  text-secondary ">
-                {" "}
-                Intake {" "}
-              </span>
-              <Select
-                mode="multiple"
-                allowClear
-                className="mt-2  "
-                value={instituteData.inTake}
-                style={{ width: "100%",  background: "#F2F5F7",
-                  height: "40px", }}
-                placeholder="Please select intake"
-                onChange={(selectedValues) =>
-                  handleInputSelect("inTake", selectedValues)
-                } 
-                options={intakeOption.map((data) => ({
-                value: data.option,
-                label: data.lablel,
-              }))}
-              />
+                <span className="text-[15px]  text-secondary "> Intake </span>
+                <Select
+                  mode="multiple"
+                  allowClear
+                  className="mt-2  "
+                  value={instituteData.inTake}
+                  style={{
+                    width: "100%",
+                    background: "#F2F5F7",
+                    height: "40px",
+                  }}
+                  placeholder="Please select intake"
+                  onChange={(selectedValues) =>
+                    handleInputSelect("inTake", selectedValues)
+                  }
+                  options={intakeOption.map((data) => ({
+                    value: data.option,
+                    label: data.lablel,
+                  }))}
+                />
               </div>
               <span className="text-[15px] text-secondary mt-6 ">
                 {" "}
-                About the institute 
+                About the institute
               </span>{" "}
               <textarea
                 name="about"
@@ -431,7 +431,7 @@ const AddInstitute = () => {
               )} */}
               <span className="text-[15px] text-secondary mt-6 ">
                 {" "}
-                Key Highlights 
+                Key Highlights
               </span>{" "}
               <textarea
                 name="highlights"
@@ -446,7 +446,7 @@ const AddInstitute = () => {
               )} */}
               <span className="text-[15px] text-secondary mt-6 ">
                 {" "}
-                Popular Courses 
+                Popular Courses
               </span>{" "}
               <textarea
                 name="popularCourse"
@@ -464,7 +464,6 @@ const AddInstitute = () => {
               <span className="text-[15px] text-secondary mt-6 ">
                 {" "}
                 Admission Facilitities and Charges{" "}
-                
               </span>{" "}
               <textarea
                 name="facilities"

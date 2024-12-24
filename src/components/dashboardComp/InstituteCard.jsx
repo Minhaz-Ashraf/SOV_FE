@@ -43,7 +43,7 @@ const InstituteCard = ({
   const handleOpenOpt = () => {
     setIsOpenOpt(true);
   };
-
+console.log(data);
   return (
     <>
       <div className="bg-white rounded-md  font-poppins border border-[#E8E8E8] flex flex-col h-full ">
@@ -59,8 +59,9 @@ const InstituteCard = ({
                 <img src={cardLogo} alt="" className="w-[16px] h-[16px]" />
               </span>
             </span>
-            <span className="px-3 py-[1px] text-primary bg-[#FFBEBB] border border-primary rounded-xl text-[13px]">
-              close
+            <span className={`px-3 py-[1px] rounded-xl text-[13px]  ${data?.instituteStatus === "open" ?  "text-[#459F49] bg-[#BDFFCB] border border-[#459F49]" :  "text-primary bg-[#FFBEBB] border border-primary"}`}>
+              {data?.instituteStatus || "NA"}
+              
             </span>
           </span>
           <p
