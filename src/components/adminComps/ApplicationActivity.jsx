@@ -63,8 +63,8 @@ const ApplicationActivity = ({ id }) => {
 
   const TABLE_HEAD = [
     "S.No.",
-    "Application No.",
     "User Name",
+    "Application No.",
     "Application Type",
     "Status",
   ];
