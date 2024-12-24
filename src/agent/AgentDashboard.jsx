@@ -366,6 +366,7 @@ const AgentDashboard = () => {
                         onChange={handleDonoughtChange}
                         className="border p-2 rounded-md  outline-none"
                       >
+                      <option>Select Year</option>
                         {donoughtFilter.map((data) => (
                           <option key={data.id} value={data.option}>
                             {data.label}

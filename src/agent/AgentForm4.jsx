@@ -193,7 +193,6 @@ const AgentForm4 = ({ hide, handleCancel, updateData, adminId, agentId }) => {
     const storageRef = ref(storage, fileUrl);
 
     try {
-      await deleteObject(storageRef);
       // toast.success("File deleted successfully!");
 
       if (uploadType === "businessRegistrationDocument") {
@@ -217,6 +216,8 @@ const AgentForm4 = ({ hide, handleCancel, updateData, adminId, agentId }) => {
           companyPan: "",
         }));
       }
+      await deleteObject(storageRef);
+
     } catch (error) {
       console.error("Error deleting file:", error);
       // toast.error("Error deleting file. Please try again.");
@@ -380,7 +381,7 @@ const AgentForm4 = ({ hide, handleCancel, updateData, adminId, agentId }) => {
             </span>
           </div>
           <div className="text-secondary text-[14px] mt-6 ">
-            Is your business licensed by the government of your country? *
+            Is your business licensed by the government of your country? <span className="text-primary">*</span>
           </div>
           <RadioInputComponent
             name="governmentLicensed"
@@ -458,6 +459,7 @@ const AgentForm4 = ({ hide, handleCancel, updateData, adminId, agentId }) => {
             </span>
             <span className="w-[50%] ">
               <FileUpload
+              imp={true}
                 label="Business Registration Document"
                 onFileSelect={(file) =>
                   handleFileSelect("businessRegistrationDocument", file)
@@ -478,6 +480,7 @@ const AgentForm4 = ({ hide, handleCancel, updateData, adminId, agentId }) => {
               )}
               <div className="mt-4">
                 <FileUpload
+                imp={true}
                   label="Business Profile Document"
                   onFileSelect={(file) =>
                     handleFileSelect("businessProfileDocument", file)
